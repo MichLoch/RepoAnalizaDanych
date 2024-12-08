@@ -23,4 +23,3 @@ any(violatedEdits(reguly,dane),na.rm=TRUE)
 library(VIM)
 czyste_dane <- hotdeck(dane)
 
-#TEST CZY DZIAŁA - MŁ
