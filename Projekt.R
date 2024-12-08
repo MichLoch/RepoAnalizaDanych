@@ -22,3 +22,5 @@ any(violatedEdits(reguly,dane),na.rm=TRUE)
 # imputacja braków danych
 library(VIM)
 czyste_dane <- hotdeck(dane)
+
+#TEST CZY DZIAŁA - MŁ
