@@ -8,6 +8,19 @@ library(VIM)
 
 dane <- read_csv("apartments_pl_2024_06.csv")
 
+dane <- data.frame(id=1:5,
+                   wiek=c(25,-5, 30, 40, 156),
+                   dochod=c(3000,4000,-500,6000,7000)
+                   #reguły:
+                   reguly <editset(c(
+                     "wiek">=0,
+                     "wiek"<=120,
+                     "dochod">=0
+                   ))
+                   #walidacja
+                   summary(violatedEdits(reguly,dane))
+                   bledy <- violatedEdits(reguly,dane)
+                   
 # zastosowanie reguły do walidacji
 summary(violatedEdits(reguly,dane))
 
