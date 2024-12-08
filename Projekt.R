@@ -13,14 +13,16 @@ dane <- data.frame(id=1:5,
                    dochod=c(3000,4000,-500,6000,7000)
                    #reguły:
                    reguly <editset(c(
-                     "wiek">=0,
-                     "wiek"<=120,
+                     "floor">=0,
+                     "buildYear"<=120,
                      "dochod">=0
                    ))
                    #walidacja
                    summary(violatedEdits(reguly,dane))
                    bledy <- violatedEdits(reguly,dane)
-                   
+View(dane)
+bledy <- violatedEdits(reguly.dane)
+
 # zastosowanie reguły do walidacji
 summary(violatedEdits(reguly,dane))
 
