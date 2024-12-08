@@ -6,6 +6,8 @@ library(dplyr)
 library(editrules)
 library(VIM)
 
+dane <- read_csv("apartments_pl_2024_06.csv")
+
 # zastosowanie reguły do walidacji
 summary(violatedEdits(reguly,dane))
 
