@@ -15,6 +15,11 @@ library(errorlocate)
 # Wczytanie danych
 dane <- read_csv("apartments_pl_2024_06.csv")
 
+# Check if required columns are present
+if (!"price" %in% colnames(dane)) {
+  stop("Missing column: 'price'")
+}
+
 # Sprawdzanie brakujących danych
 n_miss(dane)  # 37990 NA w danych
 n_complete(dane)  # 564038 pełnych wartości w danych
@@ -35,9 +40,11 @@ summary(dane)
 
 # Tworzenie zbioru reguł walidacji
 rules <- validator(
-  `Unit price` > 0,                               # Cena jednostkowa musi być większa od 0
-  Total <= `Unit price` * Quantity + `Tax 5%`,     # Total musi być obliczone poprawnie
-  Rating >= 1 & Rating <= 10                       # Rating musi być w przedziale 1-10
+  price > 0,                              # Cena musi być większa od 0
+  Total <= price * rooms,                  # Total musi być mniejsze lub równe price * rooms
+  # Remove Rating validation or replace with a suitable rule based on your dataset
+  # For example, if you have a column related to condition or other metrics, you can replace the Rating rule
+  condition %in% c("Good", "Very Good", "Excellent")  # Example: condition could be validated (if applicable)
 )
 
 # Aplikowanie reguł do danych
@@ -74,11 +81,6 @@ dane <- dane %>%
 # Zastąpienie NA w danych numerycznych medianą (przykład, jeśli trzeba)
 dane$column_name <- ifelse(is.na(dane$column_name), median(dane$column_name, na.rm = TRUE), dane$column_name)
 
-# Można także zastosować imputację wielokrotną, jeśli bardziej zaawansowane podejście jest wymagane:
-# Przykład imputacji z użyciem pakietu mice:
-# imputed_data <- mice(dane, m = 5, method = 'pmm', seed = 500)
-# dane_imputed <- complete(imputed_data, 1)  # Użycie jednej wersji imputowanych danych
-
 # Przykład wizualizacji brakujących danych
 gg_miss_var(dane)
 
@@ -89,10 +91,7 @@ czyste_dane <- czyste_dane %>%
 # Wyświetlanie danych w tabeli
 View(czyste_dane)
 View(dane)
-# Sprawdzanie brakujących danych w Czyste Dane czy wszystko się dobrze zrobiło
-n_miss(czyste_dane)  # 0 NA w danych
-n_complete(czyste_dane)  # 602028 pełnych wartości w danych
-pct_miss(czyste_dane)  # Procent NA = 0 %
+
 
 #####
 
