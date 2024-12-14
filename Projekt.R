@@ -83,7 +83,7 @@ dane$column_name <- ifelse(is.na(dane$column_name), median(dane$column_name, na.
 gg_miss_var(dane)
 
 # Wyświetlanie danych w tabeli
-View(dane)
+View(czyste_dane)
 
 
 #####
