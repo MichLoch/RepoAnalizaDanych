@@ -94,6 +94,11 @@ gg_miss_var(dane)
 czyste_dane <- czyste_dane %>%
   select(-ends_with("_imp"))
 
+# Zaokrąglanie wartości w kolumnie floor do pełnych liczb
+dane <- dane %>%
+  mutate(floor = round(floor))
+
+
 # Wyświetlanie danych w tabeli
 View(czyste_dane)
 View(dane)
