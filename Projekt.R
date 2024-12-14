@@ -1,66 +1,43 @@
 ## Reguły do sortowania danych
 # biblioteki
-
 library(readr)
 library(dplyr)
 library(editrules)
 library(VIM)
-
-install.packages("naniar")
-install.packages("dplyr")
-install.packages("ggplot2")
-install.packages("prettydoc")
-install.packages("mice")
-install.packages("shape")
-install.packages("jomo")
-install.packages("pan")
-install.packages("tidyverse")
-install.packages("dlookr")
-install.packages("editrules") #reguły
-install.packages("VIM")
-install.packages("validate")
-install.packages("editrules")
-install.packages("errorlocate")
-library(errorlocate)
 library(mice)
 library(naniar)
-library(dplyr)
 library(ggplot2)
 library(tidyverse)
 library(dlookr)
-library(editrules)
-library(VIM)
 library(validate)
-library(editrules)
+library(errorlocate)
 
-library(readr)
+# Wczytanie danych
 dane <- read_csv("apartments_pl_2024_06.csv")
 
-n_miss(dane)
-# jest 37990 NA w danych
+# Sprawdzanie brakujących danych
+n_miss(dane)  # 37990 NA w danych
+n_complete(dane)  # 564038 pełnych wartości w danych
+pct_miss(dane)  # Procent NA = 6,31 %
 
-n_complete(dane)
-# jest 564038  pełnych wartości w danych
-
-
-pct_miss(dane)
-#procent NA = 6,31 %
-
-is.special <- function(x){
+# Funkcja sprawdzająca wartości specjalne
+is.special <- function(x) {
   if (is.numeric(x)) !is.finite(x) else is.na(x)
 }
-sapply(dane, is.special)
-#Czy dane zawierają inne wartości specjalne? Jeśli tak, zastąp je wartością NA.
-for (n in colnames(dane)){
+
+# Zmieniamy wartości specjalne (NaN, Inf) na NA
+for (n in colnames(dane)) {
   is.na(dane[[n]]) <- is.special(dane[[n]])
 }
+
+# Podstawowa analiza danych po zmianie
 summary(dane)
 
 # Tworzenie zbioru reguł walidacji
 rules <- validator(
-  `Unit price` > 0,                              # Cena jednostkowa musi być większa od 0
-  Total <= `Unit price` * Quantity + `Tax 5%`,  # Total musi być obliczone poprawnie
-  Rating >= 1 & Rating <= 10                    # Rating musi być w przedziale 1-10
+  `Unit price` > 0,                               # Cena jednostkowa musi być większa od 0
+  Total <= `Unit price` * Quantity + `Tax 5%`,     # Total musi być obliczone poprawnie
+  Rating >= 1 & Rating <= 10                       # Rating musi być w przedziale 1-10
 )
 
 # Aplikowanie reguł do danych
@@ -69,18 +46,44 @@ validation_results <- confront(dane, rules)
 # Podsumowanie wyników walidacji
 summary(validation_results)
 
-# Szczegóły wyników
+# Szczegóły wyników walidacji
 print(validation_results)
 
-czyste_dane <-
-  dane %>%
+# Zastąpienie błędów według reguł
+czyste_dane <- dane %>%
   replace_errors(rules)
 
+# Podsumowanie błędów usuniętych z danych
 errors_removed(czyste_dane)
 
-miss_var_summary(dane)
-# tabelka pokazująca w jakich kolumnach mamy NA (gross income - 150, Rating - 150, City - 100)
+# Analiza brakujących danych w kolumnach
+miss_var_summary(dane)  # Tabelka pokazująca, w jakich kolumnach mamy NA (gross income - 150, Rating - 150, City - 100)
 
+# Zamiana NA w danych
+# 1. Zastępujemy NA wartościami średnimi (dla danych numerycznych)
+dane <- dane %>%
+  mutate(across(where(is.numeric), ~ if_else(is.na(.), mean(., na.rm = TRUE), .)))
+
+# 2. Zastępujemy NA wartościami zerowymi (jeśli nie chcemy imputation, tylko zerowanie)
+dane[is.na(dane)] <- 0
+
+# 3. Zastępujemy NA w zmiennych kategorycznych najczęstszymi wartościami (tryb)
+dane <- dane %>%
+  mutate(across(where(is.character), ~ replace_na(., as.character(names(sort(table(.), decreasing = TRUE))[1]))))
+
+# Zastąpienie NA w danych numerycznych medianą (przykład, jeśli trzeba)
+dane$column_name <- ifelse(is.na(dane$column_name), median(dane$column_name, na.rm = TRUE), dane$column_name)
+
+# Można także zastosować imputację wielokrotną, jeśli bardziej zaawansowane podejście jest wymagane:
+# Przykład imputacji z użyciem pakietu mice:
+# imputed_data <- mice(dane, m = 5, method = 'pmm', seed = 500)
+# dane_imputed <- complete(imputed_data, 1)  # Użycie jednej wersji imputowanych danych
+
+# Przykład wizualizacji brakujących danych
+gg_miss_var(dane)
+
+# Wyświetlanie danych w tabeli
+View(dane)
 
 
 #####
