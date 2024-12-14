@@ -57,14 +57,14 @@ czyste_dane <- dane %>%
 errors_removed(czyste_dane)
 
 # Analiza brakujących danych w kolumnach
-miss_var_summary(dane)  # Tabelka pokazująca, w jakich kolumnach mamy NA (gross income - 150, Rating - 150, City - 100)
+miss_var_summary(dane)  # Podsumowanie brakujących wartości w kolumnach
 
 # Zamiana NA w danych
 # 1. Zastępujemy NA wartościami średnimi (dla danych numerycznych)
 dane <- dane %>%
   mutate(across(where(is.numeric), ~ if_else(is.na(.), mean(., na.rm = TRUE), .)))
 
-# 2. Zastępujemy NA wartościami zerowymi (jeśli nie chcemy imputation, tylko zerowanie)
+# 2. Zastępujemy NA wartościami zerowymi (jeśli nie chcemy imputacji, tylko zerowanie)
 dane[is.na(dane)] <- 0
 
 # 3. Zastępujemy NA w zmiennych kategorycznych najczęstszymi wartościami (tryb)
@@ -82,9 +82,17 @@ dane$column_name <- ifelse(is.na(dane$column_name), median(dane$column_name, na.
 # Przykład wizualizacji brakujących danych
 gg_miss_var(dane)
 
+# Usuwanie dodatkowych kolumn z sufiksem "_imp"
+czyste_dane <- czyste_dane %>%
+  select(-ends_with("_imp"))
+
 # Wyświetlanie danych w tabeli
 View(czyste_dane)
-
+View(dane)
+# Sprawdzanie brakujących danych w Czyste Dane czy wszystko się dobrze zrobiło
+n_miss(czyste_dane)  # 0 NA w danych
+n_complete(czyste_dane)  # 602028 pełnych wartości w danych
+pct_miss(czyste_dane)  # Procent NA = 0 %
 
 #####
 
