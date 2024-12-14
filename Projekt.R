@@ -43,7 +43,47 @@ n_complete(dane)
 # jest 564038  pełnych wartości w danych
 
 
-dane <- read_csv("apartments_pl_2024_06.csv")
+pct_miss(dane)
+#procent NA = 6,31 %
+
+is.special <- function(x){
+  if (is.numeric(x)) !is.finite(x) else is.na(x)
+}
+sapply(dane, is.special)
+#Czy dane zawierają inne wartości specjalne? Jeśli tak, zastąp je wartością NA.
+for (n in colnames(dane)){
+  is.na(dane[[n]]) <- is.special(dane[[n]])
+}
+summary(dane)
+
+# Tworzenie zbioru reguł walidacji
+rules <- validator(
+  `Unit price` > 0,                              # Cena jednostkowa musi być większa od 0
+  Total <= `Unit price` * Quantity + `Tax 5%`,  # Total musi być obliczone poprawnie
+  Rating >= 1 & Rating <= 10                    # Rating musi być w przedziale 1-10
+)
+
+# Aplikowanie reguł do danych
+validation_results <- confront(dane, rules)
+
+# Podsumowanie wyników walidacji
+summary(validation_results)
+
+# Szczegóły wyników
+print(validation_results)
+
+czyste_dane <-
+  dane %>%
+  replace_errors(rules)
+
+errors_removed(czyste_dane)
+
+miss_var_summary(dane)
+# tabelka pokazująca w jakich kolumnach mamy NA (gross income - 150, Rating - 150, City - 100)
+
+
+
+#####
 
 dane <- data.frame(id=1:5,
                    floor=c(25,-5, 30, 40, 156),
