@@ -6,6 +6,43 @@ library(dplyr)
 library(editrules)
 library(VIM)
 
+install.packages("naniar")
+install.packages("dplyr")
+install.packages("ggplot2")
+install.packages("prettydoc")
+install.packages("mice")
+install.packages("shape")
+install.packages("jomo")
+install.packages("pan")
+install.packages("tidyverse")
+install.packages("dlookr")
+install.packages("editrules") #reguły
+install.packages("VIM")
+install.packages("validate")
+install.packages("editrules")
+install.packages("errorlocate")
+library(errorlocate)
+library(mice)
+library(naniar)
+library(dplyr)
+library(ggplot2)
+library(tidyverse)
+library(dlookr)
+library(editrules)
+library(VIM)
+library(validate)
+library(editrules)
+
+library(readr)
+dane <- read_csv("apartments_pl_2024_06.csv")
+
+n_miss(dane)
+# jest 37990 NA w danych
+
+n_complete(dane)
+# jest 564038  pełnych wartości w danych
+
+
 dane <- read_csv("apartments_pl_2024_06.csv")
 
 dane <- data.frame(id=1:5,
