@@ -134,4 +134,4 @@ any(violatedEdits(reguly,dane),na.rm=TRUE)
 # imputacja braków danych
 library(VIM)
 czyste_dane <- hotdeck(dane)
-
+view(czyste_dane)
