@@ -66,6 +66,12 @@ errors_removed(czyste_dane)
 # Analiza brakujących danych w kolumnach
 miss_var_summary(dane)  # Podsumowanie brakujących wartości w kolumnach
 
+
+# Zastępowanie NA w kolumnie condition najczęstszą wartością
+dane <- dane %>%
+  mutate(condition = replace_na(condition, as.character(names(sort(table(condition), decreasing = TRUE))[1])))
+
+
 # Zamiana NA w danych
 # 1. Zastępujemy NA wartościami średnimi (dla danych numerycznych)
 dane <- dane %>%
@@ -93,6 +99,7 @@ View(czyste_dane)
 View(dane)
 
 
+##### STARY KOD #####
 #####
 
 dane <- data.frame(id=1:5,
