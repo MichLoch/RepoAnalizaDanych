@@ -140,3 +140,72 @@ any(violatedEdits(reguly,dane),na.rm=TRUE)
 library(VIM)
 czyste_dane <- hotdeck(dane)
 view(czyste_dane)
+
+library(naniar)
+
+# Wykres procentowego udziału brakujących danych w kolumnach
+gg_miss_var(dane) +
+  labs(title = "Procent brakujących danych w kolumnach",
+       x = "Kolumny",
+       y = "Procent brakujących wartości") +
+  theme_minimal()
+
+library(ggplot2)
+
+# Wykres wyników walidacji
+validation_summary <- as.data.frame(summary(validation_results))
+
+ggplot(validation_summary, aes(x = rule, y = fails)) +
+  geom_bar(stat = "identity", fill = "steelblue") +
+  coord_flip() +
+  labs(title = "Wyniki walidacji reguł",
+       x = "Reguły",
+       y = "Liczba błędów") +
+  theme_minimal()
+
+# Histogram ceny (price)
+ggplot(dane, aes(x = price)) +
+  geom_histogram(bins = 30, fill = "skyblue", color = "black") +
+  labs(title = "Rozkład cen mieszkań",
+       x = "Cena",
+       y = "Częstotliwość") +
+  theme_minimal()
+
+# Brakujące dane przed imputacją
+miss_before <- pct_miss(dane)
+
+# Brakujące dane po imputacji
+miss_after <- pct_miss(czyste_dane)
+
+# Wykres porównawczy
+data_comparison <- data.frame(
+  Stage = c("Przed imputacją", "Po imputacji"),
+  MissingPercentage = c(miss_before, miss_after)
+)
+
+ggplot(data_comparison, aes(x = Stage, y = MissingPercentage, fill = Stage)) +
+  geom_bar(stat = "identity", width = 0.5) +
+  labs(title = "Porównanie brakujących danych przed i po imputacji",
+       x = "Etap",
+       y = "Procent brakujących danych") +
+  theme_minimal()
+
+# Wykres liczby błędów dla reguł
+errors_summary <- as.data.frame(summary(violatedEdits(reguly, dane)))
+
+ggplot(errors_summary, aes(x = edit, y = n)) +
+  geom_bar(stat = "identity", fill = "tomato") +
+  coord_flip() +
+  labs(title = "Liczba błędów w danych",
+       x = "Reguły",
+       y = "Liczba błędów") +
+  theme_minimal()
+
+# Boxplot ceny w zależności od liczby pokoi
+ggplot(dane, aes(x = as.factor(rooms), y = price)) +
+  geom_boxplot(fill = "lightblue") +
+  labs(title = "Cena mieszkań a liczba pokoi",
+       x = "Liczba pokoi",
+       y = "Cena") +
+  theme_minimal()
+
