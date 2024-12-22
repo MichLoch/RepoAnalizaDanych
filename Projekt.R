@@ -106,28 +106,30 @@ View(dane)
 
 ##### STARY KOD #####
 #####
+dane <- data.frame(
+  id = 1:5,
+  floor = c(25, -5, 30, 40, 156),
+  buildingYear = c(3000, 4000, -500, 6000, 7000),
+  buildingMaterial = c("wood", "brick", "brick", "wood", "concrete"),
+  condition = c("new", "good", "poor", "good", "new")
+)
 
-dane <- data.frame(id=1:5,
-                   floor=c(25,-5, 30, 40, 156),
-                   buildingYear=c(3000,4000,-500,6000,7000)
-                   #reguły:
-                   reguly <editset(c(
-                     "floor">=0,
-                     "buildYear"<=120,
-                     "buildingMaterial"
-                     "condition"
-                   ))
-                   #walidacja
-                   summary(violatedEdits(reguly,dane))
-                   bledy <- violatedEdits(reguly,dane)
-View(dane)
-bledy <- violatedEdits(reguly.dane)
+# Tworzenie reguł walidacji
+library(editrules)
+reguly <- editset(c(
+  "floor >= 0",
+  "buildingYear <= 120",
+  "buildingMaterial %in% c('wood', 'brick', 'concrete')",
+  "condition %in% c('new', 'good', 'poor')"
+))
+#View(dane)
+bledy <- violatedEdits(reguly, dane)
 
 # zastosowanie reguły do walidacji
-summary(violatedEdits(reguly,dane))
+summary(violatedEdits(reguly, dane))
 
 # podsumuj na wykresie
-bledy <- violatedEdits(reguly.dane)
+bledy <- violatedEdits(reguly,dane)
 
 dane <- read_csv("apartments_pl_2024_06.csv")
 # poprawiam bledy w danych
@@ -209,3 +211,130 @@ ggplot(dane, aes(x = as.factor(rooms), y = price)) +
        y = "Cena") +
   theme_minimal()
 
+######## WYKRESY Z ZAJĘĆ ################
+
+install.packages("plotly")
+install.packages("ISLR")
+
+library(ggplot2)
+library(hrbrthemes)
+library(plotly)
+library(ISLR)
+data("Credit")
+
+ggplot(Credit, aes(x=Rating, fill=Gender)) +
+  geom_histogram(binwidth=50, color="black")+
+  labs(title="histogram ratingu", x="rating", y="liczba obswerwacji") +
+  theme_ipsum() +
+  facet_grid(~Married)
+
+# Utwórz wykres ratingu (histogram):
+Credit %>%
+  filter(Age>30) %>%
+  ggplot(aes(x=Rating,fill=Gender)) + 
+  geom_histogram(binwidth=50, color="black") +
+  labs(title="Histogram ratingu", x="Rating", y="Liczba obserwacji") +
+  theme_ipsum() +
+  facet_grid(~Married)
+
+# Utwórz wykres ratingu (boxplot):
+ggplot(Credit, aes(x=Married, y=Rating)) +
+  geom_boxplot() +
+  labs(title="Boxplot ratingu", x="Stan cywilny", y="Rating") +
+  theme_classic() +
+  facet_grid(~Gender)
+
+# Utwórz wykres ratingu (boxplot):
+wykres <- ggplot(Credit, aes(x=Married, y=Rating, fill=Gender)) +
+  geom_boxplot() +
+  labs(title="Boxplot ratingu", x="Stan cywilny", y="Rating") +
+  theme_classic() +
+  facet_grid(~Ethnicity)
+ggplotly(wykres)
+
+# Utwórz wykres ratingu (boxplot):
+ggplot(Credit, aes(x=Married, y=Rating, fill=Gender)) +
+  geom_boxplot() +
+  labs(title="Boxplot ratingu", x="Stan cywilny", y="Rating") +
+  theme_classic() +
+  facet_grid(~Ethnicity)
+
+# Utwórz wykres ratingu (boxplot):
+wykres <- ggplot(Credit, aes(x=Married, y=Rating, fill=Gender)) +
+  geom_boxplot() +
+  labs(title="Boxplot ratingu", x="Stan cywilny", y="Rating") +
+  theme_classic() +
+  facet_grid(~Ethnicity)
+ggplotly(wykres)
+
+# Utwórz wykres ratingu (boxplot):
+ggplot(Credit, aes(x=Married, y=Rating)) +
+  geom_violin(aes(alpha=0.2)) +
+  geom_boxplot(width=0.5) +
+  labs(title="Boxplot ratingu", x="Stan cywilny", y="Rating") +
+  theme_classic() +
+  facet_grid(Gender~Ethnicity) +
+  coord_flip()
+
+ggplot(Credit, aes(x=Limit, y=Rating)) + 
+  geom_point() +
+  labs(title="Wykres ratingu w zależności od limitu", x="Limit", y="Rating") +
+  theme_classic()
+
+# Podziel zmienną Age na 3 przedziały wiekowe co 20 lat:
+Credit$AgeGroup <- cut(Credit$Age, breaks=c(20,40,60,80,100), 
+                       labels=c("20-40", "40-60", "60-80", ">80"))
+
+
+ggplot(Credit, aes(x=Limit, y=Rating)) + 
+  geom_point() +
+  labs(title="Wykres ratingu w zależności od limitu", x="Limit", y="Rating") +
+  theme_classic() +
+  facet_grid(~AgeGroup)
+
+
+ggplot(Credit, aes(x=Income, y=Rating, size=Cards)) + 
+  geom_point() +
+  labs(title="Wykres ratingu w zależności od limitu", x="Limit", y="Rating") +
+  theme_classic() +
+  facet_grid(~AgeGroup)
+
+ggplot(Credit, aes(x=Income, y=Rating, size=Cards)) + 
+  geom_point() +
+  labs(title="Wykres ratingu w zależności od limitu", x="Limit", y="Rating") +
+  theme_classic() +
+  facet_grid(Gender~AgeGroup)
+
+wykres2<-ggplot(Credit, aes(x=Income, y=Rating, size=Cards)) + 
+  geom_point() +
+  labs(title="Wykres ratingu w zależności od limitu", x="Limit", y="Rating") +
+  theme_classic() +
+  facet_grid(Gender~AgeGroup)
+ggplotly(wykres2)
+
+ggplot(Credit, aes(x=AgeGroup, fill=Cards)) + 
+  geom_bar(position="stack") +
+  labs(title="Liczba kart w zależności od grupy wiekowej", x="Grupa wiekowa", y="Liczba kart") +
+  theme_classic()
+
+ggplot(Credit, aes(x=AgeGroup, fill=Cards)) + 
+  geom_bar(position="dodge") +
+  labs(title="Liczba kart w zależności od grupy wiekowej", x="Grupa wiekowa", y="Liczba kart") +
+  theme_classic()
+
+# Podziel rating na przedziałki:
+Credit$RatingGroup <- cut(Credit$Rating, breaks=c(0,200,400,600,800,1000), 
+                          labels=c("0-200", "200-400", "400-600", "600-800", "800-1000"))
+
+# Utwórz wykres dla liczby kard (Cards) w zależności od grupy wiekowej (AgeGroup):
+
+ggplot(Credit, aes(x=AgeGroup, fill=RatingGroup)) + 
+  geom_bar(position="stack") +
+  labs(title="Liczba kart w zależności od grupy wiekowej", x="Grupa wiekowa", y="Liczba kart") +
+  theme_classic()
+
+ggplot(Credit, aes(x=AgeGroup, fill=RatingGroup)) + 
+  geom_bar(position="dodge") +
+  labs(title="Liczba kart w zależności od grupy wiekowej", x="Grupa wiekowa", y="Liczba kart") +
+  theme_classic() +
+  facet_grid(Gender~Married)
