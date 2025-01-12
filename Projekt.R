@@ -88,10 +88,20 @@ ggplot(clean_data, aes(x = city, y = price)) +
   labs(title = "Price Distribution by City", x = "City", y = "Price")
 
 # Heatmap of missing data correlations
-##błędnie zmiennne trzeba poprawić ilościowe zmienne z ilościowymi zmiennymi. Wywalić niepotrzebne zmienne
-correlation_matrix <- cor(is.na(apartments), use = "pairwise.complete.obs")
-corrplot(correlation_matrix, method = "square")
-##
+# Select specific numeric variables for the heatmap
+selected_data <- apartments %>%
+  select(squareMeters, rooms, floor, floorCount, buildYear, price, centreDistance, latitude, longitude)
+
+# Compute correlation matrix for selected variables
+correlation_matrix <- cor(selected_data, use = "pairwise.complete.obs")
+
+# Visualize the correlation matrix with heatmap
+corrplot(correlation_matrix, method = "square", 
+         tl.cex = 0.8, cl.cex = 0.8, 
+         type = "upper", order = "hclust", 
+         addCoef.col = "black", number.cex = 0.7,
+         title = "Correlation Heatmap for Selected Variables", mar = c(0, 0, 2, 0))
+
 
 # Bar plot of average price by city
 clean_data %>%
