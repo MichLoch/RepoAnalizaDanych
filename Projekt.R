@@ -9,6 +9,8 @@ library(ggplot2)
 library(tidyverse)
 library(validate)
 library(errorlocate)
+if (!require("corrplot")) install.packages("corrplot")
+library(corrplot)
 
 # Load the apartments dataset
 apartments <- read_csv("apartments_pl_2024_06.csv")
@@ -79,7 +81,7 @@ apartments <- apartments %>%
 ggplot(apartments, aes(x = squareMeters, y = price)) +
   geom_point(aes(color = city, shape = ownership), size = 2) +
   theme_minimal()
-
+  
 ggplot(clean_data, aes(x = city, y = price)) +
   geom_boxplot(aes(fill = city), alpha = 0.85) +
   theme_minimal() +
