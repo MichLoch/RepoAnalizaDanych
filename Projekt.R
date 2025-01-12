@@ -1,5 +1,4 @@
-## Reguły do sortowania danych
-# biblioteki
+# Load necessary libraries
 library(readr)
 library(dplyr)
 library(editrules)
@@ -8,333 +7,94 @@ library(mice)
 library(naniar)
 library(ggplot2)
 library(tidyverse)
-library(dlookr)
 library(validate)
 library(errorlocate)
 
-# Wczytanie danych
-dane <- read_csv("apartments_pl_2024_06.csv")
+# Load the apartments dataset
+apartments <- read_csv("apartments_pl_2024_06.csv")
 
-# Check if required columns are present
-if (!"price" %in% colnames(dane)) {
-  stop("Missing column: 'price'")
-}
+# Check for missing values
+n_miss(apartments)  # Count of NA values: 14149
+n_complete(apartments)  # Count of complete values: 587879
+pct_miss(apartments)  # Percentage of NA values: [1] 2.350223
 
-# Sprawdzanie brakujących danych
-n_miss(dane)  # 37990 NA w danych
-n_complete(dane)  # 564038 pełnych wartości w danych
-pct_miss(dane)  # Procent NA = 6,31 %
-
-# Funkcja sprawdzająca wartości specjalne
+# Replace special values (e.g., NaN, Inf) with NA
 is.special <- function(x) {
   if (is.numeric(x)) !is.finite(x) else is.na(x)
 }
-
-# Zmieniamy wartości specjalne (NaN, Inf) na NA
-for (n in colnames(dane)) {
-  is.na(dane[[n]]) <- is.special(dane[[n]])
+for (n in colnames(apartments)) {
+  is.na(apartments[[n]]) <- is.special(apartments[[n]])
 }
+summary(apartments)
 
-# Podstawowa analiza danych po zmianie
-summary(dane)
-
-# Tworzenie zbioru reguł walidacji
+# Define validation rules
 rules <- validator(
-  price > 0,                              # Cena musi być większa od 0
-  Total <= price * rooms,                  # Total musi być mniejsze lub równe price * rooms
-  # Remove Rating validation or replace with a suitable rule based on your dataset
-  # For example, if you have a column related to condition or other metrics, you can replace the Rating rule
-  condition %in% c("Good", "Very Good", "Excellent")  # Example: condition could be validated (if applicable)
+  price > 0,                               # Price must be greater than 0
+  squareMeters > 0,                        # Square meters must be positive
+  rooms > 0,                               # Rooms must be positive
+  floor >= 0 & floor <= floorCount,        # Floor must be within bounds
+  buildYear > 1800 & buildYear <= 2024,    # Valid building years
+  condition %in% c("Good", "Very Good", "Excellent")  # Valid conditions
 )
 
-# Aplikowanie reguł do danych
-validation_results <- confront(dane, rules)
+# Apply validation rules
+validation_results <- confront(apartments, rules)
 
-# Podsumowanie wyników walidacji
+# Summarize validation results
 summary(validation_results)
 
-# Szczegóły wyników walidacji
-print(validation_results)
-
-# Zastąpienie błędów według reguł
-czyste_dane <- dane %>%
+# Clean the data by removing rows with errors
+clean_data <- apartments %>% 
   replace_errors(rules)
 
-# Podsumowanie błędów usuniętych z danych
-errors_removed(czyste_dane)
+# Visualize missing data
+vis_miss(apartments)  # Heatmap of missing data
 
-# Analiza brakujących danych w kolumnach
-miss_var_summary(dane)  # Podsumowanie brakujących wartości w kolumnach
+# Grouped summaries for missing data
+apartments %>% 
+  group_by(city) %>% 
+  miss_var_summary() %>% 
+  print(n = Inf) %>% 
+  filter(variable %in% c("price", "rooms", "squareMeters"))
 
+apartments %>% 
+  miss_case_table()  # Summary of missing observations in rows
 
-# Zastępowanie NA w kolumnie condition najczęstszą wartością
-dane <- dane %>%
-  mutate(condition = replace_na(condition, as.character(names(sort(table(condition), decreasing = TRUE))[1])))
+# Replace NA values
+apartments <- apartments %>%
+  mutate(
+    condition = replace_na(condition, "Good"),  # Replace missing condition with "Good"
+    across(where(is.numeric), ~ if_else(is.na(.), mean(., na.rm = TRUE), .))  # Replace numeric NAs with column means
+  )
 
-
-# Zamiana NA w danych
-# 1. Zastępujemy NA wartościami średnimi (dla danych numerycznych)
-dane <- dane %>%
-  mutate(across(where(is.numeric), ~ if_else(is.na(.), mean(., na.rm = TRUE), .)))
-
-# 2. Zastępujemy NA wartościami zerowymi (jeśli nie chcemy imputacji, tylko zerowanie)
-dane[is.na(dane)] <- 0
-
-# 3. Zastępujemy NA w zmiennych kategorycznych najczęstszymi wartościami (tryb)
-dane <- dane %>%
-  mutate(across(where(is.character), ~ replace_na(., as.character(names(sort(table(.), decreasing = TRUE))[1]))))
-
-# Zastąpienie NA w danych numerycznych medianą (przykład, jeśli trzeba)
-dane$column_name <- ifelse(is.na(dane$column_name), median(dane$column_name, na.rm = TRUE), dane$column_name)
-
-# Przykład wizualizacji brakujących danych
-gg_miss_var(dane)
-
-# Usuwanie dodatkowych kolumn z sufiksem "_imp"
-czyste_dane <- czyste_dane %>%
+# Remove columns with `_imp` suffix if they exist
+clean_data <- clean_data %>%
   select(-ends_with("_imp"))
 
-# Zaokrąglanie wartości w kolumnie floor do pełnych liczb
-dane <- dane %>%
+# Round the `floor` values
+apartments <- apartments %>%
   mutate(floor = round(floor))
 
-
-# Wyświetlanie danych w tabeli
-View(czyste_dane)
-View(dane)
-
-
-##### STARY KOD #####
-#####
-dane <- data.frame(
-  id = 1:5,
-  floor = c(25, -5, 30, 40, 156),
-  buildingYear = c(3000, 4000, -500, 6000, 7000),
-  buildingMaterial = c("wood", "brick", "brick", "wood", "concrete"),
-  condition = c("new", "good", "poor", "good", "new")
-)
-
-# Tworzenie reguł walidacji
-library(editrules)
-reguly <- editset(c(
-  "floor >= 0",
-  "buildingYear <= 120",
-  "buildingMaterial %in% c('wood', 'brick', 'concrete')",
-  "condition %in% c('new', 'good', 'poor')"
-))
-#View(dane)
-bledy <- violatedEdits(reguly, dane)
-
-# zastosowanie reguły do walidacji
-summary(violatedEdits(reguly, dane))
-
-# podsumuj na wykresie
-bledy <- violatedEdits(reguly,dane)
-
-dane <- read_csv("apartments_pl_2024_06.csv")
-# poprawiam bledy w danych
-dane[localizeErrors(reguly,dane)$adapt] <- NA
-# coś zostało?
-any(violatedEdits(reguly,dane),na.rm=TRUE)
-# nic
-
-# imputacja braków danych
-library(VIM)
-czyste_dane <- hotdeck(dane)
-view(czyste_dane)
-
-library(naniar)
-
-# Wykres procentowego udziału brakujących danych w kolumnach
-gg_miss_var(dane) +
-  labs(title = "Procent brakujących danych w kolumnach",
-       x = "Kolumny",
-       y = "Procent brakujących wartości") +
+# Visualizations
+ggplot(apartments, aes(x = squareMeters, y = price)) +
+  geom_point(aes(color = city, shape = ownership), size = 2) +
   theme_minimal()
 
-library(ggplot2)
+ggplot(clean_data, aes(x = city, y = price)) +
+  geom_boxplot(aes(fill = city), alpha = 0.85) +
+  theme_minimal() +
+  labs(title = "Price Distribution by City", x = "City", y = "Price")
 
-# Wykres wyników walidacji
-validation_summary <- as.data.frame(summary(validation_results))
+# Heatmap of missing data correlations
+correlation_matrix <- cor(is.na(apartments), use = "pairwise.complete.obs")
+corrplot(correlation_matrix, method = "square")
 
-ggplot(validation_summary, aes(x = rule, y = fails)) +
-  geom_bar(stat = "identity", fill = "steelblue") +
+# Bar plot of average price by city
+clean_data %>%
+  group_by(city) %>%
+  summarise(avg_price = mean(price, na.rm = TRUE)) %>%
+  ggplot(aes(x = reorder(city, avg_price), y = avg_price, fill = city)) +
+  geom_col(show.legend = FALSE) +
   coord_flip() +
-  labs(title = "Wyniki walidacji reguł",
-       x = "Reguły",
-       y = "Liczba błędów") +
-  theme_minimal()
-
-# Histogram ceny (price)
-ggplot(dane, aes(x = price)) +
-  geom_histogram(bins = 30, fill = "skyblue", color = "black") +
-  labs(title = "Rozkład cen mieszkań",
-       x = "Cena",
-       y = "Częstotliwość") +
-  theme_minimal()
-
-# Brakujące dane przed imputacją
-miss_before <- pct_miss(dane)
-
-# Brakujące dane po imputacji
-miss_after <- pct_miss(czyste_dane)
-
-# Wykres porównawczy
-data_comparison <- data.frame(
-  Stage = c("Przed imputacją", "Po imputacji"),
-  MissingPercentage = c(miss_before, miss_after)
-)
-
-ggplot(data_comparison, aes(x = Stage, y = MissingPercentage, fill = Stage)) +
-  geom_bar(stat = "identity", width = 0.5) +
-  labs(title = "Porównanie brakujących danych przed i po imputacji",
-       x = "Etap",
-       y = "Procent brakujących danych") +
-  theme_minimal()
-
-# Wykres liczby błędów dla reguł
-errors_summary <- as.data.frame(summary(violatedEdits(reguly, dane)))
-
-ggplot(errors_summary, aes(x = edit, y = n)) +
-  geom_bar(stat = "identity", fill = "tomato") +
-  coord_flip() +
-  labs(title = "Liczba błędów w danych",
-       x = "Reguły",
-       y = "Liczba błędów") +
-  theme_minimal()
-
-# Boxplot ceny w zależności od liczby pokoi
-ggplot(dane, aes(x = as.factor(rooms), y = price)) +
-  geom_boxplot(fill = "lightblue") +
-  labs(title = "Cena mieszkań a liczba pokoi",
-       x = "Liczba pokoi",
-       y = "Cena") +
-  theme_minimal()
-
-######## WYKRESY Z ZAJĘĆ ################
-
-install.packages("plotly")
-install.packages("ISLR")
-
-library(ggplot2)
-library(hrbrthemes)
-library(plotly)
-library(ISLR)
-data("Credit")
-
-ggplot(Credit, aes(x=Rating, fill=Gender)) +
-  geom_histogram(binwidth=50, color="black")+
-  labs(title="histogram ratingu", x="rating", y="liczba obswerwacji") +
-  theme_ipsum() +
-  facet_grid(~Married)
-
-# Utwórz wykres ratingu (histogram):
-Credit %>%
-  filter(Age>30) %>%
-  ggplot(aes(x=Rating,fill=Gender)) + 
-  geom_histogram(binwidth=50, color="black") +
-  labs(title="Histogram ratingu", x="Rating", y="Liczba obserwacji") +
-  theme_ipsum() +
-  facet_grid(~Married)
-
-# Utwórz wykres ratingu (boxplot):
-ggplot(Credit, aes(x=Married, y=Rating)) +
-  geom_boxplot() +
-  labs(title="Boxplot ratingu", x="Stan cywilny", y="Rating") +
-  theme_classic() +
-  facet_grid(~Gender)
-
-# Utwórz wykres ratingu (boxplot):
-wykres <- ggplot(Credit, aes(x=Married, y=Rating, fill=Gender)) +
-  geom_boxplot() +
-  labs(title="Boxplot ratingu", x="Stan cywilny", y="Rating") +
-  theme_classic() +
-  facet_grid(~Ethnicity)
-ggplotly(wykres)
-
-# Utwórz wykres ratingu (boxplot):
-ggplot(Credit, aes(x=Married, y=Rating, fill=Gender)) +
-  geom_boxplot() +
-  labs(title="Boxplot ratingu", x="Stan cywilny", y="Rating") +
-  theme_classic() +
-  facet_grid(~Ethnicity)
-
-# Utwórz wykres ratingu (boxplot):
-wykres <- ggplot(Credit, aes(x=Married, y=Rating, fill=Gender)) +
-  geom_boxplot() +
-  labs(title="Boxplot ratingu", x="Stan cywilny", y="Rating") +
-  theme_classic() +
-  facet_grid(~Ethnicity)
-ggplotly(wykres)
-
-# Utwórz wykres ratingu (boxplot):
-ggplot(Credit, aes(x=Married, y=Rating)) +
-  geom_violin(aes(alpha=0.2)) +
-  geom_boxplot(width=0.5) +
-  labs(title="Boxplot ratingu", x="Stan cywilny", y="Rating") +
-  theme_classic() +
-  facet_grid(Gender~Ethnicity) +
-  coord_flip()
-
-ggplot(Credit, aes(x=Limit, y=Rating)) + 
-  geom_point() +
-  labs(title="Wykres ratingu w zależności od limitu", x="Limit", y="Rating") +
-  theme_classic()
-
-# Podziel zmienną Age na 3 przedziały wiekowe co 20 lat:
-Credit$AgeGroup <- cut(Credit$Age, breaks=c(20,40,60,80,100), 
-                       labels=c("20-40", "40-60", "60-80", ">80"))
-
-
-ggplot(Credit, aes(x=Limit, y=Rating)) + 
-  geom_point() +
-  labs(title="Wykres ratingu w zależności od limitu", x="Limit", y="Rating") +
-  theme_classic() +
-  facet_grid(~AgeGroup)
-
-
-ggplot(Credit, aes(x=Income, y=Rating, size=Cards)) + 
-  geom_point() +
-  labs(title="Wykres ratingu w zależności od limitu", x="Limit", y="Rating") +
-  theme_classic() +
-  facet_grid(~AgeGroup)
-
-ggplot(Credit, aes(x=Income, y=Rating, size=Cards)) + 
-  geom_point() +
-  labs(title="Wykres ratingu w zależności od limitu", x="Limit", y="Rating") +
-  theme_classic() +
-  facet_grid(Gender~AgeGroup)
-
-wykres2<-ggplot(Credit, aes(x=Income, y=Rating, size=Cards)) + 
-  geom_point() +
-  labs(title="Wykres ratingu w zależności od limitu", x="Limit", y="Rating") +
-  theme_classic() +
-  facet_grid(Gender~AgeGroup)
-ggplotly(wykres2)
-
-ggplot(Credit, aes(x=AgeGroup, fill=Cards)) + 
-  geom_bar(position="stack") +
-  labs(title="Liczba kart w zależności od grupy wiekowej", x="Grupa wiekowa", y="Liczba kart") +
-  theme_classic()
-
-ggplot(Credit, aes(x=AgeGroup, fill=Cards)) + 
-  geom_bar(position="dodge") +
-  labs(title="Liczba kart w zależności od grupy wiekowej", x="Grupa wiekowa", y="Liczba kart") +
-  theme_classic()
-
-# Podziel rating na przedziałki:
-Credit$RatingGroup <- cut(Credit$Rating, breaks=c(0,200,400,600,800,1000), 
-                          labels=c("0-200", "200-400", "400-600", "600-800", "800-1000"))
-
-# Utwórz wykres dla liczby kard (Cards) w zależności od grupy wiekowej (AgeGroup):
-
-ggplot(Credit, aes(x=AgeGroup, fill=RatingGroup)) + 
-  geom_bar(position="stack") +
-  labs(title="Liczba kart w zależności od grupy wiekowej", x="Grupa wiekowa", y="Liczba kart") +
-  theme_classic()
-
-ggplot(Credit, aes(x=AgeGroup, fill=RatingGroup)) + 
-  geom_bar(position="dodge") +
-  labs(title="Liczba kart w zależności od grupy wiekowej", x="Grupa wiekowa", y="Liczba kart") +
-  theme_classic() +
-  facet_grid(Gender~Married)
+  theme_minimal() +
+  labs(title = "Average Price by City", x = "City", y = "Average Price")
