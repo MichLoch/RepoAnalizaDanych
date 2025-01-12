@@ -1,3 +1,33 @@
+##Biblioteki install.packages("summarytools")
+
+
+```{r setup1, include=FALSE}
+knitr::opts_chunk$set(
+	echo = TRUE,
+	message = FALSE,
+	warning = FALSE
+)
+options(qwraps2_markup = "markdown")
+library(qwraps2)
+library(arsenal)
+library(e1071)
+library(haven)
+library(papeR)
+library(dplyr)
+library(tidyverse)
+library(ggplot2)
+library(kableExtra)
+library(summarytools)
+library(classInt)
+library(pastecs)
+library(desctable)
+library(frequency)
+library(corrplot)
+library(ggpubr)
+download.file("https://github.com/kflisikowski/ds/blob/master/data_apartments.csv?raw=true", destfile ="mieszkania.csv",mode="wb")
+mieszkania <- read.csv("mieszkania.csv",sep=";",dec=",")
+```
+
 ---
 title: "Analiza_Danych_Projekt_Markdown"
 author: "MŁ"
@@ -28,3 +58,72 @@ plot(pressure)
 ```
 
 Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
+
+apartments \<- read_csv("apartments_pl_2024_06.csv")
+##Poprawa błędów (kod niżej)
+str(apartments)
+summary(apartments$district)
+table(apartments$district)
+apartments$district <- as.factor(apartments$district)
+apartments$district <- factor(c("district1", "district2", "district3", ...))
+apartments$district <- factor(rep("Unknown", nrow(apartments)))
+colnames(apartments)
+apartments$district <- factor(ifelse(apartments$city == "Wrocław", "Wrocław", "Inne"))
+apartments$district <- factor(rep(NA, nrow(apartments)))
+
+
+
+
+
+
+## Data wrangling
+```{r wrangling, include=TRUE}
+
+apartments$building_type<-as.factor(apartments$buildYear)
+apartments$rooms<-factor(apartments$rooms,ordered=TRUE)
+attach(apartments)
+apartments$price<-as.numeric(apartments$price)
+
+```
+
+
+
+
+
+## Tabele liczności oraz TAI
+
+```{r table, message=FALSE, warning=FALSE, include=FALSE, paged.print=FALSE}
+# Granice przedziałów co 300000, od 190000 do 3000000
+limits <- seq(190000, 3000000, by = 300000)
+
+# Generowanie etykiet w formacie "190000-490000 PLN", "490000-790000 PLN", itd.
+etykiety <- paste(limits[-length(limits)], limits[-1] - 1, "PLN", sep = "-")
+
+# Dodajemy etykietę dla ostatniego przedziału, aby kończył się na 3000000
+etykiety[length(etykiety)] <- paste(limits[length(limits)] - 300000, "3000000 PLN", sep="-")
+
+# Tworzymy przedziały przy pomocy 'cut' i dopasowujemy etykiety
+limits_cut <- cut(apartments$price, breaks = limits, labels = etykiety, right = FALSE, include.lowest = TRUE)
+
+# Tworzymy tabelę z frekwencją (w HTML)
+tabela1 <- freq(limits_cut, type = "html")
+
+# Wyświetlanie wyników
+tabela1
+
+
+
+
+```
+
+
+
+
+```{r tai, echo=FALSE}
+kbl(tabela1,caption = "Mieszkania we Wrocławiu- ceny w PLN") %>%
+    kable_material(c("striped", "hover"))
+tab1<-classIntervals(apartments$price,n=10,style="fixed",fixedBreaks=seq(190000,3100000,by=100000))
+jenks.tests(tab1)
+```
+
+
