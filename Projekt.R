@@ -11,6 +11,7 @@ library(validate)
 library(errorlocate)
 if (!require("corrplot")) install.packages("corrplot")
 library(corrplot)
+library(ggstatsplot) 
 
 # Load the apartments dataset
 apartments <- read_csv("apartments_pl_2024_06.csv")
@@ -111,4 +112,34 @@ czyste %>%
   geom_col(show.legend = FALSE) +
   coord_flip() +
   theme_minimal() +
-  labs(title = "Average Price by City", x = "City", y = "Average Price")
+  labs(title = "Average Price by City", x = "City", y = "Average Price") 
+
+
+# ggstatsplot visualizations
+
+# Example of bar chart for missing data visualization using ggbarstats
+ggbarstats(
+  data = apartments,
+  x = city,
+  y = condition,  # Replace with a categorical variable
+  bf.message = FALSE,
+  title = "Comparison of Condition Across Cities"
+)
+
+
+# aov and interaction plot
+# Using aov to assess interaction effects between variables
+aov <- aov(price ~ city * condition, data = apartments)
+summary(wyniki)
+
+# Interaction plot
+interaction.plot(
+  apartments$city,
+  apartments$condition,
+  apartments$price,
+  main = "Interaction Plot: City x Condition",
+  xlab = "City",
+  ylab = "Average Price",
+  col = 1:6
+)
+
