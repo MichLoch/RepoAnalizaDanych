@@ -11,6 +11,7 @@ library(validate)
 library(errorlocate)
 if (!require("corrplot")) install.packages("corrplot")
 library(corrplot)
+if (!require("ggstatsplot")) install.packages("ggstatsplot")
 library(ggstatsplot) 
 
 # Load the apartments dataset
@@ -130,7 +131,7 @@ ggbarstats(
 # aov and interaction plot
 # Using aov to assess interaction effects between variables
 aov <- aov(price ~ city * condition, data = apartments)
-summary(wyniki)
+summary(aov)
 
 # Interaction plot
 interaction.plot(
