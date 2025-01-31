@@ -28,3 +28,51 @@ plot(pressure)
 ```
 
 Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
+
+```{r}
+library(ggplot2)
+library(scales)
+library(dplyr)
+
+# Compute percentages within each city group
+apartments_pct <- czyste %>%
+  group_by(city, condition) %>%
+  summarise(count = n(), .groups = "drop") %>%
+  mutate(percentage = count / sum(count))  # Calculate percentage
+
+# Define color palette
+colors <- RColorBrewer::brewer.pal(8, "Set2")  
+
+ggplot(apartments_pct, aes(x = condition, y = percentage, fill = condition)) +
+  geom_bar(stat = "identity") +
+  geom_text(aes(label = scales::percent(percentage, accuracy = 1)), 
+            y = 0.1,  # Fixed height (10%) for all labels
+            color = "black", size = 5) +  
+  facet_wrap(~ city) +  
+  theme_minimal() +
+  scale_y_continuous(labels = percent_format(), limits = c(0, 0.2)) +  # Limit Y-axis to 20%
+  scale_fill_manual(values = colors) +  
+  labs(title = "Condition Distribution Across Cities", x = "Condition", y = "Percentage")
+
+```
+```{r}
+# aov and interaction plot
+# Using aov to assess interaction effects between variables
+aov <- aov(price ~ city * condition, data = apartments)
+summary(aov)
+
+# Interaction plot
+interaction.plot(
+  czyste$city,
+  czyste$condition,
+  czyste$price,
+  main = "Interaction Plot: City x Condition",
+  xlab = "City",
+  ylab = "Average Price",
+  col = 1:6
+)
+
+
+```
+  
+  
