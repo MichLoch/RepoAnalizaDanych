@@ -65,47 +65,32 @@ This is an R Markdown document. Markdown is a simple formatting syntax for autho
 When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
 
 ```{r}
-# Ładowanie bibliotek
+# Load necessary libraries
 library(dplyr)
 library(knitr)
-library(kableExtra)  # Dodajemy kableExtra
-library(scales)  # Dodajemy scales dla formatowania walutowego
+library(kableExtra)
+library(scales)
+library(moments)  # Required for skewness and kurtosis
 
-# Obliczanie podstawowych statystyk opisowych dla price
+# Compute basic descriptive statistics for price
 price_stats <- czyste %>%
   summarise(
-    mean_price = mean(price, na.rm = TRUE),
-    median_price = median(price, na.rm = TRUE),
-    sd_price = sd(price, na.rm = TRUE),
-    min_price = min(price, na.rm = TRUE),
-    max_price = max(price, na.rm = TRUE),
-    range_price = max(price, na.rm = TRUE) - min(price, na.rm = TRUE),
-    skewness_price = skewness(price, na.rm = TRUE),  # Skośność
-    kurtosis_price = kurtosis(price, na.rm = TRUE)   # Kurtoza
+    Mean = mean(price, na.rm = TRUE),  # Mean
+    Median = median(price, na.rm = TRUE),  # Median
+    SD = sd(price, na.rm = TRUE),  # Standard deviation
+    Min = min(price, na.rm = TRUE),  # Minimum
+    Max = max(price, na.rm = TRUE),  # Maximum
+    Skewness = skewness(price, na.rm = TRUE),  # Skewness
+    Kurtosis = kurtosis(price, na.rm = TRUE)  # Kurtosis
   )
 
-# Formatowanie danych w walucie
-price_stats <- price_stats %>%
-  mutate(
-    mean_price = number(mean_price, big.mark = ".", decimal.mark = ",", accuracy = 0.01),
-    median_price = number(median_price, big.mark = ".", decimal.mark = ",", accuracy = 0.01),
-    sd_price = number(sd_price, big.mark = ".", decimal.mark = ",", accuracy = 0.01),
-    min_price = number(min_price, big.mark = ".", decimal.mark = ",", accuracy = 0.01),
-    max_price = number(max_price, big.mark = ".", decimal.mark = ",", accuracy = 0.01),
-    range_price = number(range_price, big.mark = ".", decimal.mark = ",", accuracy = 0.01),
-    skewness_price = round(skewness_price, 2),
-    kurtosis_price = round(kurtosis_price, 2)
-  )
-
-# Wyświetlanie tabeli z granicami, tylko dla statystyk dla price
+# Format the statistics into a nice table
 price_stats %>%
-  kable(format = "markdown", caption = "Statystyki dla zmiennej price") %>%
+  kable(format = "markdown", caption = "Descriptive Statistics for Price") %>%
   kable_styling(bootstrap_options = c("striped", "hover", "condensed"), 
-                full_width = F, 
+                full_width = FALSE, 
                 position = "center", 
-                font_size = 12) %>%
-  add_header_above(c(" " = 1, "Price Stats" = 7))  # Tylko nagłówek dla price stats
-
+                font_size = 12)
 
 ```
 
