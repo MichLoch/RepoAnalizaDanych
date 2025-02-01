@@ -415,9 +415,30 @@ ggplot(average_price_by_type, aes(x = type, y = avg_price, fill = type)) +
 ```
 >>>>>>> d1e3609dc246b872a6562d5ec7f6ee16036eb488
 
+```{r}
+
+###wizualizacja
+ggplot(czyste, aes(x = city, y = price)) +  
+  geom_boxplot(aes(fill = city), alpha = 0.85) +  
+  theme_minimal() +  
+  labs(title = "Price Distribution by City", x = "City", y = "Price")  
+
+# Visualizations  
+ggplot(czyste, aes(x = squareMeters, y = price)) +  
+  geom_point(aes(color = city, shape = ownership), size = 2) +  
+  theme_minimal()  
 
 
-
+# Bar plot of average price by city  
+czyste %>%  
+  group_by(city) %>%  
+  summarise(avg_price = mean(price, na.rm = TRUE)) %>%  
+  ggplot(aes(x = reorder(city, avg_price), y = avg_price, fill = city)) +  
+  geom_col(show.legend = FALSE) +  
+  coord_flip() +  
+  theme_minimal() +  
+  labs(title = "Average Price by City", x = "City", y = "Average Price")  
+```
 
 
 
