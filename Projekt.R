@@ -15,7 +15,7 @@ if (!require("corrplot")) install.packages("ggstatsplot")
 
 library(ggstatsplot) 
 library(e1071)  # Dla obliczania skośności i kurtozy
-library(DMwR)    # Dla wykrywania punktów odstających
+    # Dla wykrywania punktów odstających
 # Load the apartments dataset
 apartments <- read_csv("apartments_pl_2024_06.csv")
 
