@@ -143,4 +143,26 @@ interaction.plot(
   ylab = "Average Price",
   col = 1:6
 )
+ggplot(czyste, aes(x = condition, y = price, fill = condition)) +
+  geom_violin(alpha = 0.8) +
+  theme_minimal() +
+  labs(title = "Impact of Apartment Condition on Prices", x = "Condition", y = "Price")
 
+ggplot(czyste, aes(x = floor)) +
+  geom_histogram(binwidth = 1, fill = "blue", alpha = 0.7) +
+  theme_minimal() +
+  scale_x_continuous(breaks = seq(min(czyste$floor, na.rm = TRUE), 
+                                  max(czyste$floor, na.rm = TRUE), 
+                                  by = 1)) 
+labs(title = "Distribution of Apartments by Floor", x = "Floor", y = "Count")
+
+# Select relevant POI variables + price
+poi_vars <- c("schoolDistance", "clinicDistance", "postOfficeDistance", "kindergartenDistance", 
+              "restaurantDistance", "collegeDistance", "pharmacyDistance", "price")
+
+poi_correlation <- cor(czyste %>% select(all_of(poi_vars)), use = "pairwise.complete.obs")
+
+# Plot correlation heatmap
+corrplot(poi_correlation, method = "square", tl.cex = 0.8, cl.cex = 0.8, 
+         type = "upper", order = "hclust", addCoef.col = "black", 
+         number.cex = 0.7, title = "POI Distance Correlations with Price", mar = c(0, 0, 2, 0))
