@@ -74,5 +74,12 @@ interaction.plot(
 
 
 ```
+```{r}
+corrplot(correlation_matrix, method = "square", 
+         tl.cex = 0.8, cl.cex = 0.8, 
+         type = "upper", order = "hclust", 
+         addCoef.col = "black", number.cex = 0.7,
+         title = "Correlation Heatmap for Selected Variables", mar = c(0, 0, 2, 0))
+```
   
   
