@@ -23,6 +23,23 @@ n_miss(apartments)  # Count of NA values: 14149
 n_complete(apartments)  # Count of complete values: 587879
 pct_miss(apartments)  # Percentage of NA values: [1] 2.350223
 
+# Calculate the percentage of missing data for each column
+missing_percentage <- sapply(apartments, function(x) mean(is.na(x)) * 100)
+
+# Create a data frame to display the results
+missing_data_summary <- data.frame(
+  Variable = names(missing_percentage),
+  Missing_Percentage = missing_percentage
+)
+
+# Display the result sorted by percentage of missing data
+missing_data_summary <- missing_data_summary %>%
+  arrange(desc(Missing_Percentage))
+
+# Print the summary
+print(missing_data_summary)
+
+
 vis_miss(apartments)  # Heatmap of missing data
 # Grouped summaries for missing data
 apartments %>% 
@@ -208,3 +225,31 @@ corrplot(correlation_matrix, method = "square",
          type = "upper", order = "hclust", 
          addCoef.col = "black", number.cex = 0.7,
          title = "Correlation Heatmap for Selected Variables", mar = c(0, 0, 2, 0))
+
+
+# Calculate the count and percentage of each building type
+type_summary <- czyste %>%
+  count(type) %>%
+  mutate(percentage = n / sum(n) * 100)
+
+# Create a bar plot to show the count and percentage of each building type with fixed bar height
+ggplot(type_summary, aes(x = type, y = n)) +
+  geom_bar(stat = "identity", fill = "steelblue", color = "black", width = 0.7) +
+  geom_text(aes(label = paste0(round(percentage, 1), "%")), 
+            vjust = 0.5, hjust = 0.5, size = 5, color = "black") +  # Center the percentage
+  theme_minimal() +
+  labs(title = "Distribution of Building Types", x = "Building Type", y = "Count") +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+
+
+# Calculate the average price for each building type
+average_price_by_type <- czyste %>%
+  group_by(type) %>%
+  summarise(avg_price = mean(price, na.rm = TRUE))
+
+# Create a bar plot to visualize the average price by building type
+ggplot(average_price_by_type, aes(x = type, y = avg_price, fill = type)) +
+  geom_bar(stat = "identity", color = "black") +
+  theme_minimal() +
+  labs(title = "Average Price by Building Type", x = "Building Type", y = "Average Price") +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))  # Rotate the x-axis labels if needed
