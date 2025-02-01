@@ -11,7 +11,8 @@ library(validate)
 library(errorlocate)
 if (!require("corrplot")) install.packages("corrplot")
 library(corrplot)
-if (!require("ggstatsplot")) install.packages("ggstatsplot")
+if (!require("corrplot")) install.packages("ggstatsplot")
+
 library(ggstatsplot) 
 
 # Load the apartments dataset
@@ -27,14 +28,10 @@ vis_miss(apartments)  # Heatmap of missing data
 apartments %>% 
   group_by(city) %>% 
   miss_var_summary() %>% 
-  print(n = Inf) %>% 
-  filter(variable %in% c("price", "rooms", "squareMeters"))
-
+  print(n = Inf)
 
 apartments %>% 
   miss_case_table()  # Summary of missing observations in rows
-
-
 
 # Replace special values (e.g., NaN, Inf) with NA
 is.special <- function(x) {
@@ -51,21 +48,9 @@ n_miss(czyste)  # Count of NA values: 0
 n_complete(czyste)  # Count of complete values: 1204056
 pct_miss(czyste)  # Percentage of NA values: [1] 0
 
-# Define validation rules
-rules <- validator(
-  price > 0,                               # Price must be greater than 0
-  squareMeters > 0,                        # Square meters must be positive
-  rooms > 0,                               # Rooms must be positive
-  floor >= 0 & floor <= floorCount,        # Floor must be within bounds
-  buildYear > 1800 & buildYear <= 2024,    # Valid building years
-  condition %in% c("Good", "Very Good", "Excellent")  # Valid conditions
-)
 
 # Apply validation rules
 validation_results <- confront(czyste, rules)
-
-# Summarize validation results
-summary(validation_results)
 
 # Clean the data by removing rows with errors
 clean_data <- czyste %>% 
@@ -143,10 +128,55 @@ interaction.plot(
   ylab = "Average Price",
   col = 1:6
 )
-ggplot(czyste, aes(x = condition, y = price, fill = condition)) +
-  geom_violin(alpha = 0.8) +
+
+ggplot(czyste, aes(x = factor(hasSecurity, labels = c("No Security", "Has Security")), y = price)) +
+  geom_boxplot(aes(fill = factor(hasSecurity)), alpha = 0.8) +
   theme_minimal() +
-  labs(title = "Impact of Apartment Condition on Prices", x = "Condition", y = "Price")
+  labs(title = "Impact of Security on Apartment Prices", x = "Security", y = "Price") +
+  scale_fill_manual(values = c("red", "green"))
+czyste %>%
+  group_by(hasSecurity) %>%
+  summarise(
+    count = n(),
+    mean_price = mean(price, na.rm = TRUE),
+    median_price = median(price, na.rm = TRUE),
+    min_price = min(price, na.rm = TRUE),
+    max_price = max(price, na.rm = TRUE),
+    sd_price = sd(price, na.rm = TRUE)  # Standard deviation for variability
+  )
+
+ggplot(czyste, aes(x = centreDistance, y = price)) +
+  geom_point(aes(color = city), alpha = 0.5) +
+  geom_smooth(method = "lm", color = "red", se = FALSE) +
+  theme_minimal() +
+  labs(title = "Effect of Distance from Center on Price", x = "Distance from City Center (km)", y = "Price")
+
+czyste %>%
+  group_by(city) %>%
+  summarise(avg_size = mean(squareMeters, na.rm = TRUE)) %>%
+  ggplot(aes(x = reorder(city, avg_size), y = avg_size, fill = city)) +
+  geom_col(show.legend = FALSE) +
+  coord_flip() +
+  theme_minimal() +
+  labs(title = "Average Apartment Size by City", x = "City", y = "Average Square Meters")
+
+ggplot(czyste, aes(x = buildingMaterial, y = price, fill = buildingMaterial)) +
+  geom_boxplot(alpha = 0.8) +
+  theme_minimal() +
+  coord_flip() +
+  labs(title = "Impact of Building Material on Price", x = "Building Material", y = "Price")
+
+# Select relevant POI variables + price
+poi_vars <- c("schoolDistance", "clinicDistance", "postOfficeDistance", "kindergartenDistance", 
+              "restaurantDistance", "collegeDistance", "pharmacyDistance", "centreDistance", "price")
+
+poi_correlation <- cor(czyste %>% select(all_of(poi_vars)), use = "pairwise.complete.obs")
+
+# Plot correlation heatmap
+corrplot(poi_correlation, method = "square", tl.cex = 0.8, cl.cex = 0.8, 
+         type = "upper", order = "hclust", addCoef.col = "black", 
+         number.cex = 0.7, title = "POI Distance Correlations with Price", mar = c(0, 0, 2, 0))
+
 
 ggplot(czyste, aes(x = floor)) +
   geom_histogram(binwidth = 1, fill = "blue", alpha = 0.7) +
@@ -156,13 +186,25 @@ ggplot(czyste, aes(x = floor)) +
                                   by = 1)) 
 labs(title = "Distribution of Apartments by Floor", x = "Floor", y = "Count")
 
-# Select relevant POI variables + price
-poi_vars <- c("schoolDistance", "clinicDistance", "postOfficeDistance", "kindergartenDistance", 
-              "restaurantDistance", "collegeDistance", "pharmacyDistance", "price")
 
-poi_correlation <- cor(czyste %>% select(all_of(poi_vars)), use = "pairwise.complete.obs")
+ggplot(czyste, aes(x = condition, y = price, fill = condition)) +
+  geom_violin(alpha = 0.8) +
+  theme_minimal() +
+  labs(title = "Impact of Apartment Condition on Prices", x = "Condition", y = "Price")
+czyste %>%
+  group_by(condition) %>%
+  summarise(
+    count = n(),
+    mean_price = mean(price, na.rm = TRUE),
+    median_price = median(price, na.rm = TRUE),
+    min_price = min(price, na.rm = TRUE),
+    max_price = max(price, na.rm = TRUE),
+    sd_price = sd(price, na.rm = TRUE)  # Standard deviation for variability
+  )
 
-# Plot correlation heatmap
-corrplot(poi_correlation, method = "square", tl.cex = 0.8, cl.cex = 0.8, 
-         type = "upper", order = "hclust", addCoef.col = "black", 
-         number.cex = 0.7, title = "POI Distance Correlations with Price", mar = c(0, 0, 2, 0))
+
+corrplot(correlation_matrix, method = "square", 
+         tl.cex = 0.8, cl.cex = 0.8, 
+         type = "upper", order = "hclust", 
+         addCoef.col = "black", number.cex = 0.7,
+         title = "Correlation Heatmap for Selected Variables", mar = c(0, 0, 2, 0))
