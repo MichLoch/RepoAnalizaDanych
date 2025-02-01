@@ -246,7 +246,7 @@ interaction.plot(
 ```{r tai, echo=FALSE}
 kbl(tabela1,caption = "Mieszkania w Polsce- ceny w PLN") %>%
     kable_material(c("striped", "hover"))
-tab1<-classIntervals(apartments$price,n=10,style="fixed",fixedBreaks=seq(190000,3100000,by=100000))
+tab1<-classIntervals(czyste$price,n=10,style="fixed",fixedBreaks=seq(190000,3100000,by=100000))
 jenks.tests(tab1)
 ```
 
