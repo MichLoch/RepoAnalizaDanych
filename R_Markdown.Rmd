@@ -4,6 +4,12 @@ author: "MŁ"
 date: "2025-01-12"
 output: html_document
 ---
+rmdformats::downcute:
+    self_contained: true
+    thumbnails: false
+    lightbox: true
+    gallery: true
+    highlight: pygments
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
