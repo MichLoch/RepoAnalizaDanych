@@ -8,19 +8,27 @@ knitr::opts_chunk$set(
 	warning = FALSE
 )
 options(qwraps2_markup = "markdown")
+if (!require("qwraps2")) install.packages("qwraps2")
 library(qwraps2)
+if (!require("arsenal")) install.packages("arsenal")
 library(arsenal)
 library(e1071)
 library(haven)
+if (!require("papeR")) install.packages("papeR")
 library(papeR)
 library(dplyr)
 library(tidyverse)
 library(ggplot2)
 library(kableExtra)
+if (!require("summarytools")) install.packages("summarytools")
 library(summarytools)
+if (!require("classInt")) install.packages("classInt")
 library(classInt)
+if (!require("pastecs")) install.packages("pastecs")
 library(pastecs)
+if (!require("desctable")) install.packages("desctable")
 library(desctable)
+if (!require("frequency")) install.packages("frequency")
 library(frequency)
 library(corrplot)
 library(ggpubr) 
@@ -183,6 +191,7 @@ tabela1
 
 ```
   
+  
 ```{r}
 
 
@@ -226,7 +235,6 @@ interaction.plot(
   ylab = "Average Price",
   col = 1:6
 )
->>>>>>> d1e3609dc246b872a6562d5ec7f6ee16036eb488
 
 
 ```
