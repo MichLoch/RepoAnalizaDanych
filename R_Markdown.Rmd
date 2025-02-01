@@ -421,7 +421,10 @@ ggplot(average_price_by_type, aes(x = type, y = avg_price, fill = type)) +
 ggplot(czyste, aes(x = city, y = price)) +  
   geom_boxplot(aes(fill = city), alpha = 0.85) +  
   theme_minimal() +  
-  labs(title = "Price Distribution by City", x = "City", y = "Price")  
+  labs(title = "Price Distribution by City", x = NULL, y = "Price") +  # Usunięcie etykiet miast
+  theme(axis.text.x = element_blank(), axis.ticks.x = element_blank()) +  # Brak tekstu i znaczników na osi X
+  scale_y_continuous(labels = scales::label_number(big.mark = ".", decimal.mark = ","))  # Formatowanie ceny
+ 
 
 # Visualizations  
 ggplot(czyste, aes(x = squareMeters, y = price)) +  
