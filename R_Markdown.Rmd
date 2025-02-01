@@ -70,6 +70,7 @@ ggplot(apartments_pct, aes(x = condition, y = percentage, fill = condition)) +
   labs(title = "Condition Distribution Across Cities", x = "Condition", y = "Percentage")
 
 ```
+
 ```{r}
 # aov and interaction plot
 # Using aov to assess interaction effects between variables
@@ -89,6 +90,7 @@ interaction.plot(
 
 
 ```
+
 ```{r}
 corrplot(correlation_matrix, method = "square", 
          tl.cex = 0.8, cl.cex = 0.8, 
@@ -96,7 +98,7 @@ corrplot(correlation_matrix, method = "square",
          addCoef.col = "black", number.cex = 0.7,
          title = "Correlation Heatmap for Selected Variables", mar = c(0, 0, 2, 0))
 ```
-  
+
 ```{r}
 ggplot(czyste, aes(x = condition, y = price, fill = condition)) +
   geom_violin(alpha = 0.8) +
@@ -114,6 +116,7 @@ czyste %>%
   )
 
 ```
+
 ```{r}
 ggplot(czyste, aes(x = floor)) +
   geom_histogram(binwidth = 1, fill = "blue", alpha = 0.7) +
@@ -125,6 +128,7 @@ ggplot(czyste, aes(x = floor)) +
 
 
 ```
+
 ```{r}
 # Select relevant POI variables + price
 poi_vars <- c("schoolDistance", "clinicDistance", "postOfficeDistance", "kindergartenDistance", 
@@ -138,6 +142,7 @@ corrplot(poi_correlation, method = "square", tl.cex = 0.8, cl.cex = 0.8,
          number.cex = 0.7, title = "POI Distance Correlations with Price", mar = c(0, 0, 2, 0))
 
 ```
+
 ```{r}
 ggplot(czyste, aes(x = buildingMaterial, y = price, fill = buildingMaterial)) +
   geom_boxplot(alpha = 0.8) +
@@ -145,7 +150,6 @@ ggplot(czyste, aes(x = buildingMaterial, y = price, fill = buildingMaterial)) +
   coord_flip() +
   labs(title = "Impact of Building Material on Price", x = "Building Material", y = "Price")
 ```
-
 
 ```{r}
 czyste %>%
@@ -158,6 +162,7 @@ czyste %>%
   labs(title = "Average Apartment Size by City", x = "City", y = "Average Square Meters")
 
 ```
+
 ```{r}
 ggplot(czyste, aes(x = centreDistance, y = price)) +
   geom_point(aes(color = city), alpha = 0.5) +
@@ -166,6 +171,7 @@ ggplot(czyste, aes(x = centreDistance, y = price)) +
   labs(title = "Effect of Distance from Center on Price", x = "Distance from City Center (km)", y = "Price")
 
 ```
+
 ```{r}
 ggplot(czyste, aes(x = factor(hasSecurity, labels = c("No Security", "Has Security")), y = price)) +
   geom_boxplot(aes(fill = factor(hasSecurity)), alpha = 0.8) +
@@ -185,6 +191,7 @@ czyste %>%
 
 
 ```
+
 ```{r}
 library(corrplot)
 
@@ -215,6 +222,7 @@ correlation_analysis <- function(data) {
 correlation_analysis(czyste)
 
 ```
+
 ```{r}
 # Calculate the count and percentage of each building type
 type_summary <- czyste %>%
@@ -231,19 +239,24 @@ ggplot(type_summary, aes(x = type, y = n)) +
   theme(axis.text.x = element_text(angle = 45, hjust = 1))
 
 ```
+
 ```{r}
+# Load the scales package for formatting numbers
+library(scales)
+
 # Calculate the average price for each building type
 average_price_by_type <- czyste %>%
   group_by(type) %>%
   summarise(avg_price = mean(price, na.rm = TRUE))
 
-# Create a bar plot to visualize the average price by building type
+# Create a bar plot to visualize the average price by building type with currency formatting
 ggplot(average_price_by_type, aes(x = type, y = avg_price, fill = type)) +
   geom_bar(stat = "identity", color = "black") +
+  scale_y_continuous(labels = scales::comma_format(big.mark = ".", decimal.mark = ",")) +  # Currency format
   theme_minimal() +
   labs(title = "Average Price by Building Type", x = "Building Type", y = "Average Price") +
-  theme(axis.text.x = element_text(angle = 45, hjust = 1))  # Rotate the x-axis labels if needed
+  theme(axis.text.x = element_text(angle = 45, hjust = 1)) +  # Rotate the x-axis labels if needed
+  geom_text(aes(label = scales::comma(avg_price, big.mark = ".", decimal.mark = ",")), 
+            position = position_stack(vjust = 0.5), color = "white", fontface = "bold")
 
 ```
-  
-  

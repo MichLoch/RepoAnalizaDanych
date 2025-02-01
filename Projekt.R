@@ -247,9 +247,20 @@ average_price_by_type <- czyste %>%
   group_by(type) %>%
   summarise(avg_price = mean(price, na.rm = TRUE))
 
-# Create a bar plot to visualize the average price by building type
+# Load the scales package for formatting numbers
+library(scales)
+
+# Calculate the average price for each building type
+average_price_by_type <- czyste %>%
+  group_by(type) %>%
+  summarise(avg_price = mean(price, na.rm = TRUE))
+
+# Create a bar plot to visualize the average price by building type with currency formatting
 ggplot(average_price_by_type, aes(x = type, y = avg_price, fill = type)) +
   geom_bar(stat = "identity", color = "black") +
+  scale_y_continuous(labels = scales::comma_format(big.mark = ".", decimal.mark = ",")) +  # Currency format
   theme_minimal() +
   labs(title = "Average Price by Building Type", x = "Building Type", y = "Average Price") +
-  theme(axis.text.x = element_text(angle = 45, hjust = 1))  # Rotate the x-axis labels if needed
+  theme(axis.text.x = element_text(angle = 45, hjust = 1)) +  # Rotate the x-axis labels if needed
+  geom_text(aes(label = scales::comma(avg_price, big.mark = ".", decimal.mark = ",")), 
+            position = position_stack(vjust = 0.5), color = "white", fontface = "bold")
