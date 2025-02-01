@@ -23,9 +23,14 @@ library(pastecs)
 library(desctable)
 library(frequency)
 library(corrplot)
-library(ggpubr)
-download.file("https://github.com/kflisikowski/ds/blob/master/data_apartments.csv?raw=true", destfile ="mieszkania.csv",mode="wb")
-mieszkania <- read.csv("mieszkania.csv",sep=";",dec=",")
+library(ggpubr) 
+library(ggplot2)
+library(scales)
+library(dplyr) 
+library(corrplot) 
+library(scales)
+apartments <- read_csv("apartments_pl_2024_06.csv")
+
 ```
 
 ---
@@ -101,7 +106,7 @@ price_stats %>%
 You can also embed plots, for example:
 
 ```{r}
-apartments <- read_csv("apartments_pl_2024_06.csv")
+
 # Calculate the percentage of missing data for each column
 missing_percentage <- sapply(apartments, function(x) mean(is.na(x)) * 100)
 
@@ -180,13 +185,8 @@ tabela1
   
 ```{r}
 
-library(ggplot2)
-library(scales)
-library(dplyr)
+
 ###Dodajemy "czyste"
-
-
-
 
 # Compute percentages within each city group
 apartments_pct <- czyste %>%
@@ -244,12 +244,50 @@ jenks.tests(tab1)
 
 
 =======
-```{r}
+```{r} 
+
 corrplot(correlation_matrix, method = "square", 
          tl.cex = 0.8, cl.cex = 0.8, 
          type = "upper", order = "hclust", 
          addCoef.col = "black", number.cex = 0.7,
-         title = "Correlation Heatmap for Selected Variables", mar = c(0, 0, 2, 0))
+         title = "Correlation Heatmap for Selected Variables", mar = c(0, 0, 2, 0)) 
+# Select relevant POI variables + price
+poi_vars <- c("schoolDistance", "clinicDistance", "postOfficeDistance", "kindergartenDistance", 
+              "restaurantDistance", "collegeDistance", "pharmacyDistance", "centreDistance", "price")
+
+poi_correlation <- cor(czyste %>% select(all_of(poi_vars)), use = "pairwise.complete.obs")
+
+# Plot correlation heatmap
+corrplot(poi_correlation, method = "square", tl.cex = 0.8, cl.cex = 0.8, 
+         type = "upper", order = "hclust", addCoef.col = "black", 
+         number.cex = 0.7, title = "POI Distance Correlations with Price", mar = c(0, 0, 2, 0)) 
+
+correlation_analysis <- function(data) {
+  # Ensure the selected columns exist in the dataset
+  required_columns <- c("price", "poiCount", "squareMeters", "rooms")
+  
+  if (!all(required_columns %in% names(data))) {
+    stop("One or more required columns are missing from the dataset.")
+  }
+  
+  # Compute correlation values
+  cor_matrix <- cor(data[, required_columns], use = "pairwise.complete.obs")
+  
+  # Create the correlation heatmap
+  corrplot(cor_matrix, 
+           method = "color", 
+           col = colorRampPalette(c("orange", "white", "navy"))(200), 
+           type = "upper", 
+           order = "hclust", 
+           addCoef.col = "black", 
+           tl.col = "black", 
+           tl.srt = 45, 
+           title = "Correlation Heatmap")
+}
+
+# Usage example:
+correlation_analysis(czyste)
+
 ```
 
 ```{r}
@@ -282,50 +320,16 @@ ggplot(czyste, aes(x = floor)) +
 
 ```
 
-```{r}
-# Select relevant POI variables + price
-poi_vars <- c("schoolDistance", "clinicDistance", "postOfficeDistance", "kindergartenDistance", 
-              "restaurantDistance", "collegeDistance", "pharmacyDistance", "centreDistance", "price")
 
-poi_correlation <- cor(czyste %>% select(all_of(poi_vars)), use = "pairwise.complete.obs")
-
-# Plot correlation heatmap
-corrplot(poi_correlation, method = "square", tl.cex = 0.8, cl.cex = 0.8, 
-         type = "upper", order = "hclust", addCoef.col = "black", 
-         number.cex = 0.7, title = "POI Distance Correlations with Price", mar = c(0, 0, 2, 0))
-
-```
 
 ```{r}
 ggplot(czyste, aes(x = buildingMaterial, y = price, fill = buildingMaterial)) +
   geom_boxplot(alpha = 0.8) +
   theme_minimal() +
   coord_flip() +
-  labs(title = "Impact of Building Material on Price", x = "Building Material", y = "Price")
-```
+  labs(title = "Impact of Building Material on Price", x = "Building Material", y = "Price") 
 
-```{r}
-czyste %>%
-  group_by(city) %>%
-  summarise(avg_size = mean(squareMeters, na.rm = TRUE)) %>%
-  ggplot(aes(x = reorder(city, avg_size), y = avg_size, fill = city)) +
-  geom_col(show.legend = FALSE) +
-  coord_flip() +
-  theme_minimal() +
-  labs(title = "Average Apartment Size by City", x = "City", y = "Average Square Meters")
-
-```
-
-```{r}
-ggplot(czyste, aes(x = centreDistance, y = price)) +
-  geom_point(aes(color = city), alpha = 0.5) +
-  geom_smooth(method = "lm", color = "red", se = FALSE) +
-  theme_minimal() +
-  labs(title = "Effect of Distance from Center on Price", x = "Distance from City Center (km)", y = "Price")
-
-```
-
-```{r}
+#Impact of Security on Apartment Prices
 ggplot(czyste, aes(x = factor(hasSecurity, labels = c("No Security", "Has Security")), y = price)) +
   geom_boxplot(aes(fill = factor(hasSecurity)), alpha = 0.8) +
   theme_minimal() +
@@ -342,39 +346,53 @@ czyste %>%
     sd_price = sd(price, na.rm = TRUE)  # Standard deviation for variability
   )
 
+###wizualizacja Price Distribution by City
+ggplot(czyste, aes(x = city, y = price)) +  
+  geom_boxplot(aes(fill = city), alpha = 0.85) +  
+  theme_minimal() +  
+  labs(title = "Price Distribution by City", x = NULL, y = "Price") +  # Usunięcie etykiet miast
+  theme(axis.text.x = element_blank(), axis.ticks.x = element_blank()) +  # Brak tekstu i znaczników na osi X
+  scale_y_continuous(labels = scales::label_number(big.mark = ".", decimal.mark = ","))  # Formatowanie ceny
 
 ```
 
 ```{r}
-library(corrplot)
+czyste %>%
+  group_by(city) %>%
+  summarise(avg_size = mean(squareMeters, na.rm = TRUE)) %>%
+  ggplot(aes(x = reorder(city, avg_size), y = avg_size, fill = city)) +
+  geom_col(show.legend = FALSE) +
+  coord_flip() +
+  theme_minimal() +
+  labs(title = "Average Apartment Size by City", x = "City", y = "Average Square Meters") 
 
-correlation_analysis <- function(data) {
-  # Ensure the selected columns exist in the dataset
-  required_columns <- c("price", "poiCount", "squareMeters", "rooms")
-  
-  if (!all(required_columns %in% names(data))) {
-    stop("One or more required columns are missing from the dataset.")
-  }
-  
-  # Compute correlation values
-  cor_matrix <- cor(data[, required_columns], use = "pairwise.complete.obs")
-  
-  # Create the correlation heatmap
-  corrplot(cor_matrix, 
-           method = "color", 
-           col = colorRampPalette(c("orange", "white", "navy"))(200), 
-           type = "upper", 
-           order = "hclust", 
-           addCoef.col = "black", 
-           tl.col = "black", 
-           tl.srt = 45, 
-           title = "Correlation Heatmap")
-}
-
-# Usage example:
-correlation_analysis(czyste)
+# Bar plot of average price by city  
+czyste %>%  
+  group_by(city) %>%  
+  summarise(avg_price = mean(price, na.rm = TRUE)) %>%  
+  ggplot(aes(x = reorder(city, avg_price), y = avg_price, fill = city)) +  
+  geom_col(show.legend = FALSE) +  
+  coord_flip() +  
+  theme_minimal() +  
+  labs(title = "Average Price by City", x = "City", y = "Average Price")  
 
 ```
+
+```{r}
+ggplot(czyste, aes(x = centreDistance, y = price)) +
+  geom_point(aes(color = city), alpha = 0.5) +
+  geom_smooth(method = "lm", color = "red", se = FALSE) +
+  theme_minimal() +
+  labs(title = "Effect of Distance from Center on Price", x = "Distance from City Center (km)", y = "Price") 
+
+# Visualizations  
+ggplot(czyste, aes(x = squareMeters, y = price)) +  
+  geom_point(aes(color = city, shape = ownership), size = 2) +  
+  theme_minimal()  
+
+```
+
+
 
 Stworzyony wykres typu HeatMap wskazuje na wysoką korelacje zmiennych squareMeter, rooms i poiCount z zmienną price. Zmienna poiCount oznaczające liczbę tzw. punktów zainteresowania (eng. Point of interest)
 
@@ -391,13 +409,7 @@ ggplot(type_summary, aes(x = type, y = n)) +
             vjust = 0.5, hjust = 0.5, size = 5, color = "black") +  # Center the percentage
   theme_minimal() +
   labs(title = "Distribution of Building Types", x = "Building Type", y = "Count") +
-  theme(axis.text.x = element_text(angle = 45, hjust = 1))
-
-```
-
-```{r}
-# Load the scales package for formatting numbers
-library(scales)
+  theme(axis.text.x = element_text(angle = 45, hjust = 1)) 
 
 # Calculate the average price for each building type
 average_price_by_type <- czyste %>%
@@ -415,35 +427,11 @@ ggplot(average_price_by_type, aes(x = type, y = avg_price, fill = type)) +
             position = position_stack(vjust = 0.5), color = "white", fontface = "bold")
 
 ```
+
+
 >>>>>>> d1e3609dc246b872a6562d5ec7f6ee16036eb488
 
-```{r}
 
-###wizualizacja
-ggplot(czyste, aes(x = city, y = price)) +  
-  geom_boxplot(aes(fill = city), alpha = 0.85) +  
-  theme_minimal() +  
-  labs(title = "Price Distribution by City", x = NULL, y = "Price") +  # Usunięcie etykiet miast
-  theme(axis.text.x = element_blank(), axis.ticks.x = element_blank()) +  # Brak tekstu i znaczników na osi X
-  scale_y_continuous(labels = scales::label_number(big.mark = ".", decimal.mark = ","))  # Formatowanie ceny
- 
-
-# Visualizations  
-ggplot(czyste, aes(x = squareMeters, y = price)) +  
-  geom_point(aes(color = city, shape = ownership), size = 2) +  
-  theme_minimal()  
-
-
-# Bar plot of average price by city  
-czyste %>%  
-  group_by(city) %>%  
-  summarise(avg_price = mean(price, na.rm = TRUE)) %>%  
-  ggplot(aes(x = reorder(city, avg_price), y = avg_price, fill = city)) +  
-  geom_col(show.legend = FALSE) +  
-  coord_flip() +  
-  theme_minimal() +  
-  labs(title = "Average Price by City", x = "City", y = "Average Price")  
-```
 
 
 
