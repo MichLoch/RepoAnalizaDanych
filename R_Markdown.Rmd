@@ -151,6 +151,8 @@ The missing data in the data-set may stem from several factors. The high percent
 #### Filling missing data using hotdeck
 
 ```{r}
+install.packages("naniar")  
+library(naniar) 
 #Using hotdeck to fill missing data
 czyste <- hotdeck(apartments)
 n_miss(czyste)  # Count of NA values: 0
