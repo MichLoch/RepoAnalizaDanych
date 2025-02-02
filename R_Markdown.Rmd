@@ -100,6 +100,10 @@ options(qwraps2_markup = "markdown")
 library(e1071)
 install.packages("naniar")  
 library(naniar)    
+install.packages("VIM")
+library(VIM)
+install.packages("mice")
+library(mice)
 library(haven)
 library(frequency)
 library(corrplot)
@@ -151,10 +155,10 @@ The missing data in the data-set may stem from several factors. The high percent
 #### Filling missing data using hotdeck
 
 ```{r}
-install.packages("naniar")  
-library(naniar) 
+ 
 #Using hotdeck to fill missing data
 czyste <- hotdeck(apartments)
+
 n_miss(czyste)  # Count of NA values: 0
 n_complete(czyste)  # Count of complete values: 1204056
 pct_miss(czyste)  # Percentage of NA values: [1] 0
