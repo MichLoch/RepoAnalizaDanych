@@ -12,7 +12,7 @@ The dataset apartaments_pl_2024_06 contains information about the housing market
 
 ## Collected Data The dataset includes the following variables:
 
-##### Variables descrbing location of the apartament:
+#### Variables descrbing location of the apartament:
 
 id – A computer-generated unique identifier for each property
 
@@ -22,13 +22,13 @@ latitude – Geographic latitude
 
 longitude – Geographic longitude
 
-##### Variables describe the price and ownership of the property:
+#### Variables describe the price and ownership of the property:
 
 price – The price of the property
 
 ownership – Ownership status of the property
 
-##### Variables that describe the type and size of the apartment:
+#### Variables that describe the type and size of the apartment:
 
 type – The type of building: Block of flats, apartment building, tenement
 
@@ -42,7 +42,7 @@ floor – The floor on which the property is located
 
 floor count – The total number of floors in the building
 
-##### Variables that describe the distance from crucial amenities within the city:
+#### Variables that describe the distance from crucial amenities within the city:
 
 centreDistance – Distance from the city center
 
@@ -62,7 +62,7 @@ collegeDistance – Distance to the nearest college/university
 
 pharmacyDistance – Distance to the nearest pharmacy
 
-##### Variables that describe weather the property or the building where the property is located includes certain infrastructure:
+#### Variables that describe weather the property or the building where the property is located includes certain infrastructure:
 
 hasParkingSpace – Whether the property includes a parking space (Yes/No)
 
@@ -76,7 +76,7 @@ hasStorageRoom – Whether the property includes a storage room (Yes/No)
 
 ## Data Cleansing and Wrangling
 
-##### Installation of needed libraries and data
+#### Installation of needed libraries and data
 
 ```{r setup1, include=FALSE}
 knitr::opts_chunk$set(
@@ -120,7 +120,7 @@ apartments <- read_csv("apartments_pl_2024_06.csv")
 
 ```
 
-Visualizing the missing data using Heat-map
+#### Visualizing the missing data using missing-data map
 
 ```{r visualize-missing-data, echo=TRUE, message=FALSE, warning=FALSE}
 # Missing Data Map
@@ -134,6 +134,8 @@ gg_miss_upset(apartments, nsets = 3)
 The resulting graph shows that the data Missing from the data-set amount to approximate 6,3% of all data. Most of the missing data comes from Variables **condition** amounting to 74% and building **material** 41%. Relevant deficits of data can also be found in variables: **type**, **floor** and **buildYear** at 20% ; 17% ; 16% missing data respectively.
 
 The missing data in the data-set may stem from several factors. The high percentage of missing values in the **condition** and **buildingMaterial** variables suggests that such information is often not disclosed by property owners or real estate listings. Similarly, gaps in **type**, **floor**, and **buildYear** may result from incomplete records in older properties or inconsistencies in how data is reported across different cities. Missing values in **floor** could also be attributed to properties listed as houses or ground-floor apartments, where this information is not relevant. In some cases, property details might be deliberately omitted by sellers to make listings more appealing or due to a lack of accurate records. Additionally, data collection methods—such as web scraping from real estate portals—could contribute to missing values if certain details are not consistently provided across different platforms.
+
+#### Filling missing data using hotdeck
 
 ```{r}
 #Using hotdeck to fill missing data
@@ -160,6 +162,62 @@ czyste <- czyste %>%
 
 ```
 
+To analyse
+
+```{# Define price range limits}
+limits <- c(0, 250000, 500000, 750000, 1000000, 1250000, Inf)
+
+# Generate labels
+labels <- c(
+  "<250,000 PLN", 
+  "250,000 - 499,999 PLN", 
+  "500,000 - 749,999 PLN", 
+  "750,000 - 999,999 PLN", 
+  "1,000,000 - 1,249,999 PLN", 
+  "≥1,250,000 PLN"
+)
+
+# Categorize apartment prices into bins
+czyste$price_category <- cut(
+  czyste$price, 
+  breaks = limits, 
+  labels = labels, 
+  include.lowest = TRUE, 
+  right = FALSE
+)
+
+# Create binary columns for each price category
+for (i in 1:length(labels)) {
+  czyste[paste0("in_range_", i)] <- ifelse(czyste$price_category == labels[i], 1, 0)
+}
+
+# Count occurrences and calculate percentages
+price_counts <- czyste %>%
+  count(price_category) %>%
+  mutate(percentage = n / sum(n) * 100)  # Convert counts to percentages
+
+# Define fixed label height (adjust based on dataset)
+fixed_label_height <- max(price_counts$n) * 1.05  # Slightly above max count for visibility
+
+# Plot the distribution of apartment prices
+ggplot(price_counts, aes(x = price_category, y = n, fill = price_category)) +
+  geom_bar(stat = "identity", show.legend = FALSE) +
+  geom_text(aes(label = paste0(round(percentage, 1), "%")), 
+            vjust = 2, 
+            size = 5, 
+            color = "black",
+            nudge_y = fixed_label_height - max(price_counts$n)) +  # Fixed height
+  scale_y_continuous(labels = scales::comma) +  # Format Y-axis with thousands separator
+  theme_minimal() +
+  labs(
+    title = "Distribution of Apartment Prices",
+    x = "Price Range",
+    y = "Count of Apartments"
+  ) +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))  # Rotate labels for readability
+
+```
+
 Handling of the
 
 ```{r}
@@ -175,7 +233,6 @@ price_stats <- czyste %>%
     Kurtosis = kurtosis(price, na.rm = TRUE)  # Kurtosis
   )
 
-# Format the statistics into a nice table
 price_stats %>%
   kable(format = "markdown", caption = "Descriptive Statistics for Price") %>%
   kable_styling(bootstrap_options = c("striped", "hover", "condensed"), 
@@ -209,52 +266,98 @@ print(missing_data_summary)
 
 ```
 
-```{r setup, include=FALSE}
-knitr::opts_chunk$set(warning = FALSE)
-##Poprawa błędów (kod niżej)
-str(apartments)
-summary(apartments$district)
-table(apartments$district)
-apartments$district <- as.factor(apartments$district)
-apartments$district <- factor(c("district1", "district2", "district3", ...))
-apartments$district <- factor(rep("Unknown", nrow(apartments)))
-colnames(apartments)
-apartments$district <- factor(ifelse(apartments$city == "Wrocław", "Wrocław", "Inne"))
-apartments$district <- factor(rep(NA, nrow(apartments)))
+
+```{r}
+# Define price range limits
+limits <- c(0, 250000, 500000, 750000, 1000000, 1250000, Inf)
+
+# Generate labels
+labels <- c(
+  "<250,000 PLN", 
+  "250,000 - 499,999 PLN", 
+  "500,000 - 749,999 PLN", 
+  "750,000 - 999,999 PLN", 
+  "1,000,000 - 1,249,999 PLN", 
+  "≥1,250,000 PLN"
+)
+
+# Categorize apartment prices into bins
+czyste$price_category <- cut(
+  czyste$price, 
+  breaks = limits, 
+  labels = labels, 
+  include.lowest = TRUE, 
+  right = FALSE
+)
+
+# Count occurrences and calculate percentages
+price_counts <- czyste %>%
+  count(price_category) %>%
+  mutate(percentage = n / sum(n) * 100)  # Convert counts to percentages
+
+# Define fixed label height (adjust based on dataset)
+fixed_label_height <- max(price_counts$n) * 1.05  # Slightly above max count for visibility
+
+
+
+ggplot(price_counts, aes(x = price_category, y = n, fill = price_category)) +
+  geom_bar(stat = "identity", show.legend = FALSE) +
+  geom_text(aes(label = paste0(round(percentage, 1), "%")), 
+            vjust = 2, 
+            size = 5, 
+            color = "black",
+            nudge_y = fixed_label_height - max(price_counts$n)) +  # Fixed height
+  scale_y_continuous(labels = scales::comma) +  # Format Y-axis with thousands separator
+  theme_minimal() +
+  labs(
+    title = "Distribution of Apartment Prices",
+    x = "Price Range",
+    y = "Count of Apartments"
+  ) +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))  # Rotate labels for readability
+
+```
+The visualization shows at what prince range's apartments in the data-set are located in.
+The biggest cluster of the apartments is for the apartemtns within the price range of 500,000 to 749,999 PLN with 33,9% observations being within that price range. The next two categories with the highest amounts of observations are 750,000 to 999,999 PLN at 24,7% and 250,000 to 499,999 PLN at 18,5%. Together they contribute to 77,1% of observations.
+
+
+
+```{r}
+###Visualisation of Price Distribution by City
+ggplot(czyste, aes(x = city, y = price)) +  
+  geom_boxplot(aes(fill = city), alpha = 0.85) +  
+  theme_minimal() +  
+  labs(title = "Price Distribution by City", x = NULL, y = "Price") +   miast
+  theme(axis.text.x = element_blank(), axis.ticks.x = element_blank()) +  
+  scale_y_continuous(labels = scales::label_number(big.mark = ".", decimal.mark = ","))  # Formatowanie ceny
 ```
 
-## Data wrangling
 
-```{r wrangling, include=TRUE}
+```{r}
+# Count occurrences and calculate percentages for the 'ownership' variable
+ownership_counts <- czyste %>%
+  count(ownership) %>%
+  mutate(percentage = n / sum(n) * 100)  # Convert counts to percentages
 
-apartments$building_type<-as.factor(apartments$buildYear)
-apartments$rooms<-factor(apartments$rooms,ordered=TRUE)
-attach(apartments)
-apartments$price<-as.numeric(apartments$price)
+# Define fixed label height (adjust based on dataset)
+fixed_label_height <- max(ownership_counts$n) * 1.05  # Slightly above max count for visibility
 
-```
-
-## Tabele liczności oraz TAI
-
-```{r table, message=FALSE, warning=FALSE, include=FALSE, paged.print=FALSE}
-# Granice przedziałów co 300000, od 190000 do 3000000
-limits <- seq(190000, 3000000, by = 300000)
-
-# Generowanie etykiet w formacie "190000-490000 PLN", "490000-790000 PLN", itd.
-etykiety <- paste(limits[-length(limits)], limits[-1] - 1, "PLN", sep = "-")
-
-# Dodajemy etykietę dla ostatniego przedziału, aby kończył się na 3000000
-etykiety[length(etykiety)] <- paste(limits[length(limits)] - 300000, "3000000 PLN", sep="-")
-
-# Tworzymy przedziały przy pomocy 'cut' i dopasowujemy etykiety
-limits_cut <- cut(apartments$price, breaks = limits, labels = etykiety, right = FALSE, include.lowest = TRUE)
-
-# Tworzymy tabelę z frekwencją (w HTML)
-tabela1 <- freq(limits_cut, type = "html")
-
-# Wyświetlanie wyników
-tabela1
-
+# Plot the distribution of ownership
+ggplot(ownership_counts, aes(x = ownership, y = n, fill = ownership)) +
+  geom_bar(stat = "identity", show.legend = FALSE) +
+  geom_text(aes(label = paste0(round(percentage, 1), "%")), 
+            vjust = 2, 
+            size = 5, 
+            color = "black",
+            nudge_y = fixed_label_height - max(ownership_counts$n)) +  # Fixed height
+  scale_y_continuous(labels = scales::comma) +  # Format Y-axis with thousands separator
+  theme_minimal() +
+  labs(
+    title = "Distribution of Ownership",
+    x = "Ownership",
+    y = "Count of Apartments"
+  ) +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))  # Rotate labels for readability
 
 ```
 
@@ -303,13 +406,6 @@ interaction.plot(
 )
 
 
-```
-
-```{r tai, echo=FALSE}
-kbl(tabela1,caption = "Mieszkania w Polsce- ceny w PLN") %>%
-    kable_material(c("striped", "hover"))
-tab1<-classIntervals(czyste$price,n=10,style="fixed",fixedBreaks=seq(190000,3100000,by=100000))
-jenks.tests(tab1)
 ```
 
 ```{r}
@@ -401,24 +497,7 @@ ggplot(czyste, aes(x = factor(hasSecurity, labels = c("No Security", "Has Securi
   theme_minimal() +
   labs(title = "Impact of Security on Apartment Prices", x = "Security", y = "Price") +
   scale_fill_manual(values = c("red", "green"))
-czyste %>%
-  group_by(hasSecurity) %>%
-  summarise(
-    count = n(),
-    mean_price = mean(price, na.rm = TRUE),
-    median_price = median(price, na.rm = TRUE),
-    min_price = min(price, na.rm = TRUE),
-    max_price = max(price, na.rm = TRUE),
-    sd_price = sd(price, na.rm = TRUE)  # Standard deviation for variability
-  )
 
-###wizualizacja Price Distribution by City
-ggplot(czyste, aes(x = city, y = price)) +  
-  geom_boxplot(aes(fill = city), alpha = 0.85) +  
-  theme_minimal() +  
-  labs(title = "Price Distribution by City", x = NULL, y = "Price") +  # Usunięcie etykiet miast
-  theme(axis.text.x = element_blank(), axis.ticks.x = element_blank()) +  # Brak tekstu i znaczników na osi X
-  scale_y_continuous(labels = scales::label_number(big.mark = ".", decimal.mark = ","))  # Formatowanie ceny
 
 ```
 
@@ -480,14 +559,5 @@ average_price_by_type <- czyste %>%
   group_by(type) %>%
   summarise(avg_price = mean(price, na.rm = TRUE))
 
-# Create a bar plot to visualize the average price by building type with currency formatting
-ggplot(average_price_by_type, aes(x = type, y = avg_price, fill = type)) +
-  geom_bar(stat = "identity", color = "black") +
-  scale_y_continuous(labels = scales::comma_format(big.mark = ".", decimal.mark = ",")) +  # Currency format
-  theme_minimal() +
-  labs(title = "Average Price by Building Type", x = "Building Type", y = "Average Price") +
-  theme(axis.text.x = element_text(angle = 45, hjust = 1)) +  # Rotate the x-axis labels if needed
-  geom_text(aes(label = scales::comma(avg_price, big.mark = ".", decimal.mark = ",")), 
-            position = position_stack(vjust = 0.5), color = "white", fontface = "bold")
 
 ```
