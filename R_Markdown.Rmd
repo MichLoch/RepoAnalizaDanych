@@ -326,25 +326,6 @@ interaction.plot(
 
 The graph display the price of the average price of the apartment in each city according to condition of it
 
-```{r}
-ggplot(czyste, aes(x = condition, y = price, fill = condition)) +
-  geom_violin(alpha = 0.8) +
-  theme_minimal() +
-  labs(title = "Impact of Apartment Condition on Prices", x = "Condition", y = "Price")
-czyste %>%
-  group_by(condition) %>%
-  summarise(
-    count = n(),
-    mean_price = mean(price, na.rm = TRUE),
-    median_price = median(price, na.rm = TRUE),
-    min_price = min(price, na.rm = TRUE),
-    max_price = max(price, na.rm = TRUE),
-    sd_price = sd(price, na.rm = TRUE)  # Standard deviation for variability
-  )
-
-```
-
-The graph displays that the difference in price for different conditions of the apartments does not differ greatly. The distrubiton is largely simmilar.
 
 ### Heatmap Analysis
 
