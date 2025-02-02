@@ -162,9 +162,36 @@ czyste <- czyste %>%
 
 ```
 
-To analyse
+## The core of the analysis
+The key variable to analyse within the data-set is price as it describes the situation on the polish housing market which the data-set is based on.
 
-```{# Define price range limits}
+```{r}
+descriptive_stats <- czyste %>%
+  select(price) %>%
+  summarise(
+    Mean = format(mean(price, na.rm = TRUE), big.mark = ".", scientific = FALSE, digits = 0),
+    Median = format(median(price, na.rm = TRUE), big.mark = ".", scientific = FALSE, digits = 0),
+    Std_Dev = format(sd(price, na.rm = TRUE), big.mark = ".", scientific = FALSE, digits = 0),
+    Min = format(min(price, na.rm = TRUE), big.mark = ".", scientific = FALSE, digits = 0),
+    Max = format(max(price, na.rm = TRUE), big.mark = ".", scientific = FALSE, digits = 0),
+  
+  )
+
+# Print the results
+print(descriptive_stats)
+skew_value <- skewness(czyste$price, na.rm = TRUE)
+kurt_value <- kurtosis(czyste$price, na.rm = TRUE)
+
+print(paste("Skewness: ", skew_value))
+print(paste("Kurtosis: ", kurt_value))
+```
+
+The results of skewness indicate that data has some high-price outliners and that the low price properties are more concentrated
+The kurtosis at value 7.12 indicate a large number of outliers within the data-set
+
+#### To Analyse the state of the polish housing market the apartaments are clustered into prince ranges:
+
+```{r}
 limits <- c(0, 250000, 500000, 750000, 1000000, 1250000, Inf)
 
 # Generate labels
@@ -218,107 +245,20 @@ ggplot(price_counts, aes(x = price_category, y = n, fill = price_category)) +
 
 ```
 
-Handling of the
-
-```{r}
-# Compute basic descriptive statistics for price
-price_stats <- czyste %>%
-  summarise(
-    Mean = mean(price, na.rm = TRUE),  # Mean
-    Median = median(price, na.rm = TRUE),  # Median
-    SD = sd(price, na.rm = TRUE),  # Standard deviation
-    Min = min(price, na.rm = TRUE),  # Minimum
-    Max = max(price, na.rm = TRUE),  # Maximum
-    Skewness = skewness(price, na.rm = TRUE),  # Skewness
-    Kurtosis = kurtosis(price, na.rm = TRUE)  # Kurtosis
-  )
-
-price_stats %>%
-  kable(format = "markdown", caption = "Descriptive Statistics for Price") %>%
-  kable_styling(bootstrap_options = c("striped", "hover", "condensed"), 
-                full_width = FALSE, 
-                position = "center", 
-                font_size = 12)
-
-```
-
-## Including Plots
-
-You can also embed plots, for example:
-
-```{r}
-
-# Calculate the percentage of missing data for each column
-missing_percentage <- sapply(apartments, function(x) mean(is.na(x)) * 100)
-
-# Create a data frame to display the results
-missing_data_summary <- data.frame(
-  Variable = names(missing_percentage),
-  Missing_Percentage = missing_percentage
-)
-
-# Display the result sorted by percentage of missing data
-missing_data_summary <- missing_data_summary %>%
-  arrange(desc(Missing_Percentage))
-
-# Print the summary
-print(missing_data_summary)
-
-```
-#### Finding the distrubtion of 
-
-```{r}
-# Define price range limits
-limits <- c(0, 250000, 500000, 750000, 1000000, 1250000, Inf)
-
-# Generate labels
-labels <- c(
-  "<250,000 PLN", 
-  "250,000 - 499,999 PLN", 
-  "500,000 - 749,999 PLN", 
-  "750,000 - 999,999 PLN", 
-  "1,000,000 - 1,249,999 PLN", 
-  "≥1,250,000 PLN"
-)
-
-# Categorize apartment prices into bins
-czyste$price_category <- cut(
-  czyste$price, 
-  breaks = limits, 
-  labels = labels, 
-  include.lowest = TRUE, 
-  right = FALSE
-)
-
-# Count occurrences and calculate percentages
-price_counts <- czyste %>%
-  count(price_category) %>%
-  mutate(percentage = n / sum(n) * 100)  # Convert counts to percentages
-
-# Define fixed label height (adjust based on dataset)
-fixed_label_height <- max(price_counts$n) * 1.05  # Slightly above max count for visibility
-
-
-
-ggplot(price_counts, aes(x = price_category, y = n, fill = price_category)) +
-  geom_bar(stat = "identity", show.legend = FALSE) +
-  geom_text(aes(label = paste0(round(percentage, 1), "%")), 
-            vjust = 2, 
-            size = 5, 
-            color = "black",
-            nudge_y = fixed_label_height - max(price_counts$n)) +  # Fixed height
-  scale_y_continuous(labels = scales::comma) +  # Format Y-axis with thousands separator
-  theme_minimal() +
-  labs(
-    title = "Distribution of Apartment Prices",
-    x = "Price Range",
-    y = "Count of Apartments"
-  ) +
-  theme(axis.text.x = element_text(angle = 45, hjust = 1))  # Rotate labels for readability
-
-```
 The visualization shows at what prince range's apartments in the data-set are located in.
-The biggest cluster of the apartments is for the apartemtns within the price range of 500,000 to 749,999 PLN with 33,9% observations being within that price range. The next two categories with the highest amounts of observations are 750,000 to 999,999 PLN at 24,7% and 250,000 to 499,999 PLN at 18,5%. Together they contribute to 77,1% of observations.
+The biggest cluster of the apartments is for the apartemtns within the price range of 500,000 to 749,999 PLN with 33,9% observations being within that price range. The next two categories with the highest amounts of observations are 750,000 to 999,999 PLN at 24,7% and 250,000 to 499,999 PLN at 18,5%. Together they contribute to 77,1% of observations. 
+
+The previous hypothesis of large number of outliers is confirmed with 13,2% properties being priced at over 1,250,000 PLN. This however does not justify this large kurtosi byitself within this price range there must also be heavy outliers, to test a box plot graph is created
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -327,9 +267,9 @@ The biggest cluster of the apartments is for the apartemtns within the price ran
 ggplot(czyste, aes(x = city, y = price)) +  
   geom_boxplot(aes(fill = city), alpha = 0.85) +  
   theme_minimal() +  
-  labs(title = "Price Distribution by City", x = NULL, y = "Price") +   miast
+  labs(title = "Price Distribution by City", x = NULL, y = "Price") +   
   theme(axis.text.x = element_blank(), axis.ticks.x = element_blank()) +  
-  scale_y_continuous(labels = scales::label_number(big.mark = ".", decimal.mark = ","))  # Formatowanie ceny
+  scale_y_continuous(labels = scales::label_number(big.mark = ".", decimal.mark = ","))  
 ```
 
 
