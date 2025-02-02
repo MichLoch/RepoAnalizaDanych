@@ -392,7 +392,7 @@ The heat map analysis of correlations between different variables results in 3 g
 2. The second heat map display the correlation between the apartment and distances to different amenities showing that typically if apartment is close to one amenities or infrastructure it is also close to another. What's interesting however is negative correlation between price and clinicDistance and restarurantDistance indicating that the smaller the distance the higher the price of the apartment which is especially unusual considering positive correlation between price and centreDistance which shows that the closer to the center apartment is the lower the price. This results go against intuitive hypothesis that apartments are the most expensive at the city center. This might mean that data has a great deal of apartments in suburban areas that are worth more than the urban apartment.
 3. The third graph displays a heatmap that masseurs price relative to number of rooms and size of the apartment. The natural hypothesis that the larger the apartments and the more room it has the more expensive it is holds true with very high positive correlation.
 
-
+Next the graph is created to analyse the influence of on what floor apartment it's price.
 
 ```{r}
 ggplot(czyste, aes(x = floor)) +
@@ -404,8 +404,26 @@ ggplot(czyste, aes(x = floor)) +
   labs(title = "Distribution of Apartments by Floor", x = "Floor", y = "Count")
 
 
+
 ```
 
+The graph shows that most apartments are on the lower floors and that generally there are more buildings that have less than 5 floors, suggesting that most of the buildings are rather small.
+##### Next a graph is created to display the effect of Floor on price.
+```{r}
+# Create scatter plot with a linear trend line
+ggplot(czyste, aes(x = floor, y = price)) +
+  geom_point(alpha = 0.5, color = "blue") +  # Scatter plot points
+  geom_smooth(method = "lm", color = "red", se = FALSE) +  # Linear trend line
+  labs(
+    title = "Price vs. Floor",
+    x = "Floor",
+    y = "Price (PLN)"
+  ) +
+  theme_minimal()
+```
+The graph shows relatively insignificant and weak positive correlation between price and floor. Suggesting that the floor at which apartment is on does not effect it's price significantly
+
+Next Building material and security infrastructure is analysed to determine their effect on price of the building.
 ```{r}
 ggplot(czyste, aes(x = buildingMaterial, y = price, fill = buildingMaterial)) +
   geom_boxplot(alpha = 0.8) +
@@ -422,6 +440,8 @@ ggplot(czyste, aes(x = factor(hasSecurity, labels = c("No Security", "Has Securi
 
 
 ```
+Data shows that generally apartments made of brick are more expensive than that made of concrete and that apartments with security are more expensive than that without it, however in both cases there is a great deal of outliers in the population, meaning that there is no strong correlation between the two. What's important for analysis however is that density of the outliers for apartments without security suggesting that there are very expensive apartments that do not have security. 
+
 
 ```{r}
 czyste %>%
