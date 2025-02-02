@@ -330,35 +330,51 @@ The graph display the price of the average price of the apartment in each city a
 ### Heatmap Analysis
 
 ```{r}
+# Compute correlation matrix for selected variables
+correlation_matrix <- cor(czyste %>% select(price, poiCount, squareMeters, rooms), 
+                          use = "pairwise.complete.obs")
 
+# Plot correlation heatmap for key apartment features
 corrplot(correlation_matrix, method = "square", 
          tl.cex = 0.8, cl.cex = 0.8, 
          type = "upper", order = "hclust", 
          addCoef.col = "black", number.cex = 0.7,
          title = "Correlation Heatmap for Selected Variables", mar = c(0, 0, 2, 0)) 
-# Select relevant POI variables + price
-poi_vars <- c("schoolDistance", "clinicDistance", "postOfficeDistance", "kindergartenDistance", 
-              "restaurantDistance", "collegeDistance", "pharmacyDistance", "centreDistance", "price")
 
-poi_correlation <- cor(czyste %>% select(all_of(poi_vars)), use = "pairwise.complete.obs")
+# Define relevant POI variables
+poi_vars <- c("schoolDistance", "clinicDistance", "postOfficeDistance", 
+              "kindergartenDistance", "restaurantDistance", "collegeDistance", 
+              "pharmacyDistance", "centreDistance", "price")
 
-# Plot correlation heatmap
-corrplot(poi_correlation, method = "square", tl.cex = 0.8, cl.cex = 0.8, 
-         type = "upper", order = "hclust", addCoef.col = "black", 
-         number.cex = 0.7, title = "POI Distance Correlations with Price", mar = c(0, 0, 2, 0)) 
+# Ensure all selected variables exist in the dataset
+existing_poi_vars <- poi_vars[poi_vars %in% colnames(czyste)]
 
+# Compute correlation matrix for POI distances and price
+poi_correlation <- cor(czyste %>% select(all_of(existing_poi_vars)), 
+                       use = "pairwise.complete.obs")
+
+# Plot POI correlation heatmap
+corrplot(poi_correlation, method = "square", 
+         tl.cex = 0.8, cl.cex = 0.8, 
+         type = "upper", order = "hclust", 
+         addCoef.col = "black", number.cex = 0.7,
+         title = "POI Distance Correlations with Price", mar = c(0, 0, 2, 0)) 
+
+# Define correlation analysis function
 correlation_analysis <- function(data) {
-  # Ensure the selected columns exist in the dataset
   required_columns <- c("price", "poiCount", "squareMeters", "rooms")
   
-  if (!all(required_columns %in% names(data))) {
+  # Ensure required columns exist
+  existing_columns <- required_columns[required_columns %in% names(data)]
+  
+  if (length(existing_columns) < length(required_columns)) {
     stop("One or more required columns are missing from the dataset.")
   }
   
   # Compute correlation values
-  cor_matrix <- cor(data[, required_columns], use = "pairwise.complete.obs")
+  cor_matrix <- cor(data[, existing_columns], use = "pairwise.complete.obs")
   
-  # Create the correlation heatmap
+  # Create correlation heatmap
   corrplot(cor_matrix, 
            method = "color", 
            col = colorRampPalette(c("orange", "white", "navy"))(200), 
@@ -370,7 +386,7 @@ correlation_analysis <- function(data) {
            title = "Correlation Heatmap")
 }
 
-# Usage example:
+# Execute correlation analysis
 correlation_analysis(czyste)
 
 ```
