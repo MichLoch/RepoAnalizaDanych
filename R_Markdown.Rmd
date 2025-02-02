@@ -1,4 +1,14 @@
-title: "Raport" author: "Michał Łochowski, , ," date: 02.02.2025 "`r Sys.Date()`" output: prettydoc::html_pretty: theme: architect highlight: github toc: true \# Dodanie spisu treści toc_depth: 2
+---
+title: "Raport"
+author: "Michał Łochowski, Paweł Górdak, Dawid Drawc"
+date: "`r format(Sys.Date(), '%d.%m.%Y')`"
+output: 
+  prettydoc::html_pretty:
+    theme: architect
+    highlight: github
+toc: true  
+toc_depth: 2
+---
 
 # Introduction
 
