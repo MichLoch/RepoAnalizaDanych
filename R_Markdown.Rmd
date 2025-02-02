@@ -443,27 +443,7 @@ ggplot(czyste, aes(x = factor(hasSecurity, labels = c("No Security", "Has Securi
 Data shows that generally apartments made of brick are more expensive than that made of concrete and that apartments with security are more expensive than that without it, however in both cases there is a great deal of outliers in the population, meaning that there is no strong correlation between the two. What's important for analysis however is that density of the outliers for apartments without security suggesting that there are very expensive apartments that do not have security. 
 
 
-```{r}
-czyste %>%
-  group_by(city) %>%
-  summarise(avg_size = mean(squareMeters, na.rm = TRUE)) %>%
-  ggplot(aes(x = reorder(city, avg_size), y = avg_size, fill = city)) +
-  geom_col(show.legend = FALSE) +
-  coord_flip() +
-  theme_minimal() +
-  labs(title = "Average Apartment Size by City", x = "City", y = "Average Square Meters") 
 
-# Bar plot of average price by city  
-czyste %>%  
-  group_by(city) %>%  
-  summarise(avg_price = mean(price, na.rm = TRUE)) %>%  
-  ggplot(aes(x = reorder(city, avg_price), y = avg_price, fill = city)) +  
-  geom_col(show.legend = FALSE) +  
-  coord_flip() +  
-  theme_minimal() +  
-  labs(title = "Average Price by City", x = "City", y = "Average Price")  
-
-```
 
 ```{r}
 ggplot(czyste, aes(x = centreDistance, y = price)) +
@@ -478,8 +458,9 @@ ggplot(czyste, aes(x = squareMeters, y = price)) +
   theme_minimal()  
 
 ```
+The first graph shows the correlation between price and distance from city center across different polish cities. 
 
-Stworzyony wykres typu HeatMap wskazuje na wysoką korelacje zmiennych squareMeter, rooms i poiCount z zmienną price. Zmienna poiCount oznaczające liczbę tzw. punktów zainteresowania (eng. Point of interest)
+The second visualization display the price against the size of the apartment depending on the type of ownership and city it is from. The most significant conclusion is the high cost of warsaw apartments and low cost of Bydgoszcz apartments. The most expensive mall apartments are situated in polish capital as expected however the biggest least expensive apartments are present around many polish cities with most notable being Bydgodsz, Katowice and Lodz 
 
 ```{r}
 # Calculate the count and percentage of each building type
