@@ -432,7 +432,7 @@ average_price_by_type <- czyste %>%
 
 
 ```
-Block of flats dominate at 62,5%, Apartment buildings at 20,2% and tenements at 17,3%. The significant amount of tenement, which typically are small and not very high contribute greatly to the apartaments in the population being situated typically on the lower floors.
+Block of flats dominate at 62,5%, Apartment builings at 20,2% and tenements at 17,3%. The significant amount of tenement, which typically are small and not very high contribute greatly to the apartaments in the population being situated typically on the lower floors.
 
 
 ##### Next a graph is created to display the effect of Floor on price.
@@ -451,11 +451,6 @@ ggplot(czyste, aes(x = floor, y = price)) +
 The graph shows relatively insignificant and weak positive correlation between price and floor. Suggesting that the floor at which apartment is on does not effect it's price significantly
 
 Next Building material and security infrastructure is analysed to determine their effect on price of the building.
-
-
-
-
-
 
 ```{r}
 ggplot(czyste, aes(x = buildingMaterial, y = price, fill = buildingMaterial)) +
@@ -495,25 +490,34 @@ The first graph shows the correlation between price and distance from city cente
 
 The second visualization display the price against the size of the apartment depending on the type of ownership and city it is from. The most significant conclusion is the high cost of warsaw apartments and low cost of Bydgoszcz apartments. The most expensive mall apartments are situated in polish capital as expected however the biggest least expensive apartments are present around many polish cities with most notable being Bydgodsz, Katowice and Lodz 
 
-```{r}
-# Calculate the count and percentage of each building type
-type_summary <- czyste %>%
-  count(type) %>%
-  mutate(percentage = n / sum(n) * 100)
+------------------------------------------------------------------------
 
-# Create a bar plot to show the count and percentage of each building type with fixed bar height
-ggplot(type_summary, aes(x = type, y = n)) +
-  geom_bar(stat = "identity", fill = "steelblue", color = "black", width = 0.7) +
-  geom_text(aes(label = paste0(round(percentage, 1), "%")), 
-            vjust = 0.5, hjust = 0.5, size = 5, color = "black") +  # Center the percentage
-  theme_minimal() +
-  labs(title = "Distribution of Building Types", x = "Building Type", y = "Count") +
-  theme(axis.text.x = element_text(angle = 45, hjust = 1)) 
-
-# Calculate the average price for each building type
-average_price_by_type <- czyste %>%
-  group_by(type) %>%
-  summarise(avg_price = mean(price, na.rm = TRUE))
+## Findings
 
 
-```
+##### General data
+The analysis of the polish real estate market using data from june 2024
+Most of the Polish apartaments at 77,1% are at the price range from 250.000 to 1.000.000 PLN
+The price distribution is highly right-skewed, indicating a large number of high-priced apartments.
+Over 13% of properties exceed 1,250,000 PLN, confirming the presence of high-endreal estate.
+
+##### City where the apatament is located is the most significant factor for it's price
+Boxplots show significant price variability between cities.
+Apartment condition does not strongly affect price, as shown by the violin plot.
+The ANOVA analysis of price by city and condition confirms that price differences are more dependent on the city rather than the condition of the apartment.
+
+##### City distance
+The negative correlation between price and clinic/restaurant distances suggests that high-value apartments are located in areas with better urban infrastructure.
+Unexpected result: Apartments further from the center are more expensive, possibly due to the presence of luxury suburban properties in gated communities.
+The dataset may be skewed by high-end suburban developments rather than traditional urban apartments.
+
+### Final Conclusions
+Polish real estate market is dominated by mid-range price apartments (500,000 - 999,999 PLN).
+Outliers exist in the luxury market, significantly affecting statistical measures.
+Private ownership dominates (nearly 90%), with limited cooperative housing.
+Apartment condition has little impact on price, suggesting location matters more.
+Proximity to clinics and restaurants is positively associated with price, while city-center distance has an unexpected negative correlation.
+The unexpected center-distance effect suggests that high-priced properties may be concentrated in suburban, high-end developments rather than traditional city centers.
+
+------------------------------------------------------------------------
+
