@@ -294,13 +294,14 @@ Near 0% Udział Ownership: The negligible presence of the "udział" option sugge
 
 
 
-
-
 ```{r}
 # aov and interaction plot
 # Using aov to assess interaction effects between variables
-aov <- aov(price ~ city * condition, data = apartments)
+aov <- aov(price ~ city * condition, data = czyste)
 summary(aov)
+
+# Ensure 'city' is treated as a factor (if not already)
+czyste$city <- factor(czyste$city)
 
 # Interaction plot
 interaction.plot(
@@ -310,11 +311,16 @@ interaction.plot(
   main = "Interaction Plot: City x Condition",
   xlab = "City",
   ylab = "Average Price",
-  col = 1:6
+  col = 1:length(unique(czyste$city)), # Dynamic coloring based on number of cities
+  las = 2, # Rotate labels on x-axis for better readability
+  cex.axis = 0.7, # Adjust axis label size if needed
+  cex.lab = 1.2 # Adjust label size if needed
 )
 
-
 ```
+The graph display the price of the average price of the apartment in each city according to condition of it 
+
+### Heatmap Analysis
 
 ```{r}
 
@@ -361,6 +367,10 @@ correlation_analysis <- function(data) {
 correlation_analysis(czyste)
 
 ```
+
+The heat map analysis of correlations between different variables results in 3 graphs. 
+1. The first graph display the correlation between selected variables such as latitude, price, squareMeters, rooms floor, floor count, longitude, build year and centreDistance little to no correlation between most of them.
+2.
 
 ```{r}
 ggplot(czyste, aes(x = condition, y = price, fill = condition)) +
