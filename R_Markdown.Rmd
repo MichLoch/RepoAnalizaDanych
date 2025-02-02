@@ -265,7 +265,7 @@ missing_data_summary <- missing_data_summary %>%
 print(missing_data_summary)
 
 ```
-
+#### Finding the distrubtion of 
 
 ```{r}
 # Define price range limits
