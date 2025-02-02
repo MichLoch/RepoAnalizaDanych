@@ -408,6 +408,33 @@ ggplot(czyste, aes(x = floor)) +
 ```
 
 The graph shows that most apartments are on the lower floors and that generally there are more buildings that have less than 5 floors, suggesting that most of the buildings are rather small.
+
+##### The floor analysis can be better understood through analysis of the building types within the population
+```{r}
+# Calculate the count and percentage of each building type
+type_summary <- czyste %>%
+  count(type) %>%
+  mutate(percentage = n / sum(n) * 100)
+
+# Create a bar plot to show the count and percentage of each building type with fixed bar height
+ggplot(type_summary, aes(x = type, y = n)) +
+  geom_bar(stat = "identity", fill = "steelblue", color = "black", width = 0.7) +
+  geom_text(aes(label = paste0(round(percentage, 1), "%")), 
+            vjust = 0.5, hjust = 0.5, size = 5, color = "black") +  # Center the percentage
+  theme_minimal() +
+  labs(title = "Distribution of Building Types", x = "Building Type", y = "Count") +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1)) 
+
+# Calculate the average price for each building type
+average_price_by_type <- czyste %>%
+  group_by(type) %>%
+  summarise(avg_price = mean(price, na.rm = TRUE))
+
+
+```
+Block of flats dominate at 62,5%, Apartment buildings at 20,2% and tenements at 17,3%. The significant amount of tenement, which typically are small and not very high contribute greatly to the apartaments in the population being situated typically on the lower floors.
+
+
 ##### Next a graph is created to display the effect of Floor on price.
 ```{r}
 # Create scatter plot with a linear trend line
@@ -424,6 +451,12 @@ ggplot(czyste, aes(x = floor, y = price)) +
 The graph shows relatively insignificant and weak positive correlation between price and floor. Suggesting that the floor at which apartment is on does not effect it's price significantly
 
 Next Building material and security infrastructure is analysed to determine their effect on price of the building.
+
+
+
+
+
+
 ```{r}
 ggplot(czyste, aes(x = buildingMaterial, y = price, fill = buildingMaterial)) +
   geom_boxplot(alpha = 0.8) +
