@@ -163,6 +163,7 @@ czyste <- czyste %>%
 ```
 
 ## The core of the analysis
+
 The key variable to analyse within the data-set is price as it describes the situation on the polish housing market which the data-set is based on.
 
 ```{r}
@@ -186,8 +187,7 @@ print(paste("Skewness: ", skew_value))
 print(paste("Kurtosis: ", kurt_value))
 ```
 
-The results of skewness indicate that data has some high-price outliners and that the low price properties are more concentrated
-The kurtosis at value 7.12 indicate a large number of outliers within the data-set
+The results of skewness indicate that data has some high-price outliners and that the low price properties are more concentrated The kurtosis at value 7.12 indicate a large number of outliers within the data-set
 
 #### To Analyse the state of the polish housing market the apartaments are clustered into prince ranges:
 
@@ -245,22 +245,9 @@ ggplot(price_counts, aes(x = price_category, y = n, fill = price_category)) +
 
 ```
 
-The visualization shows at what prince range's apartments in the data-set are located in.
-The biggest cluster of the apartments is for the apartemtns within the price range of 500,000 to 749,999 PLN with 33,9% observations being within that price range. The next two categories with the highest amounts of observations are 750,000 to 999,999 PLN at 24,7% and 250,000 to 499,999 PLN at 18,5%. Together they contribute to 77,1% of observations. 
+The visualization shows at what prince range's apartments in the data-set are located in. The biggest cluster of the apartments is for the apartemtns within the price range of 500,000 to 749,999 PLN with 33,9% observations being within that price range. The next two categories with the highest amounts of observations are 750,000 to 999,999 PLN at 24,7% and 250,000 to 499,999 PLN at 18,5%. Together they contribute to 77,1% of observations.
 
 The previous hypothesis of large number of outliers is confirmed with 13,2% properties being priced at over 1,250,000 PLN. This however does not justify this large kurtosi byitself within this price range there must also be heavy outliers, to test a box plot graph is created
-
-
-
-
-
-
-
-
-
-
-
-
 
 ```{r}
 ###Visualisation of Price Distribution by City
@@ -271,7 +258,6 @@ ggplot(czyste, aes(x = city, y = price)) +
   theme(axis.text.x = element_blank(), axis.ticks.x = element_blank()) +  
   scale_y_continuous(labels = scales::label_number(big.mark = ".", decimal.mark = ","))  
 ```
-
 
 ```{r}
 # Count occurrences and calculate percentages for the 'ownership' variable
