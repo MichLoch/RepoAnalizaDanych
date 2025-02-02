@@ -94,6 +94,7 @@ knitr::opts_chunk$set(
 	message = FALSE,
 	warning = FALSE
 )
+options(repos = c(CRAN = "https://cran.rstudio.com"))
 options(qwraps2_markup = "markdown")
 
 library(e1071)
