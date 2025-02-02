@@ -320,6 +320,25 @@ interaction.plot(
 ```
 The graph display the price of the average price of the apartment in each city according to condition of it 
 
+```{r}
+ggplot(czyste, aes(x = condition, y = price, fill = condition)) +
+  geom_violin(alpha = 0.8) +
+  theme_minimal() +
+  labs(title = "Impact of Apartment Condition on Prices", x = "Condition", y = "Price")
+czyste %>%
+  group_by(condition) %>%
+  summarise(
+    count = n(),
+    mean_price = mean(price, na.rm = TRUE),
+    median_price = median(price, na.rm = TRUE),
+    min_price = min(price, na.rm = TRUE),
+    max_price = max(price, na.rm = TRUE),
+    sd_price = sd(price, na.rm = TRUE)  # Standard deviation for variability
+  )
+
+```
+The graph displays that the difference in price for different conditions of the apartments does not differ greatly. The distrubiton is largely simmilar.
+
 ### Heatmap Analysis
 
 ```{r}
@@ -372,23 +391,8 @@ The heat map analysis of correlations between different variables results in 3 g
 1. The first graph display the correlation between selected variables such as latitude, price, squareMeters, rooms floor, floor count, longitude, build year and centreDistance little to no correlation between most of them.
 2. The second heat map display the correlation between the apartment and distances to different amenities showing that typically if apartment is close to one amenities or infrastructure it is also close to another. What's interesting however is negative correlation between price and clinicDistance and restarurantDistance indicating that the smaller the distance the higher the price of the apartment which is especially unusual considering positive correlation between price and centreDistance which shows that the closer to the center apartment is the lower the price. This results go against intuitive hypothesis that apartments are the most expensive at the city center. This might mean that data has a great deal of apartments in suburban areas that are worth more than the urban apartment.
 3. The third graph displays a heatmap that masseurs price relative to number of rooms and size of the apartment. The natural hypothesis that the larger the apartments and the more room it has the more expensive it is holds true with very high positive correlation.
-```{r}
-ggplot(czyste, aes(x = condition, y = price, fill = condition)) +
-  geom_violin(alpha = 0.8) +
-  theme_minimal() +
-  labs(title = "Impact of Apartment Condition on Prices", x = "Condition", y = "Price")
-czyste %>%
-  group_by(condition) %>%
-  summarise(
-    count = n(),
-    mean_price = mean(price, na.rm = TRUE),
-    median_price = median(price, na.rm = TRUE),
-    min_price = min(price, na.rm = TRUE),
-    max_price = max(price, na.rm = TRUE),
-    sd_price = sd(price, na.rm = TRUE)  # Standard deviation for variability
-  )
 
-```
+
 
 ```{r}
 ggplot(czyste, aes(x = floor)) +
