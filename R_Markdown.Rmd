@@ -1,5 +1,82 @@
-##Biblioteki install.packages("summarytools")
+title: "Raport" author: "Michał Łochowski, , ," date: 02.02.2025 "`r Sys.Date()`" output: prettydoc::html_pretty: theme: architect highlight: github toc: true \# Dodanie spisu treści toc_depth: 2
 
+# Introduction
+
+## Report Objective
+
+The purpose of this report is to analyze the dataset apartaments_pl_2024_06. To achieve this, the data will be cleaned, missing values will be filled, and an analysis with visualizations of the results will be conducted.
+
+## Dataset Overview
+
+The dataset apartaments_pl_2024_06 contains information about the housing market in Poland's largest cities. It focuses on property price, apartment size, proximity to urban infrastructure, and the year of construction.
+
+## Collected Data The dataset includes the following variables:
+
+##### Variables descrbing location of the apartament:
+
+id – A computer-generated unique identifier for each property
+
+city – The city where the property is located
+
+latitude – Geographic latitude
+
+longitude – Geographic longitude
+
+##### Variables describe the price and ownership of the property:
+
+price – The price of the property
+
+ownership – Ownership status of the property
+
+##### Variables that describe the type and size of the apartment:
+
+type – The type of building: Block of flats, apartment building, tenement
+
+buildingMaterial – The material used for constructing the building condition – The current condition of the property
+
+squareMeters – The total area of the property (in square meters)
+
+rooms – The number of rooms in the property
+
+floor – The floor on which the property is located
+
+floor count – The total number of floors in the building
+
+##### Variables that describe the distance from crucial amenities within the city:
+
+centreDistance – Distance from the city center
+
+poiCount – The number of points of interest within a relevant proximity from the property
+
+schoolDistance – Distance to the nearest school
+
+clinicDistance – Distance to the nearest medical clinic
+
+postOfficeDistance – Distance to the nearest post office
+
+kindergartenDistance – Distance to the nearest kindergarten
+
+restaurantDistance – Distance to the nearest restaurant
+
+collegeDistance – Distance to the nearest college/university
+
+pharmacyDistance – Distance to the nearest pharmacy
+
+##### Variables that describe weather the property or the building where the property is located includes certain infrastructure:
+
+hasParkingSpace – Whether the property includes a parking space (Yes/No)
+
+hasBalcony – Whether the property has a balcony (Yes/No)
+
+hasElevator – Whether the building has an elevator (Yes/No)
+
+hasSecurity – Whether the property/building has security features (Yes/No)
+
+hasStorageRoom – Whether the property includes a storage room (Yes/No)
+
+## Data Cleansing and Wrangling
+
+##### Installation of needed libraries and data
 
 ```{r setup1, include=FALSE}
 knitr::opts_chunk$set(
@@ -8,18 +85,27 @@ knitr::opts_chunk$set(
 	warning = FALSE
 )
 options(qwraps2_markup = "markdown")
-if (!require("qwraps2")) install.packages("qwraps2")
-library(qwraps2)
-if (!require("arsenal")) install.packages("arsenal")
-library(arsenal)
+
 library(e1071)
 library(haven)
-if (!require("papeR")) install.packages("papeR")
-library(papeR)
+library(frequency)
+library(corrplot)
+library(ggpubr) 
+library(ggplot2)
+library(scales)
+library(dplyr) 
+library(corrplot) 
+library(moments)
 library(dplyr)
 library(tidyverse)
 library(ggplot2)
 library(kableExtra)
+if (!require("qwraps2")) install.packages("qwraps2")
+library(qwraps2)
+if (!require("arsenal")) install.packages("arsenal")
+library(arsenal)
+if (!require("papeR")) install.packages("papeR")
+library(papeR)
 if (!require("summarytools")) install.packages("summarytools")
 library(summarytools)
 if (!require("classInt")) install.packages("classInt")
@@ -29,49 +115,54 @@ library(pastecs)
 if (!require("desctable")) install.packages("desctable")
 library(desctable)
 if (!require("frequency")) install.packages("frequency")
-library(frequency)
-library(corrplot)
-library(ggpubr) 
-library(ggplot2)
-library(scales)
-library(dplyr) 
-library(corrplot) 
-library(scales)
+#data reading
 apartments <- read_csv("apartments_pl_2024_06.csv")
 
 ```
 
----
-title: "Analiza_Danych_Projekt_Markdown"
-author: "MŁ"
-date: "2025-01-12"
-output: html_document
----
-rmdformats::downcute:
-    self_contained: true
-    thumbnails: false
-    lightbox: true
-    gallery: true
-    highlight: pygments
+Visualizing the missing data using Heat-map
 
-```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
+```{r visualize-missing-data, echo=TRUE, message=FALSE, warning=FALSE}
+# Missing Data Map
+vis_miss(apartments)
+
+# UpSet plot for missing data
+library(naniar)
+gg_miss_upset(apartments, nsets = 3)
 ```
 
-## R Markdown
+The resulting graph shows that the data Missing from the data-set amount to approximate 6,3% of all data. Most of the missing data comes from Variables **condition** amounting to 74% and building **material** 41%. Relevant deficits of data can also be found in variables: **type**, **floor** and **buildYear** at 20% ; 17% ; 16% missing data respectively.
 
-This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
-
-When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
+The missing data in the data-set may stem from several factors. The high percentage of missing values in the **condition** and **buildingMaterial** variables suggests that such information is often not disclosed by property owners or real estate listings. Similarly, gaps in **type**, **floor**, and **buildYear** may result from incomplete records in older properties or inconsistencies in how data is reported across different cities. Missing values in **floor** could also be attributed to properties listed as houses or ground-floor apartments, where this information is not relevant. In some cases, property details might be deliberately omitted by sellers to make listings more appealing or due to a lack of accurate records. Additionally, data collection methods—such as web scraping from real estate portals—could contribute to missing values if certain details are not consistently provided across different platforms.
 
 ```{r}
-# Load necessary libraries
-library(dplyr)
-library(knitr)
-library(kableExtra)
-library(scales)
-library(moments)  # Required for skewness and kurtosis
+#Using hotdeck to fill missing data
+czyste <- hotdeck(apartments)
+n_miss(czyste)  # Count of NA values: 0
+n_complete(czyste)  # Count of complete values: 1204056
+pct_miss(czyste)  # Percentage of NA values: [1] 0
 
+
+# Apply validation rules
+validation_results <- confront(czyste, rules)
+
+# Clean the data by removing rows with errors
+clean_data <- czyste %>% 
+  replace_errors(rules)
+
+# Remove columns with _imp suffix if they exist
+clean_data <- clean_data %>%
+  select(-ends_with("_imp"))
+
+# Round the floor values
+czyste <- czyste %>%
+  mutate(floor = round(floor))
+
+```
+
+Handling of the
+
+```{r}
 # Compute basic descriptive statistics for price
 price_stats <- czyste %>%
   summarise(
@@ -118,10 +209,8 @@ print(missing_data_summary)
 
 ```
 
-Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
-
-<<<<<<< HEAD
 ```{r setup, include=FALSE}
+knitr::opts_chunk$set(warning = FALSE)
 ##Poprawa błędów (kod niżej)
 str(apartments)
 summary(apartments$district)
@@ -134,11 +223,8 @@ apartments$district <- factor(ifelse(apartments$city == "Wrocław", "Wrocław", 
 apartments$district <- factor(rep(NA, nrow(apartments)))
 ```
 
-
-
-
-
 ## Data wrangling
+
 ```{r wrangling, include=TRUE}
 
 apartments$building_type<-as.factor(apartments$buildYear)
@@ -147,10 +233,6 @@ attach(apartments)
 apartments$price<-as.numeric(apartments$price)
 
 ```
-
-
-
-
 
 ## Tabele liczności oraz TAI
 
@@ -175,8 +257,7 @@ tabela1
 
 
 ```
-  
-  
+
 ```{r}
 
 
@@ -224,10 +305,6 @@ interaction.plot(
 
 ```
 
-<<<<<<< HEAD
-
-
-
 ```{r tai, echo=FALSE}
 kbl(tabela1,caption = "Mieszkania w Polsce- ceny w PLN") %>%
     kable_material(c("striped", "hover"))
@@ -235,9 +312,7 @@ tab1<-classIntervals(czyste$price,n=10,style="fixed",fixedBreaks=seq(190000,3100
 jenks.tests(tab1)
 ```
 
-
-=======
-```{r} 
+```{r}
 
 corrplot(correlation_matrix, method = "square", 
          tl.cex = 0.8, cl.cex = 0.8, 
@@ -313,8 +388,6 @@ ggplot(czyste, aes(x = floor)) +
 
 ```
 
-
-
 ```{r}
 ggplot(czyste, aes(x = buildingMaterial, y = price, fill = buildingMaterial)) +
   geom_boxplot(alpha = 0.8) +
@@ -385,8 +458,6 @@ ggplot(czyste, aes(x = squareMeters, y = price)) +
 
 ```
 
-
-
 Stworzyony wykres typu HeatMap wskazuje na wysoką korelacje zmiennych squareMeter, rooms i poiCount z zmienną price. Zmienna poiCount oznaczające liczbę tzw. punktów zainteresowania (eng. Point of interest)
 
 ```{r}
@@ -420,17 +491,3 @@ ggplot(average_price_by_type, aes(x = type, y = avg_price, fill = type)) +
             position = position_stack(vjust = 0.5), color = "white", fontface = "bold")
 
 ```
-
-
->>>>>>> d1e3609dc246b872a6562d5ec7f6ee16036eb488
-
-
-
-
-
-
-
-
-
-
-
