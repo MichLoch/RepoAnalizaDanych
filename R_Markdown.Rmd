@@ -117,6 +117,8 @@ library(dplyr)
 library(tidyverse)
 library(ggplot2)
 library(kableExtra)
+install.packages("validate")
+library(validate)
 if (!require("qwraps2")) install.packages("qwraps2")
 library(qwraps2)
 if (!require("arsenal")) install.packages("arsenal")
@@ -163,21 +165,6 @@ n_miss(czyste)  # Count of NA values: 0
 n_complete(czyste)  # Count of complete values: 1204056
 pct_miss(czyste)  # Percentage of NA values: [1] 0
 
-
-# Apply validation rules
-validation_results <- confront(czyste, rules)
-
-# Clean the data by removing rows with errors
-clean_data <- czyste %>% 
-  replace_errors(rules)
-
-# Remove columns with _imp suffix if they exist
-clean_data <- clean_data %>%
-  select(-ends_with("_imp"))
-
-# Round the floor values
-czyste <- czyste %>%
-  mutate(floor = round(floor))
 
 ```
 
