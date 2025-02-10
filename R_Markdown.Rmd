@@ -2,12 +2,13 @@
 title: "Raport"
 author: "Michał Łochowski, Paweł Górdak, Dawid Drawc"
 date: "`r format(Sys.Date(), '%d.%m.%Y')`"
-output: 
-  prettydoc::html_pretty:
-    theme: architect
-    highlight: github
-toc: true  
-toc_depth: 2
+output:
+  rmdformats::downcute:
+    self_contained: true
+    thumbnails: true
+    lightbox: true
+    gallery: false
+    highlight: tango
 ---
 
 # Introduction
@@ -326,7 +327,6 @@ interaction.plot(
 
 The graph display the price of the average price of the apartment in each city according to condition of it
 
-
 ### Heatmap Analysis
 
 ```{r}
@@ -391,7 +391,13 @@ correlation_analysis(czyste)
 
 ```
 
-The heat map analysis of correlations between different variables results in 3 graphs. 1. The first graph display the correlation between selected variables such as latitude, price, squareMeters, rooms floor, floor count, longitude, build year and centreDistance little to no correlation between most of them. 2. The second heat map display the correlation between the apartment and distances to different amenities showing that typically if apartment is close to one amenities or infrastructure it is also close to another. What's interesting however is negative correlation between price and clinicDistance and restarurantDistance indicating that the smaller the distance the higher the price of the apartment which is especially unusual considering positive correlation between price and centreDistance which shows that the closer to the center apartment is the lower the price. This results go against intuitive hypothesis that apartments are the most expensive at the city center. This might mean that data has a great deal of apartments in suburban areas that are worth more than the urban apartment. 3. The third graph displays a heatmap that masseurs price relative to number of rooms and size of the apartment. The natural hypothesis that the larger the apartments and the more room it has the more expensive it is holds true with very high positive correlation.
+The heat map analysis of correlations between different variables results in 3 graphs:
+
+1.  The first graph display the correlation between selected variables such as latitude, price, squareMeters, rooms floor, floor count, longitude, build year and centreDistance little to no correlation between most of them.
+
+2.  The second heat map display the correlation between the apartment and distances to different amenities showing that typically if apartment is close to one amenities or infrastructure it is also close to another. What's interesting however is negative correlation between price and clinicDistance and restarurantDistance indicating that the smaller the distance the higher the price of the apartment which is especially unusual considering positive correlation between price and centreDistance which shows that the closer to the center apartment is the lower the price. This results go against intuitive hypothesis that apartments are the most expensive at the city center. This might mean that data has a great deal of apartments in suburban areas that are worth more than the urban apartment.
+
+3.  The third graph displays a heatmap that masseurs price relative to number of rooms and size of the apartment. The natural hypothesis that the larger the apartments and the more room it has the more expensive it is holds true with very high positive correlation.
 
 Next the graph is created to analyse the influence of on what floor apartment it's price.
 
@@ -514,3 +520,10 @@ The negative correlation between price and clinic/restaurant distances suggests 
 Polish real estate market is dominated by mid-range price apartments (500,000 - 999,999 PLN). Outliers exist in the luxury market, significantly affecting statistical measures. Private ownership dominates (nearly 90%), with limited cooperative housing. Apartment condition has little impact on price, suggesting location matters more. Proximity to clinics and restaurants is positively associated with price, while city-center distance has an unexpected negative correlation. The unexpected center-distance effect suggests that high-priced properties may be concentrated in suburban, high-end developments rather than traditional city centers.
 
 ------------------------------------------------------------------------
+
+### Sources
+
+```{r}
+citation("ggstatsplot")
+  
+```
