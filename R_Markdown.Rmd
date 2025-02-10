@@ -11,81 +11,87 @@ output:
     highlight: tango
 ---
 
-# Introduction
+# Wprowadzenie
 
-## Report Objective
+## Cel Raportu
 
-The purpose of this report is to analyze the dataset apartaments_pl_2024_06. To achieve this, the data will be cleaned, missing values will be filled, and an analysis with visualizations of the results will be conducted.
+Celem tego raportu jest analiza zbioru danych **apartaments_pl_2024_06**.  
+Aby to osiągnąć, dane zostaną oczyszczone, brakujące wartości uzupełnione, a następnie przeprowadzona zostanie analiza wraz z wizualizacją wyników.  
 
-## Dataset Overview
+## Przegląd zbioru danych  
 
-The dataset apartaments_pl_2024_06 contains information about the housing market in Poland's largest cities. It focuses on property price, apartment size, proximity to urban infrastructure, and the year of construction.
+Zbiór danych **apartaments_pl_2024_06** zawiera informacje o rynku nieruchomości w największych miastach Polski.  
+Koncentruje się na cenach nieruchomości, wielkości mieszkań, bliskości infrastruktury miejskiej oraz roku budowy.  
 
-## Collected Data The dataset includes the following variables:
+## Zmienne w zbiorze danych aparaments_pl_2024_06  
 
-#### Variables descrbing location of the apartament:
+Zbiór danych zawiera następujące zmienne:  
 
-id – A computer-generated unique identifier for each property
+#### Zmienne opisujące lokalizację mieszkania:  
 
-city – The city where the property is located
+**id** – Unikalny identyfikator każdej nieruchomości generowany komputerowo  
 
-latitude – Geographic latitude
+**city** – Miasto, w którym znajduje się nieruchomość  
 
-longitude – Geographic longitude
+**latitude** – Szerokość geograficzna  
 
-#### Variables describe the price and ownership of the property:
+**longitude** – Długość geograficzna  
 
-price – The price of the property
+#### Zmienne opisujące cenę i status własności nieruchomości:  
 
-ownership – Ownership status of the property
+**price** – Cena nieruchomości  
 
-#### Variables that describe the type and size of the apartment:
+**ownership** – Status własności nieruchomości  
 
-type – The type of building: Block of flats, apartment building, tenement
+#### Zmienne opisujące typ i wielkość mieszkania:  
 
-buildingMaterial – The material used for constructing the building condition – The current condition of the property
+**type** – Typ budynku: blok mieszkalny, apartamentowiec, kamienica  
 
-squareMeters – The total area of the property (in square meters)
+**buildingMaterial** – Materiał użyty do budowy budynku  
 
-rooms – The number of rooms in the property
+**condition** – Aktualny stan nieruchomości  
 
-floor – The floor on which the property is located
+**squareMeters** – Całkowita powierzchnia nieruchomości (w metrach kwadratowych)  
 
-floor count – The total number of floors in the building
+**rooms** – Liczba pokoi w nieruchomości  
 
-#### Variables that describe the distance from crucial amenities within the city:
+**floor** – Piętro, na którym znajduje się nieruchomość  
 
-centreDistance – Distance from the city center
+**floor count** – Całkowita liczba pięter w budynku  
 
-poiCount – The number of points of interest within a relevant proximity from the property
+#### Zmienne opisujące odległość od kluczowych udogodnień w mieście:  
 
-schoolDistance – Distance to the nearest school
+**centreDistance** – Odległość od centrum miasta  
 
-clinicDistance – Distance to the nearest medical clinic
+**poiCount** – Liczba punktów użyteczności publicznej w pobliżu nieruchomości  
 
-postOfficeDistance – Distance to the nearest post office
+**schoolDistance** – Odległość do najbliższej szkoły  
 
-kindergartenDistance – Distance to the nearest kindergarten
+**clinicDistance** – Odległość do najbliższej przychodni medycznej  
 
-restaurantDistance – Distance to the nearest restaurant
+**postOfficeDistance** – Odległość do najbliższej poczty  
 
-collegeDistance – Distance to the nearest college/university
+**kindergartenDistance** – Odległość do najbliższego przedszkola  
 
-pharmacyDistance – Distance to the nearest pharmacy
+**restaurantDistance** – Odległość do najbliższej restauracji  
 
-#### Variables that describe weather the property or the building where the property is located includes certain infrastructure:
+**collegeDistance** – Odległość do najbliższego college’u/uniwersytetu  
 
-hasParkingSpace – Whether the property includes a parking space (Yes/No)
+**pharmacyDistance** – Odległość do najbliższej apteki  
 
-hasBalcony – Whether the property has a balcony (Yes/No)
+#### Zmienne opisujące, czy nieruchomość lub budynek, w którym się znajduje, obejmuje określoną infrastrukturę:  
 
-hasElevator – Whether the building has an elevator (Yes/No)
+**hasParkingSpace** – Czy nieruchomość posiada miejsce parkingowe (Tak/Nie)  
 
-hasSecurity – Whether the property/building has security features (Yes/No)
+**hasBalcony** – Czy nieruchomość posiada balkon (Tak/Nie)  
 
-hasStorageRoom – Whether the property includes a storage room (Yes/No)
+**hasElevator** – Czy budynek posiada windę (Tak/Nie)  
 
-## Data Cleansing and Wrangling
+**hasSecurity** – Czy nieruchomość/budynek posiada zabezpieczenia (Tak/Nie)  
+
+**hasStorageRoom** – Czy nieruchomość posiada pomieszczenie gospodarcze (Tak/Nie)  
+
+## Czyszczenie i przetwarzanie danych  
 
 #### Installation of needed libraries and data
 
@@ -159,12 +165,99 @@ The resulting graph shows that the data Missing from the data-set amount to appr
 
 The missing data in the data-set may stem from several factors. The high percentage of missing values in the **condition** and **buildingMaterial** variables suggests that such information is often not disclosed by property owners or real estate listings. Similarly, gaps in **type**, **floor**, and **buildYear** may result from incomplete records in older properties or inconsistencies in how data is reported across different cities. Missing values in **floor** could also be attributed to properties listed as houses or ground-floor apartments, where this information is not relevant. In some cases, property details might be deliberately omitted by sellers to make listings more appealing or due to a lack of accurate records. Additionally, data collection methods—such as web scraping from real estate portals—could contribute to missing values if certain details are not consistently provided across different platforms.
 
+
+```{r}
+str(apartments)
+
+# Wybór zmiennych numerycznych do analizy
+numeric_cols <- apartments %>% select(where(is.numeric))
+
+# Metoda 1: Wykrywanie wartości odstających metodą IQR
+find_outliers_iqr <- function(x) {
+  Q1 <- quantile(x, 0.25, na.rm = TRUE)
+  Q3 <- quantile(x, 0.75, na.rm = TRUE)
+  IQR <- Q3 - Q1
+  lower_bound <- Q1 - 1.5 * IQR
+  upper_bound <- Q3 + 1.5 * IQR
+  return(which(x < lower_bound | x > upper_bound))
+}
+
+outliers_iqr <- lapply(numeric_cols, find_outliers_iqr)
+```
+```{r}
+# Wybór tylko zmiennych numerycznych
+numeric_cols <- apartments %>% select(where(is.numeric))
+
+# Funkcja do wykrywania wartości odstających metodą IQR
+find_outliers_iqr <- function(x) {
+  Q1 <- quantile(x, 0.25, na.rm = TRUE)
+  Q3 <- quantile(x, 0.75, na.rm = TRUE)
+  IQR <- Q3 - Q1
+  lower_bound <- Q1 - 1.5 * IQR
+  upper_bound <- Q3 + 1.5 * IQR
+  return(which(x < lower_bound | x > upper_bound))  # Zwraca indeksy wartości odstających
+}
+
+# Znalezienie wartości odstających dla wszystkich zmiennych numerycznych
+outliers_iqr <- lapply(numeric_cols, find_outliers_iqr)
+
+# Wizualizacja wartości odstających za pomocą boxplotów dla każdej zmiennej numerycznej
+par(mfrow = c(3, 3))  # Układ wykresów (3x3)
+for (col in colnames(numeric_cols)) {
+  boxplot(numeric_cols[[col]], main = col, col = "lightblue", border = "red", outline = TRUE)
+}
+par(mfrow = c(1, 1))  # Powrót do domyślnego układu wykresów
+```
+W Wyniku analizy zbioru danych, możemy zobaczyć, że dane apartments_pl_2024_06 zawierają wiele wartości odstających. Wartości odstające, możemy zaobserwować dla niemal wszystkich zmiennych. Szczególnymi przykładami może być zmienne: Price, collegeDistance oraz Centre Distance.
+
+### Zastępowanie wartości odstających medianą
+
+```{r}
+# Lista zmiennych związanych z odległościami (distance)
+distance_vars <- c("centreDistance", "schoolDistance", "clinicDistance", 
+                   "postOfficeDistance", "kindergartenDistance", 
+                   "restaurantDistance", "collegeDistance", "pharmacyDistance")
+
+# Funkcja do zastępowania wartości odstających medianą (dla zmiennych numerycznych poza distance_vars)
+replace_outliers_with_median <- function(x) {
+  Q1 <- quantile(x, 0.25, na.rm = TRUE)
+  Q3 <- quantile(x, 0.75, na.rm = TRUE)
+  IQR <- Q3 - Q1
+  lower_bound <- Q1 - 1.5 * IQR
+  upper_bound <- Q3 + 1.5 * IQR
+  
+  # Zastąp wartości odstające medianą
+  x[x < lower_bound | x > upper_bound] <- median(x, na.rm = TRUE)
+  return(x)
+}
+
+# Tworzenie nowego zbioru danych apartments2
+apartments2 <- apartments
+
+# Przetwarzanie zmiennych numerycznych z wyłączeniem distance_vars
+for (col in names(numeric_cols)) {
+  if (!(col %in% distance_vars)) {
+    apartments2[[col]] <- replace_outliers_with_median(apartments[[col]])
+  }
+}
+
+# Sprawdzenie pierwszych kilku wierszy w nowym zbiorze danych
+head(apartments2)
+
+# Porównanie statystyk przed i po przetwarzaniu
+cat("Statystyki dla pierwotnego zbioru danych:\n")
+summary(apartments)
+
+cat("\nStatystyki dla przetworzonego zbioru danych (apartments2):\n")
+summary(apartments2)
+```
+
 #### Filling missing data using hotdeck
 
 ```{r}
  
 #Using hotdeck to fill missing data
-czyste <- hotdeck(apartments)
+czyste <- hotdeck(apartments2)
 
 n_miss(czyste)  # Count of NA values: 0
 n_complete(czyste)  # Count of complete values: 1204056
