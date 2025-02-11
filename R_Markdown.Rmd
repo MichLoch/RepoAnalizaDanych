@@ -341,9 +341,9 @@ ggplot(price_counts, aes(x = price_category, y = n, fill = price_category)) +
   scale_y_continuous(labels = scales::comma) +  # Format Y-axis with thousands separator
   theme_minimal() +
   labs(
-    title = "Distribution of Apartment Prices",
-    x = "Price Range",
-    y = "Count of Apartments"
+    title = "Rozkład cen apartamentów",
+    x = "Przedział cenowy",
+    y = "Liczba apartamentów"
   ) +
   theme(axis.text.x = element_text(angle = 45, hjust = 1))  # Rotate labels for readability
 
