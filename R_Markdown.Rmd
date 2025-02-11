@@ -266,9 +266,9 @@ pct_miss(czyste)  # Percentage of NA values: [1] 0
 
 ```
 
-## The core of the analysis
+##Rdzeń analizy
 
-The key variable to analyse within the data-set is price as it describes the situation on the polish housing market which the data-set is based on.
+Kluczową zmienną do analizy w zbiorze danych jest cena, ponieważ opisuje ona sytuację na polskim rynku mieszkaniowym, na którym oparty jest ten zbiór danych.
 
 ```{r}
 descriptive_stats <- czyste %>%
