@@ -161,9 +161,9 @@ library(naniar)
 gg_miss_upset(apartments, nsets = 3)
 ```
 
-The resulting graph shows that the data Missing from the data-set amount to approximate 6,3% of all data. Most of the missing data comes from Variables **condition** amounting to 74% and building **material** 41%. Relevant deficits of data can also be found in variables: **type**, **floor** and **buildYear** at 20% ; 17% ; 16% missing data respectively.
+Otrzymany wykres pokazuje, że brakujące dane w zbiorze stanowią około 6,3% wszystkich danych. Większość brakujących wartości pochodzi z zmiennej condition, której braki wynoszą 74%, oraz **material**, gdzie braki sięgają 41%. Znaczące deficyty danych można również zauważyć w zmiennych: **type**, **floor** oraz **buildYear**, które zawierają odpowiednio 20%, 17% i 16% brakujących wartości.
 
-The missing data in the data-set may stem from several factors. The high percentage of missing values in the **condition** and **buildingMaterial** variables suggests that such information is often not disclosed by property owners or real estate listings. Similarly, gaps in **type**, **floor**, and **buildYear** may result from incomplete records in older properties or inconsistencies in how data is reported across different cities. Missing values in **floor** could also be attributed to properties listed as houses or ground-floor apartments, where this information is not relevant. In some cases, property details might be deliberately omitted by sellers to make listings more appealing or due to a lack of accurate records. Additionally, data collection methods—such as web scraping from real estate portals—could contribute to missing values if certain details are not consistently provided across different platforms.
+Brakujące dane w zbiorze mogą wynikać z kilku czynników. Wysoki odsetek brakujących wartości w zmiennych condition i buildingMaterial sugeruje, że takie informacje często nie są ujawniane przez właścicieli nieruchomości lub w ogłoszeniach na portalach. Podobnie, luki w zmiennych **type**, **floor** i **buildYear** mogą wynikać z niekompletnych zapisów dotyczących starszych nieruchomości lub niespójności w sposobie raportowania danych w różnych miastach. Braki w **floor** mogą być również związane z nieruchomościami oznaczonymi jako domy lub mieszkania na parterze, gdzie ta informacja nie jest istotna. W niektórych przypadkach szczegóły dotyczące nieruchomości mogą być celowo pomijane przez sprzedających, aby zwiększyć atrakcyjność ogłoszenia lub z powodu braku dokładnych informacji. Dodatkowo, metody zbierania danych – takie jak web scraping z portali nieruchomości – mogą przyczyniać się do brakujących wartości, jeśli niektóre szczegóły nie są konsekwentnie udostępniane na różnych platformach.
 
 
 ```{r}
@@ -252,11 +252,11 @@ cat("\nStatystyki dla przetworzonego zbioru danych (apartments2):\n")
 summary(apartments2)
 ```
 
-#### Filling missing data using hotdeck
+#### Wypełnianie brakujących danych używając funkcji hotdeck
 
 ```{r}
  
-#Using hotdeck to fill missing data
+#Używanie funkcji hotdeck do wypełnienia brakujących danych
 czyste <- hotdeck(apartments2)
 
 n_miss(czyste)  # Count of NA values: 0
@@ -291,9 +291,9 @@ print(paste("Skewness: ", skew_value))
 print(paste("Kurtosis: ", kurt_value))
 ```
 
-The results of skewness indicate that data has some high-price outliners and that the low price properties are more concentrated The kurtosis at value 7.12 indicate a large number of outliers within the data-set
+Wyniki skośności wskazują, że dane zawierają niektóre wartości odstające o wysokich cenach, a nieruchomości o niskiej cenie są bardziej skoncentrowane. Kurtoza na poziomie 7,12 wskazuje na dużą liczbę wartości odstających w zbiorze danych.
 
-#### To Analyse the state of the polish housing market the apartaments are clustered into prince ranges:
+#### Aby przeanalizować stan polskiego rynku mieszkaniowego, apartamenty zostały pogrupowane w przedziały cenowe:
 
 ```{r}
 limits <- c(0, 250000, 500000, 750000, 1000000, 1250000, Inf)
@@ -349,9 +349,9 @@ ggplot(price_counts, aes(x = price_category, y = n, fill = price_category)) +
 
 ```
 
-The visualization shows at what prince range's apartments in the data-set are located in. The biggest cluster of the apartments is for the apartemtns within the price range of 500,000 to 749,999 PLN with 33,9% observations being within that price range. The next two categories with the highest amounts of observations are 750,000 to 999,999 PLN at 24,7% and 250,000 to 499,999 PLN at 18,5%. Together they contribute to 77,1% of observations.
+Wizualizacja pokazuje, w jakich przedziałach cenowych znajdują się apartamenty w zbiorze danych. Największy klaster apartamentów znajduje się w przedziale cenowym od 500 000 do 749 999 PLN, który obejmuje 33,9% obserwacji. Kolejne dwie kategorie z największą liczbą obserwacji to 750 000 do 999 999 PLN (24,7%) oraz 250 000 do 499 999 PLN (18,5%). Łącznie stanowią one 77,1% obserwacji.
 
-The previous hypothesis of large number of outliers is confirmed with 13,2% properties being priced at over 1,250,000 PLN. This however does not justify this large kurtosi byitself within this price range there must also be heavy outliers, to test a box plot graph is created
+Poprzednia hipoteza o dużej liczbie wartości odstających została potwierdzona, ponieważ 13,2% nieruchomości ma cenę powyżej 1 250 000 PLN. Jednak sama ta wartość nie uzasadnia dużej kurtozy; w tym przedziale cenowym muszą występować również silne wartości odstające. Aby to sprawdzić, tworzony jest wykres pudełkowy.
 
 ```{r}
 ###Visualisation of Price Distribution by City
@@ -364,15 +364,15 @@ ggplot(czyste, aes(x = city, y = price)) +
 ```
 
 ```{r}
-# Count occurrences and calculate percentages for the 'ownership' variable
+# Zlicz wystąpienia i oblicz procentowy udział dla zmiennej 'ownership'
 ownership_counts <- czyste %>%
   count(ownership) %>%
   mutate(percentage = n / sum(n) * 100)  # Convert counts to percentages
 
-# Define fixed label height (adjust based on dataset)
+# Ustal stałą wysokość etykiet (dostosuj w zależności od zbioru danych)
 fixed_label_height <- max(ownership_counts$n) * 1.05  # Slightly above max count for visibility
 
-# Plot the distribution of ownership
+# Wizualizuj rozkład własności ('ownership')
 ggplot(ownership_counts, aes(x = ownership, y = n, fill = ownership)) +
   geom_bar(stat = "identity", show.legend = FALSE) +
   geom_text(aes(label = paste0(round(percentage, 1), "%")), 
@@ -391,11 +391,11 @@ ggplot(ownership_counts, aes(x = ownership, y = n, fill = ownership)) +
 
 ```
 
-89.7% Condominium Ownership: The dominance of condominiums suggests that most people in the dataset own their housing as individual units with personal titles to the property. This aligns with a more market-oriented housing structure where private ownership is emphasized, and people typically have full control over their units.
+89,7% Własność kondominium: Dominacja kondominiów sugeruje, że większość osób w zbiorze danych posiada swoje mieszkania jako indywidualne jednostki z osobistym tytułem własności. Jest to zgodne z bardziej rynkowym modelem mieszkalnictwa, w którym podkreśla się prywatną własność, a właściciele mają pełną kontrolę nad swoimi lokalami.
 
-10.3% Cooperative Ownership: A smaller percentage of people are in cooperative housing, indicating that while still significant, cooperative housing is less common. Cooperative ownership is often more tightly regulated and may limit certain freedoms, like the ability to sell or rent the unit freely.
+10,3% Własność spółdzielcza: Mniejszy odsetek osób mieszka w lokalach spółdzielczych, co wskazuje, że choć nadal istotna, ta forma własności jest mniej powszechna. Własność spółdzielcza jest często bardziej regulowana i może ograniczać pewne swobody, takie jak możliwość swobodnej sprzedaży lub wynajmu lokalu.
 
-Near 0% Udział Ownership: The negligible presence of the "udział" option suggests that this form of ownership is rare or possibly declining in the Polish housing market. This might indicate a shift away from older, collective ownership structures.
+Blisko 0% Własność udziałowa: Znikoma obecność opcji „udział” sugeruje, że ta forma własności jest rzadka lub może zanikać na polskim rynku mieszkaniowym. Może to wskazywać na odchodzenie od starszych, zbiorowych struktur własnościowych.
 
 ```{r}
 # aov and interaction plot
@@ -422,9 +422,9 @@ interaction.plot(
 
 ```
 
-The graph display the price of the average price of the apartment in each city according to condition of it
+Wykres przedstawia średnią cenę mieszkania w każdym mieście w zależności od jego stanu.
 
-### Heatmap Analysis
+### Analiza mapy cieplnej
 
 ```{r}
 # Compute correlation matrix for selected variables
@@ -488,15 +488,15 @@ correlation_analysis(czyste)
 
 ```
 
-The heat map analysis of correlations between different variables results in 3 graphs:
+Analiza mapy cieplnej korelacji między różnymi zmiennymi prowadzi do trzech wykresów:
 
-1.  The first graph display the correlation between selected variables such as latitude, price, squareMeters, rooms floor, floor count, longitude, build year and centreDistance little to no correlation between most of them.
+Pierwszy wykres przedstawia korelację między wybranymi zmiennymi, takimi jak szerokość geograficzna, cena, metraż, liczba pokoi, piętro, liczba pięter w budynku, długość geograficzna, rok budowy oraz odległość od centrum. Wykazuje on niewielką lub żadną korelację między większością z tych zmiennych.
 
-2.  The second heat map display the correlation between the apartment and distances to different amenities showing that typically if apartment is close to one amenities or infrastructure it is also close to another. What's interesting however is negative correlation between price and clinicDistance and restarurantDistance indicating that the smaller the distance the higher the price of the apartment which is especially unusual considering positive correlation between price and centreDistance which shows that the closer to the center apartment is the lower the price. This results go against intuitive hypothesis that apartments are the most expensive at the city center. This might mean that data has a great deal of apartments in suburban areas that are worth more than the urban apartment.
+Druga mapa cieplna przedstawia korelację między mieszkaniem a odległością do różnych udogodnień. Pokazuje ona, że zazwyczaj, jeśli mieszkanie znajduje się blisko jednej infrastruktury, to jest także blisko innej. Co jednak ciekawe, istnieje negatywna korelacja między ceną a odległością do kliniki oraz restauracji, co wskazuje, że im mniejsza odległość, tym wyższa cena mieszkania. Jest to szczególnie nietypowe w kontekście pozytywnej korelacji między ceną a odległością do centrum, co sugeruje, że im bliżej centrum znajduje się mieszkanie, tym jest tańsze. Wynik ten stoi w sprzeczności z intuicyjną hipotezą, że mieszkania w centrum miasta są najdroższe. Może to oznaczać, że w danych znajduje się znaczna liczba mieszkań na przedmieściach, które są warte więcej niż mieszkania w obszarach miejskich.
 
-3.  The third graph displays a heatmap that masseurs price relative to number of rooms and size of the apartment. The natural hypothesis that the larger the apartments and the more room it has the more expensive it is holds true with very high positive correlation.
+Trzeci wykres przedstawia mapę cieplną mierzącą cenę w odniesieniu do liczby pokoi oraz powierzchni mieszkania. Naturalna hipoteza, że większe mieszkania i większa liczba pokoi oznaczają wyższą cenę, znajduje potwierdzenie, wykazując bardzo wysoką dodatnią korelację.
 
-Next the graph is created to analyse the influence of on what floor apartment it's price.
+Następnie tworzony jest wykres analizujący wpływ piętra, na którym znajduje się mieszkanie, na jego cenę.
 
 ```{r}
 ggplot(czyste, aes(x = floor)) +
@@ -511,9 +511,9 @@ ggplot(czyste, aes(x = floor)) +
 
 ```
 
-The graph shows that most apartments are on the lower floors and that generally there are more buildings that have less than 5 floors, suggesting that most of the buildings are rather small.
+Wykres pokazuje, że większość mieszkań znajduje się na niższych piętrach oraz że ogólnie liczba budynków mających mniej niż 5 pięter jest większa, co sugeruje, że większość budynków jest raczej niewielka.
 
-##### The floor analysis can be better understood through analysis of the building types within the population
+##### Analizę pięter można lepiej zrozumieć poprzez analizę typów budynków w badanej populacji.
 
 ```{r}
 # Calculate the count and percentage of each building type
@@ -538,9 +538,9 @@ average_price_by_type <- czyste %>%
 
 ```
 
-Block of flats dominate at 62,5%, Apartment builings at 20,2% and tenements at 17,3%. The significant amount of tenement, which typically are small and not very high contribute greatly to the apartaments in the population being situated typically on the lower floors.
+Bloki mieszkalne dominują w 62,5%, budynki mieszkalne stanowią 20,2%, a kamienice 17,3%. Znaczna liczba kamienic, które zazwyczaj są małe i niezbyt wysokie, w dużym stopniu przyczynia się do tego, że apartamenty w populacji znajdują się zazwyczaj na niższych piętrach.
 
-##### Next a graph is created to display the effect of Floor on price.
+##### Następnie tworzony jest wykres, który pokazuje wpływ piętra na cenę.
 
 ```{r}
 # Create scatter plot with a linear trend line
@@ -555,9 +555,9 @@ ggplot(czyste, aes(x = floor, y = price)) +
   theme_minimal()
 ```
 
-The graph shows relatively insignificant and weak positive correlation between price and floor. Suggesting that the floor at which apartment is on does not effect it's price significantly
+Wykres pokazuje stosunkowo nieistotną i słabą dodatnią korelację między ceną a piętrem. Sugeruje to, że piętro, na którym znajduje się apartament, nie wpływa znacząco na jego cenę.
 
-Next Building material and security infrastructure is analysed to determine their effect on price of the building.
+Następnie analizowane są materiały budowlane i infrastruktura bezpieczeństwa w celu określenia ich wpływu na cenę budynku.
 
 ```{r}
 ggplot(czyste, aes(x = buildingMaterial, y = price, fill = buildingMaterial)) +
@@ -576,7 +576,7 @@ ggplot(czyste, aes(x = factor(hasSecurity, labels = c("No Security", "Has Securi
 
 ```
 
-Data shows that generally apartments made of brick are more expensive than that made of concrete and that apartments with security are more expensive than that without it, however in both cases there is a great deal of outliers in the population, meaning that there is no strong correlation between the two. What's important for analysis however is that density of the outliers for apartments without security suggesting that there are very expensive apartments that do not have security.
+Dane pokazują, że ogólnie apartamenty zbudowane z cegły są droższe niż te wykonane z betonu, a apartamenty z ochroną są droższe niż te bez ochrony. Jednak w obu przypadkach istnieje wiele odstających wartości w populacji, co oznacza, że nie ma silnej korelacji między tymi dwoma czynnikami. Ważne dla analizy jest jednak to, że gęstość odstających wartości dla apartamentów bez ochrony sugeruje, że istnieją bardzo drogie apartamenty, które nie mają ochrony.
 
 ```{r}
 ggplot(czyste, aes(x = centreDistance, y = price)) +
@@ -592,34 +592,26 @@ ggplot(czyste, aes(x = squareMeters, y = price)) +
 
 ```
 
-The first graph shows the correlation between price and distance from city center across different polish cities.
+Pierwszy wykres pokazuje korelację między ceną a odległością od centrum miasta w różnych polskich miastach.
 
-The second visualization display the price against the size of the apartment depending on the type of ownership and city it is from. The most significant conclusion is the high cost of warsaw apartments and low cost of Bydgoszcz apartments. The most expensive mall apartments are situated in polish capital as expected however the biggest least expensive apartments are present around many polish cities with most notable being Bydgodsz, Katowice and Lodz
-
-------------------------------------------------------------------------
-
-## Findings
-
-##### General data
-
-The analysis of the polish real estate market using data from june 2024 Most of the Polish apartments at 77,1% are at the price range from 250.000 to 1.000.000 PLN The price distribution is highly right-skewed, indicating a large number of high-priced apartments. Over 13% of properties exceed 1,250,000 PLN, confirming the presence of high-end real estate.
-
-##### City where the apartment is located is the most significant factor for it's price
-
-Box-plots show significant price variability between cities. Apartment condition does not strongly affect price, as shown by the violin plot. The ANOVA analysis of price by city and condition confirms that price differences are more dependent on the city rather than the condition of the apartment.
-
-##### City distance
-
-The negative correlation between price and clinic/restaurant distances suggests that high-value apartments are located in areas with better urban infrastructure. Unexpected result: Apartments further from the center are more expensive, possibly due to the presence of luxury suburban properties in gated communities. The data set may be skewed by high-end suburban developments rather than traditional urban apartments.
-
-### Final Conclusions
-
-Polish real estate market is dominated by mid-range price apartments (500,000 - 999,999 PLN). Outliers exist in the luxury market, significantly affecting statistical measures. Private ownership dominates (nearly 90%), with limited cooperative housing. Apartment condition has little impact on price, suggesting location matters more. Proximity to clinics and restaurants is positively associated with price, while city-center distance has an unexpected negative correlation. The unexpected center-distance effect suggests that high-priced properties may be concentrated in suburban, high-end developments rather than traditional city centers.
+Druga wizualizacja przedstawia cenę w zależności od wielkości apartamentu, w zależności od typu własności i miasta, z którego pochodzi. Najistotniejszym wnioskiem jest wysoka cena apartamentów w Warszawie i niska cena apartamentów w Bydgoszczy. Najdroższe apartamenty w centrach miast znajdują się w polskiej stolicy, jak się spodziewano, jednak największe, najtańsze apartamenty znajdują się w wielu polskich miastach, z najbardziej zauważalnymi w Bydgoszczy, Katowicach i Łodzi.
 
 ------------------------------------------------------------------------
 
-### Sources
+## Wyniki
+##### Dane ogólne
+Analiza polskiego rynku nieruchomości na podstawie danych z czerwca 2024 roku pokazuje, że większość polskich apartamentów, bo 77,1%, mieści się w przedziale cenowym od 250 000 do 1 000 000 PLN. Rozkład cen jest wyraźnie przesunięty w prawo, co wskazuje na dużą liczbę apartamentów o wysokiej cenie. Ponad 13% nieruchomości przekracza cenę 1 250 000 PLN, co potwierdza obecność nieruchomości luksusowych.
 
+##### Miasto, w którym znajduje się apartament, jest najważniejszym czynnikiem wpływającym na jego cenę
+Wykresy pudełkowe pokazują znaczną zmienność cen między miastami. Stan apartamentu nie wpływa silnie na cenę, co pokazuje wykres skrzypcowy. Analiza ANOVA ceny według miasta i stanu potwierdza, że różnice cenowe zależą bardziej od miasta niż od stanu technicznego apartamentu.
+
+##### Odległość od miasta
+Negatywna korelacja między ceną a odległością od klinik/restauracji sugeruje, że apartamenty o wysokiej wartości znajdują się w rejonach o lepszej infrastrukturze miejskiej. Nieoczekiwany wynik: Apartamenty oddalone od centrum są droższe, co może wynikać z obecności luksusowych nieruchomości podmiejskich w zamkniętych osiedlach. Zbiór danych może być zniekształcony przez luksusowe inwestycje podmiejskie, a nie tradycyjne miejskie apartamenty.
+
+### Ostateczne wnioski
+Polski rynek nieruchomości zdominowany jest przez apartamenty w średnim przedziale cenowym (500 000 - 999 999 PLN). W rynku luksusowym występują wartości odstające, które znacząco wpływają na miary statystyczne. Przewagę ma własność prywatna (prawie 90%), a spółdzielcze mieszkania stanowią niewielki odsetek. Stan apartamentu ma niewielki wpływ na cenę, co sugeruje, że bardziej liczy się lokalizacja. Bliskość do klinik i restauracji ma pozytywny związek z ceną, podczas gdy odległość od centrum miasta wykazuje nieoczekiwaną negatywną korelację. Nieoczekiwany efekt odległości od centrum sugeruje, że drogie nieruchomości mogą być skoncentrowane w podmiejskich, luksusowych inwestycjach, a nie w tradycyjnych centrach miast.
+
+## Źródła
 ```{r}
 citation("ggstatsplot")
   
