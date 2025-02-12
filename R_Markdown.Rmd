@@ -656,38 +656,10 @@ ggplot(czyste, aes(x = factor(hasSecurity, labels = c("No Security", "Has Securi
 
 Dane pokazują, że ogólnie apartamenty zbudowane z cegły są droższe niż te wykonane z betonu, a apartamenty z ochroną są droższe niż te bez ochrony. Jednak w obu przypadkach istnieje wiele odstających wartości w populacji, co oznacza, że nie ma silnej korelacji między tymi dwoma czynnikami. Ważne dla analizy jest jednak to, że gęstość odstających wartości dla apartamentów bez ochrony sugeruje, że istnieją bardzo drogie apartamenty, które nie mają ochrony.
 
-```{r}
-ggplot(czyste, aes(x = centreDistance, y = price)) +
-  geom_point(aes(color = city), alpha = 0.5) +
-  geom_smooth(method = "lm", color = "red", se = FALSE) +
-  theme_minimal() +
-  labs(title = "Effect of Distance from Center on Price", x = "Distance from City Center (km)", y = "Price") 
 
-# Visualizations  
-ggplot(czyste, aes(x = squareMeters, y = price)) +  
-  geom_point(aes(color = city, shape = ownership), size = 2) +  
-  theme_minimal()  
 
-```
-
-Pierwszy wykres pokazuje korelację między ceną a odległością od centrum miasta w różnych polskich miastach.
-
-Druga wizualizacja przedstawia cenę w zależności od wielkości apartamentu, w zależności od typu własności i miasta, z którego pochodzi. Najistotniejszym wnioskiem jest wysoka cena apartamentów w Warszawie i niska cena apartamentów w Bydgoszczy. Najdroższe apartamenty w centrach miast znajdują się w polskiej stolicy, jak się spodziewano, jednak największe, najtańsze apartamenty znajdują się w wielu polskich miastach, z najbardziej zauważalnymi w Bydgoszczy, Katowicach i Łodzi.
 
 ## Wnioskowanie Statystyczne
-
-```{r}
-czyste %>%
-  ggbetweenstats(
-    x = `squareMeters`,
-    y = `price`,
-    pairwise.comparisons = TRUE,
-    p.adjust.method = "bonferroni",
-    ggtheme = theme_minimal()
-  )
-```
-
-
 
 ```{r}
 if (!require(nortest)) install.packages("nortest")
