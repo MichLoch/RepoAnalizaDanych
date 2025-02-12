@@ -149,6 +149,9 @@ if (!require("frequency")) install.packages("frequency")
 library(frequency)
 if (!require("psych")) install.packages("psych")
 library(psych)
+if (!require("ggstatsplot")) install.packages("ggstatsplot")
+library(ggstatsplot)
+
 #data reading
 apartments <- read_csv("apartments_pl_2024_06.csv")
 
@@ -670,6 +673,45 @@ ggplot(czyste, aes(x = squareMeters, y = price)) +
 Pierwszy wykres pokazuje korelację między ceną a odległością od centrum miasta w różnych polskich miastach.
 
 Druga wizualizacja przedstawia cenę w zależności od wielkości apartamentu, w zależności od typu własności i miasta, z którego pochodzi. Najistotniejszym wnioskiem jest wysoka cena apartamentów w Warszawie i niska cena apartamentów w Bydgoszczy. Najdroższe apartamenty w centrach miast znajdują się w polskiej stolicy, jak się spodziewano, jednak największe, najtańsze apartamenty znajdują się w wielu polskich miastach, z najbardziej zauważalnymi w Bydgoszczy, Katowicach i Łodzi.
+
+## Wnioskowanie Statystyczne
+
+```{r}
+czyste %>%
+  ggbetweenstats(
+    x = `squareMeters`,
+    y = `price`,
+    pairwise.comparisons = TRUE,
+    p.adjust.method = "bonferroni",
+    ggtheme = theme_minimal()
+  )
+```
+
+
+
+```{r}
+shapiro_results <- by(czyste$price, czyste$rooms, shapiro.test)
+shapiro_results
+
+# Sprawdzenie homogeniczności wariancji (test Levene’a)
+leveneTest(price ~ as.factor(rooms), data = czyste)
+
+# Przeprowadzenie jednoczynnikowej ANOVA dla liczby pokoi
+anova_rooms <- aov(price ~ as.factor(rooms), data = czyste)
+summary(anova_rooms)
+
+# Jeśli ANOVA jest istotna, wykonujemy testy post hoc (np. Tukey HSD)
+TukeyHSD(anova_rooms)
+
+# Przeprowadzenie ANOVA dla miasta
+anova_city <- aov(price ~ city, data = czyste)
+summary(anova_city)
+
+# Test post hoc dla miasta
+TukeyHSD(anova_city)
+
+```
+
 
 ------------------------------------------------------------------------
 
