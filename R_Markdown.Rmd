@@ -475,33 +475,6 @@ ggplot(ownership_counts, aes(x = ownership, y = n, fill = ownership)) +
 
 Blisko 0% Własność udziałowa: Znikoma obecność opcji „udział” sugeruje, że ta forma własności jest rzadka lub może zanikać na polskim rynku mieszkaniowym. Może to wskazywać na odchodzenie od starszych, zbiorowych struktur własnościowych.
 
-```{r, echo=TRUE, message=FALSE, warning=FALSE}
-# aov and interaction plot
-# Using aov to assess interaction effects between variables
-aov <- aov(price ~ city * condition, data = czyste)
-summary(aov)
-
-# Ensure 'city' is treated as a factor (if not already)
-czyste$city <- factor(czyste$city)
-
-# Interaction plot
-interaction.plot(
-  czyste$city,
-  czyste$condition,
-  czyste$price,
-  main = "Interaction Plot: City x Condition",
-  xlab = "City",
-  ylab = "Average Price",
-  col = 1:length(unique(czyste$city)), # Dynamic coloring based on number of cities
-  las = 2, # Rotate labels on x-axis for better readability
-  cex.axis = 0.7, # Adjust axis label size if needed
-  cex.lab = 1.2 # Adjust label size if needed
-)
-
-```
-
-Wykres przedstawia średnią cenę mieszkania w każdym mieście w zależności od jego stanu.
-
 ### Analiza mapy cieplnej
 
 ```{r, echo=TRUE, message=FALSE, warning=FALSE}
@@ -618,24 +591,6 @@ average_price_by_type <- czyste %>%
 
 Bloki mieszkalne dominują w 62,5%, budynki mieszkalne stanowią 20,2%, a kamienice 17,3%. Znaczna liczba kamienic, które zazwyczaj są małe i niezbyt wysokie, w dużym stopniu przyczynia się do tego, że apartamenty w populacji znajdują się zazwyczaj na niższych piętrach.
 
-##### Następnie tworzony jest wykres, który pokazuje wpływ piętra na cenę.
-
-```{r}
-# Create scatter plot with a linear trend line
-ggplot(czyste, aes(x = rooms, y = price)) +
-  geom_point(alpha = 0.5, color = "blue") +  # Scatter plot points
-  geom_smooth(method = "lm", color = "red", se = FALSE) +  # Linear trend line
-  labs(
-    title = "Cena vs. Liczba pokoji",
-    x = "Liczba pokoji",
-    y = "Cena (PLN)"
-  ) +
-  theme_minimal()
-```
-
-Wykres pokazuje stosunkowo nieistotną i słabą dodatnią korelację między ceną a piętrem. Sugeruje to, że piętro, na którym znajduje się apartament, nie wpływa znacząco na jego cenę.
-
-Następnie analizowane są materiały budowlane i infrastruktura bezpieczeństwa w celu określenia ich wpływu na cenę budynku.
 
 ```{r}
 ggplot(czyste, aes(x = buildingMaterial, y = price, fill = buildingMaterial)) +
