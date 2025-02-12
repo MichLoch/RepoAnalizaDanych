@@ -690,26 +690,32 @@ czyste %>%
 
 
 ```{r}
-shapiro_results <- by(czyste$price, czyste$rooms, shapiro.test)
-shapiro_results
+if (!require(nortest)) install.packages("nortest")
+library(nortest)
+# Test Andersona-Darlinga
+ad_test <- ad.test(czyste$price)
 
-# Sprawdzenie homogeniczności wariancji (test Levene’a)
-leveneTest(price ~ as.factor(rooms), data = czyste)
+# Histogram z gęstością rozkładu
+ggplot(czyste, aes(x = price)) +
+  geom_histogram(aes(y = ..density..), bins = 50, fill = "skyblue", color = "black", alpha = 0.7) +
+  geom_density(color = "red", linewidth = 1) +
+  labs(title = "Histogram cen mieszkań z gęstością", x = "Cena", y = "Gęstość") +
+  theme_minimal()
 
-# Przeprowadzenie jednoczynnikowej ANOVA dla liczby pokoi
-anova_rooms <- aov(price ~ as.factor(rooms), data = czyste)
-summary(anova_rooms)
+# QQ-plot
+ggplot(data.frame(price = czyste$price), aes(sample = price)) +
+  stat_qq(distribution = qnorm) +
+  stat_qq_line(distribution = qnorm, color = "red", linewidth = 1) +
+  labs(title = "QQ-plot dla cen mieszkań", x = "Kwantyle teoretyczne", y = "Kwantyle empiryczne") +
+  theme_minimal()
 
-# Jeśli ANOVA jest istotna, wykonujemy testy post hoc (np. Tukey HSD)
-TukeyHSD(anova_rooms)
-
-# Przeprowadzenie ANOVA dla miasta
-anova_city <- aov(price ~ city, data = czyste)
-summary(anova_city)
-
-# Test post hoc dla miasta
-TukeyHSD(anova_city)
-
+# Empiryczna funkcja rozkładu vs. normalna
+ggplot(data.frame(price = sort(czyste$price)), aes(x = price)) +
+  stat_ecdf(geom = "step", color = "blue", linewidth = 1) +
+  stat_function(fun = function(x) pnorm(x, mean = mean(czyste$price), sd = sd(czyste$price)), 
+                color = "red", linetype = "dashed", linewidth = 1) +
+  labs(title = "Empiryczna CDF vs. Normalna CDF", x = "Cena", y = "Prawdopodobieństwo") +
+  theme_minimal()
 ```
 
 
