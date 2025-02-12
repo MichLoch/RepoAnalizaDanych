@@ -128,9 +128,9 @@ install.packages("validate")
 library(validate)
 if (!require("qwraps2")) install.packages("qwraps2")
 library(qwraps2)
-if (!require("DMwR")) install.packages("DMwR")
-library(DMwR)
-if (!require("outliers")) library(outliers)
+if (!require("DMwR2")) install.packages("DMwR2")
+library(DMwR2)
+if (!require("outliers")) install.packages("outliers")
 library(outliers)
 if (!require("arsenal")) install.packages("arsenal")
 library(arsenal)
@@ -145,6 +145,9 @@ library(pastecs)
 if (!require("desctable")) install.packages("desctable")
 library(desctable)
 if (!require("frequency")) install.packages("frequency")
+library(frequency)
+if (!require("psych")) install.packages("psych")
+library(psych)
 #data reading
 apartments <- read_csv("apartments_pl_2024_06.csv")
 
@@ -291,7 +294,44 @@ print(paste("Skewness: ", skew_value))
 print(paste("Kurtosis: ", kurt_value))
 ```
 
-Wyniki skośności wskazują, że dane zawierają niektóre wartości odstające o wysokich cenach, a nieruchomości o niskiej cenie są bardziej skoncentrowane. Kurtoza na poziomie 7,12 wskazuje na dużą liczbę wartości odstających w zbiorze danych.
+Po odrzuceniu danych odstających otrzymany rozkład dla zmiennej price jest względnie równy. Skośność na poziomie 0,69 wskazuje na rozkład lekko prawostronnie skośny tzw. "Dłuższy ogon po prawej stronie".
+
+```{r}
+install.packages("psych")
+library(psych)
+raport <-
+  list("Cena w PLN" =
+       list("Min"= ~ min(price),
+            "Max"= ~ max(price),
+            "Kwartyl dolny"= ~ quantile(price,0.25),
+            "Mediana"= ~ round(median(price),2),
+            "Kwartyl górny"= ~ quantile(price,0.75),
+            "Średnia"= ~ round(mean(price),2),
+            "Odch. std."= ~ round(sd(price),2),
+            "IQR"= ~ round(iqr(price),2),
+            "Odchylenie ćwiartkowe"=~round(iqr(price)/2,2),
+            "Odch. std. w %"=~round((sd(price)/mean(price)),2),
+            "Odch. ćwiartkowe w %"=~round((iqr(price)/median(price)),2),
+            "Skośność"=~round(skew(price),2),
+            "Kurtoza"=~round(kurtosi(price),2)
+            ))
+tabela<-summary_table(czyste, summaries = raport, by = c("rooms"))
+
+knitr::kable(tabela,
+  digits = 2,
+  align = "lcccc",
+  caption="Tabela 1. Mieszkania we Wrocławiu - ceny w PLN wg liczby pokoi.",
+  col.names = c("Statystyka","1 pokój", "2 pokoje", "3 pokoje", "4 pokoje")) 
+```
+
+
+```{r table, message=FALSE, warning=FALSE, include=FALSE, paged.print=FALSE}
+etykiety<-c("350-450 kPLN","450-550 kPLN","550-650 kPLN","650-750 kPLN","750-850 kPLN","850-950 kPLN","950-1050 kPLN","1050-1150 kPLN","1150-1250 kPLN","1250-1350 kPLN")
+limits<-cut(czyste$price,seq(350000,1350000,by=100000),labels=etykiety)
+tabela1<-freq(limits,type="html")
+
+```
+
 
 #### Aby przeanalizować stan polskiego rynku mieszkaniowego, apartamenty zostały pogrupowane w przedziały cenowe:
 
@@ -349,9 +389,9 @@ ggplot(price_counts, aes(x = price_category, y = n, fill = price_category)) +
 
 ```
 
-Wizualizacja pokazuje, w jakich przedziałach cenowych znajdują się apartamenty w zbiorze danych. Największy klaster apartamentów znajduje się w przedziale cenowym od 500 000 do 749 999 PLN, który obejmuje 33,9% obserwacji. Kolejne dwie kategorie z największą liczbą obserwacji to 750 000 do 999 999 PLN (24,7%) oraz 250 000 do 499 999 PLN (18,5%). Łącznie stanowią one 77,1% obserwacji.
+Wizualizacja pokazuje, w jakich przedziałach cenowych znajdują się apartamenty w zbiorze danych. Największy klaster apartamentów znajduje się w przedziale cenowym od 500 000 do 749 999 PLN, który obejmuje 40,2% obserwacji. Kolejne dwie kategorie z największą liczbą obserwacji to 750 000 do 999 999 PLN (24,7%) oraz 250 000 do 499 999 PLN (18,5%). Łącznie stanowią one 83,4% obserwacji.
 
-Poprzednia hipoteza o dużej liczbie wartości odstających została potwierdzona, ponieważ 13,2% nieruchomości ma cenę powyżej 1 250 000 PLN. Jednak sama ta wartość nie uzasadnia dużej kurtozy; w tym przedziale cenowym muszą występować również silne wartości odstające. Aby to sprawdzić, tworzony jest wykres pudełkowy.
+(DOPISAĆ O >=1.250.000)
 
 ```{r}
 ###Visualisation of Price Distribution by City
@@ -544,13 +584,13 @@ Bloki mieszkalne dominują w 62,5%, budynki mieszkalne stanowią 20,2%, a kamien
 
 ```{r}
 # Create scatter plot with a linear trend line
-ggplot(czyste, aes(x = floor, y = price)) +
+ggplot(czyste, aes(x = rooms, y = price)) +
   geom_point(alpha = 0.5, color = "blue") +  # Scatter plot points
   geom_smooth(method = "lm", color = "red", se = FALSE) +  # Linear trend line
   labs(
-    title = "Price vs. Floor",
-    x = "Floor",
-    y = "Price (PLN)"
+    title = "Cena vs. Liczba pokoji",
+    x = "Liczba pokoji",
+    y = "Cena (PLN)"
   ) +
   theme_minimal()
 ```
