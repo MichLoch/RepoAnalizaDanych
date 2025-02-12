@@ -403,6 +403,7 @@ ggplot(price_counts, aes(x = price_category, y = n, fill = price_category)) +
 
 Wizualizacja pokazuje, w jakich przedziałach cenowych znajdują się apartamenty w zbiorze danych. Największy klaster apartamentów znajduje się w przedziale cenowym od 500 000 do 749 999 PLN, który obejmuje 40,2% obserwacji. Kolejne dwie kategorie z największą liczbą obserwacji to 750 000 do 999 999 PLN (24,7%) oraz 250 000 do 499 999 PLN (18,5%). Łącznie stanowią one 83,4% obserwacji.
 
+##### Orginalne dane zawierały skrajne ceny mieszkań, poniższa tabela przedstawia dystrybucję orginalnych danych dla przyjętych pułapów cenowych.
 ```{r}
 limits <- c(0, 250000, 500000, 750000, 1000000, 1250000, Inf)
 
