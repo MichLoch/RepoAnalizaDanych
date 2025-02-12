@@ -173,7 +173,7 @@ Otrzymany wykres pokazuje, że brakujące dane w zbiorze stanowią około 6,3% w
 Brakujące dane w zbiorze mogą wynikać z kilku czynników. Wysoki odsetek brakujących wartości w zmiennych condition i buildingMaterial sugeruje, że takie informacje często nie są ujawniane przez właścicieli nieruchomości lub w ogłoszeniach na portalach. Podobnie, luki w zmiennych **type**, **floor** i **buildYear** mogą wynikać z niekompletnych zapisów dotyczących starszych nieruchomości lub niespójności w sposobie raportowania danych w różnych miastach. Braki w **floor** mogą być również związane z nieruchomościami oznaczonymi jako domy lub mieszkania na parterze, gdzie ta informacja nie jest istotna. W niektórych przypadkach szczegóły dotyczące nieruchomości mogą być celowo pomijane przez sprzedających, aby zwiększyć atrakcyjność ogłoszenia lub z powodu braku dokładnych informacji. Dodatkowo, metody zbierania danych – takie jak web scraping z portali nieruchomości – mogą przyczyniać się do brakujących wartości, jeśli niektóre szczegóły nie są konsekwentnie udostępniane na różnych platformach.
 
 
-```{r}
+```{r, echo=TRUE, message=FALSE, warning=FALSE}
 str(apartments)
 
 # Wybór zmiennych numerycznych do analizy
@@ -219,7 +219,7 @@ W Wyniku analizy zbioru danych, możemy zobaczyć, że dane apartments_pl_2024_0
 
 ### Zastępowanie wartości odstających medianą
 
-```{r}
+```{r, echo=TRUE, message=FALSE, warning=FALSE}
 # Lista zmiennych związanych z odległościami (distance)
 distance_vars <- c("centreDistance", "schoolDistance", "clinicDistance", 
                    "postOfficeDistance", "kindergartenDistance", 
@@ -261,7 +261,7 @@ summary(apartments2)
 
 #### Wypełnianie brakujących danych używając funkcji hotdeck
 
-```{r}
+```{r, echo=TRUE, message=FALSE, warning=FALSE}
  
 #Używanie funkcji hotdeck do wypełnienia brakujących danych
 czyste <- hotdeck(apartments2)
@@ -277,7 +277,7 @@ pct_miss(czyste)  # Percentage of NA values: [1] 0
 
 Kluczową zmienną do analizy w zbiorze danych jest cena, ponieważ opisuje ona sytuację na polskim rynku mieszkaniowym, na którym oparty jest ten zbiór danych.
 
-```{r}
+```{r, echo=TRUE, message=FALSE, warning=FALSE}
 descriptive_stats <- czyste %>%
   select(price) %>%
   summarise(
@@ -300,7 +300,7 @@ print(paste("Kurtosis: ", kurt_value))
 
 Po odrzuceniu danych odstających otrzymany rozkład dla zmiennej price jest względnie równy. Skośność na poziomie 0,69 wskazuje na rozkład lekko prawostronnie skośny tzw. "Dłuższy ogon po prawej stronie".
 
-```{r}
+```{r, echo=TRUE, message=FALSE, warning=FALSE}
 install.packages("psych")
 library(psych)
 raport <-
@@ -332,7 +332,7 @@ Najtańsze mieszkanie w oczyszczonej serii danych kosztuje 191.000 PLN najdrożs
 Największa różnica pomiędzy najdroższym a najtańszym mieszkaniem występuję w przypadku mieszkań 2 pokojowych i wynosi 1.394.000 PLN jednak różnica dla mieszkań 3 i 4 pokojowych nie dużo mniejsza  i wynosi odpowiednio 1.340.000 PLN oraz 1.289.000 PLN. Najmniejsza zaś różnica jest w przypadku mieszkań 1 pokojowych i wynosi 779.000 PLN. Jednak są to wartości nominalne nie uwzględniające tego jak duże są pokoje. Poniższa tabela przedstawia metraż jaki mają badane przez nas skrajne obserwacje wraz z ceną za m^2.
 
 
-```{r}
+```{r, echo=TRUE, message=FALSE, warning=FALSE}
 skrajne_mieszkania <- czyste %>%
   group_by(rooms) %>%
   filter(price == min(price) | price == max(price)) %>%
@@ -356,14 +356,14 @@ Mimo że największa dysproporcja w cenie była obserwowalna dla mieszkań z dwo
 Średnia cena mieszkań dla mieszkań o 2; 3 i 4 pokojach jest większa od mediany co sugeruje rozkład cen skośny prawostornnie oznaczao to, że mieszkania drogie znacznie wpływają na średnią.
 
 Na Potrzeby dalszej analizy dodajmy zmienną priceSquareMeter oznaczającą cenę za m^2 dla danego mieszkania.
-```{r}
+```{r, echo=TRUE, message=FALSE, warning=FALSE}
 czyste <- czyste %>%
   mutate(priceSquareMeter = round(price / squareMeters, 2))
 ```
 
 #### Aby przeanalizować stan polskiego rynku mieszkaniowego, apartamenty zostały pogrupowane w przedziały cenowe:
 
-```{r}
+```{r, echo=TRUE, message=FALSE, warning=FALSE}
 limits <- c(0, 250000, 500000, 750000, 1000000, 1250000, Inf)
 
 labels <- c("<250,000 PLN", "250,000 - 499,999 PLN", "500,000 - 749,999 PLN", 
@@ -407,7 +407,7 @@ ggplot(price_counts, aes(x = price_category, y = n, fill = price_category)) +
 Wizualizacja pokazuje, w jakich przedziałach cenowych znajdują się apartamenty w zbiorze danych. Największy klaster apartamentów znajduje się w przedziale cenowym od 500 000 do 749 999 PLN, który obejmuje 40,2% obserwacji. Kolejne dwie kategorie z największą liczbą obserwacji to 750 000 do 999 999 PLN (24,7%) oraz 250 000 do 499 999 PLN (18,5%). Łącznie stanowią one 83,4% obserwacji.
 
 ##### Orginalne dane zawierały skrajne ceny mieszkań, poniższa tabela przedstawia dystrybucję orginalnych danych dla przyjętych pułapów cenowych.
-```{r}
+```{r, echo=TRUE, message=FALSE, warning=FALSE}
 limits <- c(0, 250000, 500000, 750000, 1000000, 1250000, Inf)
 
 apartments$price_category <- cut(apartments$price, breaks = limits, labels = labels, include.lowest = TRUE, right = FALSE)
@@ -426,7 +426,7 @@ knitr::kable(price_counts,
 Po odrzuceniu wartości odstających mieszkania o cenie wyższej niż 1.250.000 PLN stanowią 6,9% badanych mieszkań jednak uwzględniając wartości odstające mieszkania o cenie wyższej niż 1.250.000 PLN stanowiły 13,2%
 
 
-```{r}
+```{r, echo=TRUE, message=FALSE, warning=FALSE}
 ggplot(czyste, aes(x = city, y = priceSquareMeter)) +  
   geom_boxplot(aes(fill = city), alpha = 0.85) +  
   theme_minimal() +  
@@ -441,7 +441,7 @@ ggplot(czyste, aes(x = city, y = squareMeters)) +
   scale_y_continuous(labels = scales::label_number(big.mark = ".", decimal.mark = ",")) 
 ```
 
-```{r}
+```{r, echo=TRUE, message=FALSE, warning=FALSE}
 # Zlicz wystąpienia i oblicz procentowy udział dla zmiennej 'ownership'
 ownership_counts <- czyste %>%
   count(ownership) %>%
@@ -475,7 +475,7 @@ ggplot(ownership_counts, aes(x = ownership, y = n, fill = ownership)) +
 
 Blisko 0% Własność udziałowa: Znikoma obecność opcji „udział” sugeruje, że ta forma własności jest rzadka lub może zanikać na polskim rynku mieszkaniowym. Może to wskazywać na odchodzenie od starszych, zbiorowych struktur własnościowych.
 
-```{r}
+```{r, echo=TRUE, message=FALSE, warning=FALSE}
 # aov and interaction plot
 # Using aov to assess interaction effects between variables
 aov <- aov(price ~ city * condition, data = czyste)
@@ -504,7 +504,7 @@ Wykres przedstawia średnią cenę mieszkania w każdym mieście w zależności 
 
 ### Analiza mapy cieplnej
 
-```{r}
+```{r, echo=TRUE, message=FALSE, warning=FALSE}
 # Compute correlation matrix for selected variables
 correlation_matrix <- cor(czyste %>% select(price, poiCount, squareMeters, rooms), 
                           use = "pairwise.complete.obs")
@@ -576,7 +576,7 @@ Trzeci wykres przedstawia mapę cieplną mierzącą cenę w odniesieniu do liczb
 
 Następnie tworzony jest wykres analizujący wpływ piętra, na którym znajduje się mieszkanie, na jego cenę.
 
-```{r}
+```{r, echo=TRUE, message=FALSE, warning=FALSE}
 ggplot(czyste, aes(x = floor)) +
   geom_histogram(binwidth = 1, fill = "blue", alpha = 0.7) +
   theme_minimal() +
@@ -593,7 +593,7 @@ Wykres pokazuje, że większość mieszkań znajduje się na niższych piętrach
 
 ##### Analizę pięter można lepiej zrozumieć poprzez analizę typów budynków w badanej populacji.
 
-```{r}
+```{r , echo=TRUE, message=FALSE, warning=FALSE}
 # Calculate the count and percentage of each building type
 type_summary <- czyste %>%
   count(type) %>%
