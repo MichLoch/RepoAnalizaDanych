@@ -118,6 +118,7 @@ library(ggpubr)
 library(ggplot2)
 library(scales)
 library(dplyr) 
+library(knitr)
 library(corrplot) 
 library(moments)
 library(dplyr)
@@ -304,51 +305,67 @@ raport <-
        list("Min"= ~ min(price),
             "Max"= ~ max(price),
             "Kwartyl dolny"= ~ quantile(price,0.25),
-            "Mediana"= ~ round(median(price),2),
+            "Mediana"= ~ round(median(price),0),
             "Kwartyl górny"= ~ quantile(price,0.75),
-            "Średnia"= ~ round(mean(price),2),
-            "Odch. std."= ~ round(sd(price),2),
-            "IQR"= ~ round(iqr(price),2),
-            "Odchylenie ćwiartkowe"=~round(iqr(price)/2,2),
-            "Odch. std. w %"=~round((sd(price)/mean(price)),2),
-            "Odch. ćwiartkowe w %"=~round((iqr(price)/median(price)),2),
-            "Skośność"=~round(skew(price),2),
-            "Kurtoza"=~round(kurtosi(price),2)
+            "Średnia"= ~ round(mean(price),0),
+            "Odch. std."= ~ round(sd(price),0),
+            "Odstęp Międzykwartyllowy"= ~ round(iqr(price),0),
+            "Odchylenie ćwiartkowe"=~round(iqr(price)/2,0),
+            "Odch. std. w %"=~round((sd(price)/mean(price)),4),
+            "Odch. ćwiartkowe w %"=~round((iqr(price)/median(price)),4),
+            "Skośność"=~round(skew(price),4),
+            "Kurtoza"=~round(kurtosi(price),4)
             ))
 tabela<-summary_table(czyste, summaries = raport, by = c("rooms"))
 
 knitr::kable(tabela,
   digits = 2,
   align = "lcccc",
-  caption="Tabela 1. Mieszkania we Wrocławiu - ceny w PLN wg liczby pokoi.",
+  caption="Tabela cen mieszkań w Polskich miastach - ceny w PLN wg liczby pokoi.",
   col.names = c("Statystyka","1 pokój", "2 pokoje", "3 pokoje", "4 pokoje")) 
 ```
+##### Min i Max
+Najtańsze mieszkanie w oczyszczonej serii danych kosztuje 191.000 PLN najdroższe zaś 1.588.000. Najtańsze mieszkania dla wszystkich liczb pokoi kosztują poniżej 300.000 PLN. W przypadku najdroższych mieszkań jedynie w przypadku mieszkań 1 pokojowych cenna jest mniejsza od 1.000.000 PLN.
+Największa różnica pomiędzy najdroższym a najtańszym mieszkaniem występuję w przypadku mieszkań 2 pokojowych i wynosi 1.394.000 PLN jednak różnica dla mieszkań 3 i 4 pokojowych nie dużo mniejsza  i wynosi odpowiednio 1.340.000 PLN oraz 1.289.000 PLN. Najmniejsza zaś różnica jest w przypadku mieszkań 1 pokojowych i wynosi 779.000 PLN. Jednak są to wartości nominalne nie uwzględniające tego jak duże są pokoje. Poniższa tabela przedstawia metraż jaki mają badane przez nas skrajne obserwacje wraz z ceną za m^2.
 
 
-```{r table, message=FALSE, warning=FALSE, include=FALSE, paged.print=FALSE}
-etykiety<-c("350-450 kPLN","450-550 kPLN","550-650 kPLN","650-750 kPLN","750-850 kPLN","850-950 kPLN","950-1050 kPLN","1050-1150 kPLN","1150-1250 kPLN","1250-1350 kPLN")
-limits<-cut(czyste$price,seq(350000,1350000,by=100000),labels=etykiety)
-tabela1<-freq(limits,type="html")
+```{r}
+skrajne_mieszkania <- czyste %>%
+  group_by(rooms) %>%
+  filter(price == min(price) | price == max(price)) %>%
+  group_by(rooms, price) %>%
+  filter(ifelse(price == min(price), squareMeters == min(squareMeters), squareMeters == max(squareMeters))) %>%
+  ungroup() %>%
+  mutate(price_per_m2 = round(price / squareMeters, 2)) %>%  
+  select(rooms, price, squareMeters, price_per_m2) %>%
+  arrange(rooms, price)
 
+knitr::kable(skrajne_mieszkania, 
+             digits = 2, 
+             align = "lccc",
+             caption = "Tabela skrajnych mieszkań - ceny, metraż i koszt za m²",
+             col.names = c("Liczba pokoi", "Cena (PLN)", "Powierzchnia (m²)", "Cena za m² (PLN)"))
 ```
+Mimo że największa dysproporcja w cenie była obserwowalna dla mieszkań z dwoma pokojami to największa różnica w cenie za m^2 jest widoczna w przypadku mieszkań z 3 pokojami i wynosi 24675,96 PLN dla wartości skrajnych, gdzie pozycją o drugiej największej różnicy są miezkania z 1 pokojem 21211,40 PLN
 
+
+##### Średnia i Mediana
+Średnia cena mieszkań dla mieszkań o 2; 3 i 4 pokojach jest większa od mediany co sugeruje rozkład cen skośny prawostornnie oznaczao to, że mieszkania drogie znacznie wpływają na średnią.
+
+Na Potrzeby dalszej analizy dodajmy zmienną priceSquareMeter oznaczającą cenę za m^2 dla danego mieszkania.
+```{r}
+czyste <- czyste %>%
+  mutate(priceSquareMeter = round(price / squareMeters, 2))
+```
 
 #### Aby przeanalizować stan polskiego rynku mieszkaniowego, apartamenty zostały pogrupowane w przedziały cenowe:
 
 ```{r}
 limits <- c(0, 250000, 500000, 750000, 1000000, 1250000, Inf)
 
-# Generate labels
-labels <- c(
-  "<250,000 PLN", 
-  "250,000 - 499,999 PLN", 
-  "500,000 - 749,999 PLN", 
-  "750,000 - 999,999 PLN", 
-  "1,000,000 - 1,249,999 PLN", 
-  "≥1,250,000 PLN"
-)
+labels <- c("<250,000 PLN", "250,000 - 499,999 PLN", "500,000 - 749,999 PLN", 
+  "750,000 - 999,999 PLN", "1,000,000 - 1,249,999 PLN", "≥1,250,000 PLN")
 
-# Categorize apartment prices into bins
 czyste$price_category <- cut(
   czyste$price, 
   breaks = limits, 
@@ -357,50 +374,67 @@ czyste$price_category <- cut(
   right = FALSE
 )
 
-# Create binary columns for each price category
 for (i in 1:length(labels)) {
   czyste[paste0("in_range_", i)] <- ifelse(czyste$price_category == labels[i], 1, 0)
 }
 
-# Count occurrences and calculate percentages
 price_counts <- czyste %>%
   count(price_category) %>%
-  mutate(percentage = n / sum(n) * 100)  # Convert counts to percentages
+  mutate(percentage = n / sum(n) * 100)  
 
-# Define fixed label height (adjust based on dataset)
 fixed_label_height <- max(price_counts$n) * 1.05  # Slightly above max count for visibility
-
-# Plot the distribution of apartment prices
 ggplot(price_counts, aes(x = price_category, y = n, fill = price_category)) +
   geom_bar(stat = "identity", show.legend = FALSE) +
   geom_text(aes(label = paste0(round(percentage, 1), "%")), 
             vjust = 2, 
             size = 5, 
             color = "black",
-            nudge_y = fixed_label_height - max(price_counts$n)) +  # Fixed height
-  scale_y_continuous(labels = scales::comma) +  # Format Y-axis with thousands separator
+            nudge_y = fixed_label_height - max(price_counts$n)) +  
+  scale_y_continuous(labels = scales::comma) +  
   theme_minimal() +
   labs(
     title = "Rozkład cen apartamentów",
     x = "Przedział cenowy",
     y = "Liczba apartamentów"
   ) +
-  theme(axis.text.x = element_text(angle = 45, hjust = 1))  # Rotate labels for readability
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))  
 
 ```
 
 Wizualizacja pokazuje, w jakich przedziałach cenowych znajdują się apartamenty w zbiorze danych. Największy klaster apartamentów znajduje się w przedziale cenowym od 500 000 do 749 999 PLN, który obejmuje 40,2% obserwacji. Kolejne dwie kategorie z największą liczbą obserwacji to 750 000 do 999 999 PLN (24,7%) oraz 250 000 do 499 999 PLN (18,5%). Łącznie stanowią one 83,4% obserwacji.
 
-(DOPISAĆ O >=1.250.000)
+```{r}
+limits <- c(0, 250000, 500000, 750000, 1000000, 1250000, Inf)
+
+apartments$price_category <- cut(apartments$price, breaks = limits, labels = labels, include.lowest = TRUE, right = FALSE)
+
+price_counts <- apartments %>%
+  count(price_category) %>%
+  mutate(percentage = round(n / sum(n) * 100, 1))  
+
+knitr::kable(price_counts, 
+             digits = 1, 
+             align = "lc", 
+             caption = "Tabela rozkładu cen mieszkań przed odrzuceniem wartości skrajnych",
+             col.names = c("Przedział cenowy", "Liczba mieszkań", "Procentowy udział (%)"))
+```
+
+Po odrzuceniu wartości odstających mieszkania o cenie wyższej niż 1.250.000 PLN stanowią 6,9% badanych mieszkań jednak uwzględniając wartości odstające mieszkania o cenie wyższej niż 1.250.000 PLN stanowiły 13,2%
+
 
 ```{r}
-###Visualisation of Price Distribution by City
-ggplot(czyste, aes(x = city, y = price)) +  
+ggplot(czyste, aes(x = city, y = priceSquareMeter)) +  
   geom_boxplot(aes(fill = city), alpha = 0.85) +  
   theme_minimal() +  
-  labs(title = "Price Distribution by City", x = NULL, y = "Price") +   
+  labs(title = "Rozkład cen według miasta", x = NULL, y = "Cena za metr kwadratowy") +   
   theme(axis.text.x = element_blank(), axis.ticks.x = element_blank()) +  
   scale_y_continuous(labels = scales::label_number(big.mark = ".", decimal.mark = ","))  
+ggplot(czyste, aes(x = city, y = squareMeters)) +  
+  geom_boxplot(aes(fill = city), alpha = 0.85) +  
+  theme_minimal() +  
+  labs(title = "Rozkład metrażu mieszkań według miasta", x = NULL, y = "Metraż") +   
+  theme(axis.text.x = element_blank(), axis.ticks.x = element_blank()) +  
+  scale_y_continuous(labels = scales::label_number(big.mark = ".", decimal.mark = ",")) 
 ```
 
 ```{r}
