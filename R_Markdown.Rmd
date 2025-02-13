@@ -94,7 +94,7 @@ Zbiór danych zawiera następujące zmienne:
 
 ## Czyszczenie i przetwarzanie danych  
 
-#### Installation of needed libraries and data
+#### Instalacja potrzebnych bibliotek i danych
 
 ```{r setup1, include=FALSE}
 knitr::opts_chunk$set(
@@ -158,13 +158,13 @@ apartments <- read_csv("apartments_pl_2024_06.csv")
 
 ```
 
-#### Visualizing the missing data using missing-data map
+#### Wizualizacja brakujących danych za pomocą mapy brakujących danych
 
 ```{r visualize-missing-data, echo=TRUE, message=FALSE, warning=FALSE}
-# Missing Data Map
+# Mapa brakujących danych
 vis_miss(apartments)
 
-# UpSet plot for missing data
+# UpSet plot dla brakujących danych
 library(naniar)
 gg_miss_upset(apartments, nsets = 3)
 ```
@@ -214,7 +214,7 @@ for (col in colnames(numeric_cols)) {
 }
 par(mfrow = c(1, 1))  # Powrót do domyślnego układu wykresów
 ```
-W Wyniku analizy zbioru danych, możemy zobaczyć, że dane apartments_pl_2024_06 zawierają wiele wartości odstających. Wartości odstające, możemy zaobserwować dla niemal wszystkich zmiennych. Szczególnymi przykładami może być zmienne: Price, collegeDistance oraz Centre Distance.
+W Wyniku analizy zbioru danych, możemy zobaczyć, że dane apartments_pl_2024_06 zawierają wiele wartości odstających. Wartości odstające, możemy zaobserwować dla niemal wszystkich zmiennych. Szczególnymi przykładami może być zmienne: Price, collegeDistance oraz Centre Distance. Wartości odstające mogą również mogą wskazywać na obecność droższych apartamentów znajdujących się w atrakcyjnych lokalizacjach.
 
 ### Zastępowanie wartości odstających medianą
 
@@ -641,7 +641,7 @@ ggplot(data.frame(price = sort(czyste$price)), aes(x = price)) +
   theme_minimal()
 ```
 
-Wykresy przedstawiają analizę rozkładu cen mieszkań przy ocenie czy rozkład jest normalny, jak wygląda struktura danych oraz czy występują wartości odstające. Rozkład normalny jest zaznaczony czerwoną linią. W każdym przypadku rozkład normalny nie pokrywa się z linią niebieską/czarnymi punktami, które prezentują rzeczywiste wartosći cen mieszkań i oznacza, że ceny mieszkań nie są rozkładem normalnym. Znaczy to tyle, że nie odpowiednie bedą metody statystyczne, które bedą zakładać normalność. Pojawiają sie wartośći odstające. Rozkład jest skośny prawostronnie, więcej mieszkań wchodzi w niżsży zakres cen. Większą średnią cen mieszkań zwiększają pojedyncze mieszkania z górnej półki cenowej. Wnioskowanie statystyczne wymaga wykresów rozkładu danych. Jest to konieczne do wykonania oceny rozkładu danych i do wyboru medod analizy danych.
+Wykresy przedstawiają analizę rozkładu cen mieszkań przy ocenie czy rozkład jest normalny, jak wygląda struktura danych oraz czy występują wartości odstające. Rozkład normalny jest zaznaczony czerwoną linią. W każdym przypadku rozkład normalny nie pokrywa się z linią niebieską/czarnymi punktami, które prezentują rzeczywiste wartości cen mieszkań i oznacza, że ceny mieszkań nie są rozkładem normalnym. Znaczy to tyle, że nie będą odpowiednie metody statystyczne, które będą zakładać normalność. Pojawiają się wartości odstające. Rozkład jest skośny prawostronnie, więcej mieszkań wchodzi w niższy zakres cen. Większą średnią cen mieszkań zwiększają pojedyncze mieszkania z górnej półki cenowej. Wnioskowanie statystyczne wymaga wykresów rozkładu danych. Jest to konieczne do wykonania oceny rozkładu danych i do wyboru metod analizy danych.
 
 
 
