@@ -106,11 +106,11 @@ options(repos = c(CRAN = "https://cran.rstudio.com"))
 options(qwraps2_markup = "markdown")
 
 library(e1071)
-install.packages("naniar")  
+if (!require("naniar")) install.packages("naniar")  
 library(naniar)    
-install.packages("VIM")
+if (!require("VIM")) install.packages("VIM")
 library(VIM)
-install.packages("mice")
+if (!require("mice")) install.packages("mice")
 library(mice)
 library(haven)
 library(frequency)
@@ -177,10 +177,8 @@ Brakujące dane w zbiorze mogą wynikać z kilku czynników. Wysoki odsetek brak
 ```{r, echo=TRUE, message=FALSE, warning=FALSE}
 str(apartments)
 
-# Wybór zmiennych numerycznych do analizy
 numeric_cols <- apartments %>% select(where(is.numeric))
 
-# Metoda 1: Wykrywanie wartości odstających metodą IQR
 find_outliers_iqr <- function(x) {
   Q1 <- quantile(x, 0.25, na.rm = TRUE)
   Q3 <- quantile(x, 0.75, na.rm = TRUE)
@@ -212,7 +210,7 @@ outliers_iqr <- lapply(numeric_cols, find_outliers_iqr)
 # Wizualizacja wartości odstających za pomocą boxplotów dla każdej zmiennej numerycznej
 par(mfrow = c(3, 3))  # Układ wykresów (3x3)
 for (col in colnames(numeric_cols)) {
-  boxplot(numeric_cols[[col]], main = col, col = "lightblue", border = "red", outline = TRUE)
+  boxplot(numeric_cols[[col]], main = col, col = "turquoise", border = "navy", outline = TRUE)
 }
 par(mfrow = c(1, 1))  # Powrót do domyślnego układu wykresów
 ```
@@ -263,14 +261,11 @@ summary(apartments2)
 #### Wypełnianie brakujących danych używając funkcji hotdeck
 
 ```{r, echo=TRUE, message=FALSE, warning=FALSE}
- 
-#Używanie funkcji hotdeck do wypełnienia brakujących danych
-czyste <- hotdeck(apartments2)
+ czyste <- hotdeck(apartments2)
 
-n_miss(czyste)  # Count of NA values: 0
-n_complete(czyste)  # Count of complete values: 1204056
-pct_miss(czyste)  # Percentage of NA values: [1] 0
-
+n_miss(czyste)  # Licznik wartości NA
+n_complete(czyste)  # Licznik prawidłowych wartości
+pct_miss(czyste)  # Procentowa ilość wartości NA w zbiorze danych
 
 ```
 
