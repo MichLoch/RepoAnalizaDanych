@@ -419,7 +419,7 @@ knitr::kable(price_counts,
              col.names = c("Przedział cenowy", "Liczba mieszkań", "Procentowy udział (%)"))
 ```
 
-Po odrzuceniu wartości odstających mieszkania o cenie wyższej niż 1.250.000 PLN stanowią 6,9% badanych mieszkań jednak uwzględniając wartości odstające mieszkania o cenie wyższej niż 1.250.000 PLN stanowiły 13,2%
+Po odrzuceniu wartości odstających mieszkania o cenie wyższej niż 1.250.000 PLN stanowią 6,9% badanych mieszkań jednak uwzględniając wartości odstające mieszkania o cenie wyższej niż 1.250.000 PLN stanowiły 13,2%. Zmianie uległ również udział dla mieszkań w przedziale 500.000 PLN - 749.999 PLN, gdzie udział procentowy wynosił 40,2%, a po odrzuceniu warto
 
 
 ```{r, echo=TRUE, message=FALSE, warning=FALSE}
