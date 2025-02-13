@@ -419,7 +419,7 @@ knitr::kable(price_counts,
              col.names = c("Przedział cenowy", "Liczba mieszkań", "Procentowy udział (%)"))
 ```
 
-Po odrzuceniu wartości odstających mieszkania o cenie wyższej niż 1.250.000 PLN stanowią 6,9% badanych mieszkań jednak uwzględniając wartości odstające mieszkania o cenie wyższej niż 1.250.000 PLN stanowiły 13,2%. Zmianie uległ również udział dla mieszkań w przedziale 500.000 PLN - 749.999 PLN, gdzie udział procentowy wynosił 40,2%, a po odrzuceniu warto
+Po odrzuceniu wartości odstających mieszkania o cenie wyższej niż 1.250.000 PLN stanowią 6,9% badanych mieszkań jednak uwzględniając wartości odstające mieszkania o cenie wyższej niż 1.250.000 PLN stanowiły 13,2%. Zmianie uległ również udział dla mieszkań w przedziale 500.000 PLN - 749.999 PLN, gdzie udział procentowy wynosił 33,9%, a po odrzuceniu wartości skrajnych udział wzrósł do 40,2%. W pozostałych przypadkach wartość pozostała bez zmian.
 
 
 ```{r, echo=TRUE, message=FALSE, warning=FALSE}
@@ -436,6 +436,10 @@ ggplot(czyste, aes(x = city, y = squareMeters)) +
   theme(axis.text.x = element_blank(), axis.ticks.x = element_blank()) +  
   scale_y_continuous(labels = scales::label_number(big.mark = ".", decimal.mark = ",")) 
 ```
+
+Pierwszy wykres przedstawia rozkład cen za metr kwadratowy mieszkań w miastach. Największa ceną za metr kwadratowy należy do Warszawy z medianą na poziomie ok.17-18.000 PLN. Obok Warszawy znajdują się również Kraków, z medianą na poziomie ok.16.000 PLN, Gdańsk, z medianą na poziomie ok.14.000 PLN oraz Wrocław, również z medianą na poziomie ok.14.000 PLN. Najniższe wartości ceny za metr kwadratowy znajdują się w Częstochowie i Radomiu i wynoszą ok.7.000 PLN. Większa cena za metr jest również spowodowana licznymi przypadkami, w których cena metra kwadratowego jest dużo większa od innych mieszkań jak na przykład w Gdańsku, Gdyni, Krakowie, Warszawie czy Wrocławiu 
+Drugi wykres ilustruje rozkład metrażu mieszkań w tych samych miastach. Tu sytuacja jest w miarę zbliżona, choć w miastach, gdzie ceny za metr kwadratwoy są wysokie metraż mieszkania jest większy. Mediana znajduje się głównie w przedziale 50-55 metrów kwadratowych.
+
 
 ```{r, echo=TRUE, message=FALSE, warning=FALSE}
 # Zlicz wystąpienia i oblicz procentowy udział dla zmiennej 'ownership'
