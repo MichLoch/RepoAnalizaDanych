@@ -641,6 +641,9 @@ ggplot(data.frame(price = sort(czyste$price)), aes(x = price)) +
   theme_minimal()
 ```
 
+Wykresy przedstawiają analizę rozkładu cen mieszkań przy ocenie czy rozkład jest normalny, jak wygląda struktura danych oraz czy występują wartości odstające. Rozkład normalny jest zaznaczony czerwoną linią. W każdym przypadku rozkład normalny nie pokrywa się z linią niebieską/czarnymi punktami, które prezentują rzeczywiste wartosći cen mieszkań i oznacza, że ceny mieszkań nie są rozkładem normalnym. Znaczy to tyle, że nie odpowiednie bedą metody statystyczne, które bedą zakładać normalność. Pojawiają sie wartośći odstające. Rozkład jest skośny prawostronnie, więcej mieszkań wchodzi w niżsży zakres cen. Większą średnią cen mieszkań zwiększają pojedyncze mieszkania z górnej półki cenowej. Wnioskowanie statystyczne wymaga wykresów rozkładu danych. Jest to konieczne do wykonania oceny rozkładu danych i do wyboru medod analizy danych.
+
+
 
 ------------------------------------------------------------------------
 
