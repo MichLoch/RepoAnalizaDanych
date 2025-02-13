@@ -8,7 +8,8 @@ output:
     thumbnails: true
     lightbox: true
     gallery: false
-    highlight: tango
+    highlight: zenburn
+    css: "custom.css"
 ---
 
 # Wprowadzenie
@@ -16,7 +17,7 @@ output:
 ## Cel Raportu
 
 Celem tego raportu jest analiza zbioru danych **apartaments_pl_2024_06**.  
-Aby to osiągnąć, dane zostaną oczyszczone, brakujące wartości uzupełnione, a następnie przeprowadzona zostanie analiza wraz z wizualizacją wyników.  
+Aby to osiągnąć, dane zostaną oczyszczone, brakujące wartości uzupełnione, a następnie przeprowadzona zostanie analiza opisowa oraz wnioskowanie statystyczne wraz z wizualizacją wyników.  
 
 ## Przegląd zbioru danych  
 
@@ -170,7 +171,7 @@ gg_miss_upset(apartments, nsets = 3)
 
 Otrzymany wykres pokazuje, że brakujące dane w zbiorze stanowią około 6,3% wszystkich danych. Większość brakujących wartości pochodzi z zmiennej condition, której braki wynoszą 74%, oraz **material**, gdzie braki sięgają 41%. Znaczące deficyty danych można również zauważyć w zmiennych: **type**, **floor** oraz **buildYear**, które zawierają odpowiednio 20%, 17% i 16% brakujących wartości.
 
-Brakujące dane w zbiorze mogą wynikać z kilku czynników. Wysoki odsetek brakujących wartości w zmiennych condition i buildingMaterial sugeruje, że takie informacje często nie są ujawniane przez właścicieli nieruchomości lub w ogłoszeniach na portalach. Podobnie, luki w zmiennych **type**, **floor** i **buildYear** mogą wynikać z niekompletnych zapisów dotyczących starszych nieruchomości lub niespójności w sposobie raportowania danych w różnych miastach. Braki w **floor** mogą być również związane z nieruchomościami oznaczonymi jako domy lub mieszkania na parterze, gdzie ta informacja nie jest istotna. W niektórych przypadkach szczegóły dotyczące nieruchomości mogą być celowo pomijane przez sprzedających, aby zwiększyć atrakcyjność ogłoszenia lub z powodu braku dokładnych informacji. Dodatkowo, metody zbierania danych – takie jak web scraping z portali nieruchomości – mogą przyczyniać się do brakujących wartości, jeśli niektóre szczegóły nie są konsekwentnie udostępniane na różnych platformach.
+Brakujące dane w zbiorze mogą wynikać z kilku czynników. Wysoki odsetek brakujących wartości w zmiennych condition i buildingMaterial sugeruje, że takie informacje często nie są ujawniane przez właścicieli nieruchomości lub w ogłoszeniach na portalach. Podobnie, luki w zmiennych **type**, **floor** i **buildYear** mogą wynikać z niekompletnych zapisów dotyczących starszych nieruchomości lub niespójności w sposobie raportowania danych w różnych miastach. W niektórych przypadkach szczegóły dotyczące nieruchomości mogą być celowo pomijane przez sprzedających, aby zwiększyć atrakcyjność ogłoszenia lub z powodu braku dokładnych informacji.
 
 
 ```{r, echo=TRUE, message=FALSE, warning=FALSE}
