@@ -465,9 +465,9 @@ ggplot(ownership_counts, aes(x = ownership, y = n, fill = ownership)) +
   scale_y_continuous(labels = scales::comma) +  # Format Y-axis with thousands separator
   theme_minimal() +
   labs(
-    title = "Distribution of Ownership",
-    x = "Ownership",
-    y = "Count of Apartments"
+    title = "Dystrubucja typu własności mieszkań",
+    x = "Typ Właności",
+    y = "Licznik Mieszkań"
   ) +
   theme(axis.text.x = element_text(angle = 45, hjust = 1))  # Rotate labels for readability
 
