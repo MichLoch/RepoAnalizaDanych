@@ -266,7 +266,7 @@ Po odrzuceniu danych odstających otrzymany rozkład dla zmiennej price jest wzg
 ------------------------------------------------------------------------
 ## Analiza Opisowa
 
-```{r descriptive-statistics, echo=TRUE, message=FALSE, warning=FALSE}
+```{r ,descriptive-statistics echo=TRUE, message=FALSE, warning=FALSE}
 czyste %>%
   select(city, type, rooms, centreDistance, ownership, condition) %>%
   tbl_summary(by = city) %>%
@@ -317,7 +317,7 @@ knitr::kable(tabela,
 
 Najtańsze mieszkanie w oczyszczonej serii danych kosztuje 191.000 PLN najdroższe zaś 1.588.000. Najtańsze mieszkania dla wszystkich liczb pokoi kosztują poniżej 300.000 PLN. W przypadku najdroższych mieszkań jedynie w przypadku mieszkań 1 pokojowych cenna jest mniejsza od 1.000.000 PLN. Największa różnica pomiędzy najdroższym a najtańszym mieszkaniem występuję w przypadku mieszkań 2 pokojowych i wynosi 1.394.000 PLN jednak różnica dla mieszkań 3 i 4 pokojowych nie dużo mniejsza i wynosi odpowiednio 1.340.000 PLN oraz 1.289.000 PLN. Najmniejsza zaś różnica jest w przypadku mieszkań 1 pokojowych i wynosi 779.000 PLN. Jednak są to wartości nominalne nie uwzględniające tego jak duże są pokoje. Poniższa tabela przedstawia metraż jaki mają badane przez nas skrajne obserwacje wraz z ceną za m\^2.
 
-```{r Tabela cena za m^2, echo=TRUE, message=FALSE, warning=FALSE}
+```{r ,Tabela cena za m^2 echo=TRUE, message=FALSE, warning=FALSE}
 skrajne_mieszkania <- czyste %>%
   group_by(rooms) %>%
   filter(price == min(price) | price == max(price)) %>%
@@ -357,7 +357,7 @@ czyste <- czyste %>%
 
 #### Aby przeanalizować stan polskiego rynku mieszkaniowego, apartamenty zostały pogrupowane w przedziały cenowe:
 
-```{r Rozkład cen apartamentów, echo=TRUE, message=FALSE, warning=FALSE}
+```{r ,Rozkład cen apartamentów echo=TRUE, message=FALSE, warning=FALSE}
 limits <- c(0, 250000, 500000, 750000, 1000000, 1250000, Inf)
 
 labels <- c("<250,000 PLN", "250,000 - 499,999 PLN", "500,000 - 749,999 PLN", 
@@ -475,7 +475,7 @@ Blisko 0% Własność udziałowa: Znikoma obecność opcji „udział” sugeruj
 
 ### Analiza mapy cieplnej
 
-```{r Mapy Cieplne, echo=TRUE, message=FALSE, warning=FALSE}
+```{r ,Mapy Cieplne echo=TRUE, message=FALSE, warning=FALSE}
 correlation_matrix <- cor(czyste %>% select(price, poiCount, squareMeters, rooms), 
                           use = "pairwise.complete.obs")
 
