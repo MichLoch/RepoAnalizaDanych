@@ -94,7 +94,7 @@ Zbiór danych zawiera następujące zmienne:
 
 ## Czyszczenie i przetwarzanie danych  
 
-#### Instalacja potrzebnych bibliotek i danych
+#### Installation of needed libraries and data
 
 ```{r setup1, include=FALSE}
 knitr::opts_chunk$set(
@@ -158,13 +158,13 @@ apartments <- read_csv("apartments_pl_2024_06.csv")
 
 ```
 
-#### Wizualizacja brakujących danych za pomocą mapy brakujących danych
+#### Visualizing the missing data using missing-data map
 
 ```{r visualize-missing-data, echo=TRUE, message=FALSE, warning=FALSE}
 # Mapa brakujących danych
 vis_miss(apartments)
 
-# UpSet plot dla brakujących danych
+# Wykres Brakujących danych
 library(naniar)
 gg_miss_upset(apartments, nsets = 3)
 ```
@@ -214,7 +214,7 @@ for (col in colnames(numeric_cols)) {
 }
 par(mfrow = c(1, 1))  # Powrót do domyślnego układu wykresów
 ```
-W Wyniku analizy zbioru danych, możemy zobaczyć, że dane apartments_pl_2024_06 zawierają wiele wartości odstających. Wartości odstające, możemy zaobserwować dla niemal wszystkich zmiennych. Szczególnymi przykładami może być zmienne: Price, collegeDistance oraz Centre Distance. Wartości odstające mogą również mogą wskazywać na obecność droższych apartamentów znajdujących się w atrakcyjnych lokalizacjach.
+W Wyniku analizy zbioru danych, możemy zobaczyć, że dane apartments_pl_2024_06 zawierają wiele wartości odstających. Wartości odstające, możemy zaobserwować dla niemal wszystkich zmiennych. Szczególnymi przykładami może być zmienne: Price, collegeDistance oraz Centre Distance.
 
 ### Zastępowanie wartości odstających medianą
 
@@ -436,10 +436,8 @@ ggplot(czyste, aes(x = city, y = squareMeters)) +
   theme(axis.text.x = element_blank(), axis.ticks.x = element_blank()) +  
   scale_y_continuous(labels = scales::label_number(big.mark = ".", decimal.mark = ",")) 
 ```
-
 Pierwszy wykres przedstawia rozkład cen za metr kwadratowy mieszkań w miastach. Największa ceną za metr kwadratowy należy do Warszawy z medianą na poziomie ok.17-18.000 PLN. Obok Warszawy znajdują się również Kraków, z medianą na poziomie ok.16.000 PLN, Gdańsk, z medianą na poziomie ok.14.000 PLN oraz Wrocław, również z medianą na poziomie ok.14.000 PLN. Najniższe wartości ceny za metr kwadratowy znajdują się w Częstochowie i Radomiu i wynoszą ok.7.000 PLN. Większa cena za metr jest również spowodowana licznymi przypadkami, w których cena metra kwadratowego jest dużo większa od innych mieszkań jak na przykład w Gdańsku, Gdyni, Krakowie, Warszawie czy Wrocławiu 
 Drugi wykres ilustruje rozkład metrażu mieszkań w tych samych miastach. Tu sytuacja jest w miarę zbliżona, choć w miastach, gdzie ceny za metr kwadratwoy są wysokie metraż mieszkania jest większy. Mediana znajduje się głównie w przedziale 50-55 metrów kwadratowych.
-
 
 ```{r, echo=TRUE, message=FALSE, warning=FALSE}
 # Zlicz wystąpienia i oblicz procentowy udział dla zmiennej 'ownership'
@@ -644,9 +642,6 @@ ggplot(data.frame(price = sort(czyste$price)), aes(x = price)) +
   labs(title = "Empiryczna CDF vs. Normalna CDF", x = "Cena", y = "Prawdopodobieństwo") +
   theme_minimal()
 ```
-
-Wykresy przedstawiają analizę rozkładu cen mieszkań przy ocenie czy rozkład jest normalny, jak wygląda struktura danych oraz czy występują wartości odstające. Rozkład normalny jest zaznaczony czerwoną linią. W każdym przypadku rozkład normalny nie pokrywa się z linią niebieską/czarnymi punktami, które prezentują rzeczywiste wartości cen mieszkań i oznacza, że ceny mieszkań nie są rozkładem normalnym. Znaczy to tyle, że nie będą odpowiednie metody statystyczne, które będą zakładać normalność. Pojawiają się wartości odstające. Rozkład jest skośny prawostronnie, więcej mieszkań wchodzi w niższy zakres cen. Większą średnią cen mieszkań zwiększają pojedyncze mieszkania z górnej półki cenowej. Wnioskowanie statystyczne wymaga wykresów rozkładu danych. Jest to konieczne do wykonania oceny rozkładu danych i do wyboru metod analizy danych.
-
 
 
 ------------------------------------------------------------------------
