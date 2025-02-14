@@ -3,9 +3,11 @@ title: "Raport"
 author: "Michał Łochowski, Paweł Górdak, Dawid Drawc"
 date: "`r format(Sys.Date(), '%d.%m.%Y')`"
 output:
-  rmdformats::downcute:
-    self_contained: true
-    css: custom.css
+  prettydoc::html_pretty:
+    theme: classic
+    highlight: github
+    toc: true   
+    toc_depth: 2 
 ---
 
 # Wprowadzenie
