@@ -16,83 +16,60 @@ output:
 
 ## Cel Raportu
 
-Celem tego raportu jest analiza zbioru danych **apartaments_pl_2024_06**.  
-Aby to osiągnąć, dane zostaną oczyszczone, brakujące wartości uzupełnione, a następnie przeprowadzona zostanie analiza opisowa oraz wnioskowanie statystyczne wraz z wizualizacją wyników.  
+Celem tego raportu jest analiza zbioru danych **apartaments_pl_2024_06**.\
+Aby to osiągnąć, dane zostaną oczyszczone, brakujące wartości uzupełnione, a następnie przeprowadzona zostanie analiza opisowa oraz wnioskowanie statystyczne wraz z wizualizacją wyników.
 
-## Przegląd zbioru danych  
+## Przegląd zbioru danych
 
-Zbiór danych **apartaments_pl_2024_06** zawiera informacje o rynku nieruchomości w największych miastach Polski.  
-Koncentruje się na cenach nieruchomości, wielkości mieszkań, bliskości infrastruktury miejskiej oraz roku budowy.  
+Zbiór danych **apartaments_pl_2024_06** zawiera informacje o rynku nieruchomości w największych miastach Polski.\
+Koncentruje się na cenach nieruchomości, wielkości mieszkań, bliskości infrastruktury miejskiej oraz roku budowy.
 
-## Zmienne w zbiorze danych aparaments_pl_2024_06  
+## Zmienne w zbiorze danych aparaments_pl_2024_06
 
-Zbiór danych zawiera następujące zmienne:  
+Zbiór danych zawiera następujące zmienne:
 
-#### Zmienne opisujące lokalizację mieszkania:  
+#### Zmienne opisujące lokalizację mieszkania:
 
-**id** – Unikalny identyfikator każdej nieruchomości generowany komputerowo  
+**id** – Unikalny identyfikator każdej nieruchomości generowany komputerowo\
+**city** – Miasto, w którym znajduje się nieruchomość\
+**latitude** – Szerokość geograficzna\
+**longitude** – Długość geograficzna
 
-**city** – Miasto, w którym znajduje się nieruchomość  
+#### Zmienne opisujące cenę i status własności nieruchomości:
 
-**latitude** – Szerokość geograficzna  
+**price** – Cena nieruchomości **priceSquareMeter** - Cena za metr kwadratowy - zmienna dodana na potrzeby raportu **ownership** – Status własności nieruchomości
 
-**longitude** – Długość geograficzna  
+#### Zmienne opisujące typ i wielkość mieszkania:
 
-#### Zmienne opisujące cenę i status własności nieruchomości:  
+**type** – Typ budynku: blok mieszkalny, apartamentowiec, kamienica\
+**buildingMaterial** – Materiał użyty do budowy budynku\
+**condition** – Aktualny stan nieruchomości\
+**squareMeters** – Całkowita powierzchnia nieruchomości (w metrach kwadratowych)\
+**rooms** – Liczba pokoi w nieruchomości\
+**floor** – Piętro, na którym znajduje się nieruchomość\
+**floor count** – Całkowita liczba pięter w budynku
 
-**price** – Cena nieruchomości  
+#### Zmienne opisujące odległość od kluczowych udogodnień w mieście:
 
-**ownership** – Status własności nieruchomości  
+**centreDistance** – Odległość od centrum miasta\
+**poiCount** – Liczba punktów użyteczności publicznej w pobliżu nieruchomości\
+**schoolDistance** – Odległość do najbliższej szkoły\
+**clinicDistance** – Odległość do najbliższej przychodni medycznej\
+**postOfficeDistance** – Odległość do najbliższej poczty\
+**kindergartenDistance** – Odległość do najbliższego przedszkola\
+**restaurantDistance** – Odległość do najbliższej restauracji\
+**collegeDistance** – Odległość do najbliższego college’u/uniwersytetu\
+**pharmacyDistance** – Odległość do najbliższej apteki
 
-#### Zmienne opisujące typ i wielkość mieszkania:  
+#### Zmienne opisujące, czy nieruchomość lub budynek, w którym się znajduje, obejmuje określoną infrastrukturę:
 
-**type** – Typ budynku: blok mieszkalny, apartamentowiec, kamienica  
+**hasParkingSpace** – Czy nieruchomość posiada miejsce parkingowe (Tak/Nie)\
+**hasBalcony** – Czy nieruchomość posiada balkon (Tak/Nie)\
+**hasElevator** – Czy budynek posiada windę (Tak/Nie)\
+**hasSecurity** – Czy nieruchomość/budynek posiada zabezpieczenia (Tak/Nie)\
+**hasStorageRoom** – Czy nieruchomość posiada pomieszczenie gospodarcze (Tak/Nie)
 
-**buildingMaterial** – Materiał użyty do budowy budynku  
-
-**condition** – Aktualny stan nieruchomości  
-
-**squareMeters** – Całkowita powierzchnia nieruchomości (w metrach kwadratowych)  
-
-**rooms** – Liczba pokoi w nieruchomości  
-
-**floor** – Piętro, na którym znajduje się nieruchomość  
-
-**floor count** – Całkowita liczba pięter w budynku  
-
-#### Zmienne opisujące odległość od kluczowych udogodnień w mieście:  
-
-**centreDistance** – Odległość od centrum miasta  
-
-**poiCount** – Liczba punktów użyteczności publicznej w pobliżu nieruchomości  
-
-**schoolDistance** – Odległość do najbliższej szkoły  
-
-**clinicDistance** – Odległość do najbliższej przychodni medycznej  
-
-**postOfficeDistance** – Odległość do najbliższej poczty  
-
-**kindergartenDistance** – Odległość do najbliższego przedszkola  
-
-**restaurantDistance** – Odległość do najbliższej restauracji  
-
-**collegeDistance** – Odległość do najbliższego college’u/uniwersytetu  
-
-**pharmacyDistance** – Odległość do najbliższej apteki  
-
-#### Zmienne opisujące, czy nieruchomość lub budynek, w którym się znajduje, obejmuje określoną infrastrukturę:  
-
-**hasParkingSpace** – Czy nieruchomość posiada miejsce parkingowe (Tak/Nie)  
-
-**hasBalcony** – Czy nieruchomość posiada balkon (Tak/Nie)  
-
-**hasElevator** – Czy budynek posiada windę (Tak/Nie)  
-
-**hasSecurity** – Czy nieruchomość/budynek posiada zabezpieczenia (Tak/Nie)  
-
-**hasStorageRoom** – Czy nieruchomość posiada pomieszczenie gospodarcze (Tak/Nie)  
-
-## Czyszczenie i przetwarzanie danych  
+## Czyszczenie i przetwarzanie danych
 
 #### Installation of needed libraries and data
 
@@ -152,6 +129,8 @@ if (!require("psych")) install.packages("psych")
 library(psych)
 if (!require("ggstatsplot")) install.packages("ggstatsplot")
 library(ggstatsplot)
+if (!require("gtsummary")) install.packages("gtsummary")
+library(gtsummary)
 
 #data reading
 apartments <- read_csv("apartments_pl_2024_06.csv")
@@ -173,7 +152,6 @@ Otrzymany wykres pokazuje, że brakujące dane w zbiorze stanowią około 6,3% w
 
 Brakujące dane w zbiorze mogą wynikać z kilku czynników. Wysoki odsetek brakujących wartości w zmiennych condition i buildingMaterial sugeruje, że takie informacje często nie są ujawniane przez właścicieli nieruchomości lub w ogłoszeniach na portalach. Podobnie, luki w zmiennych **type**, **floor** i **buildYear** mogą wynikać z niekompletnych zapisów dotyczących starszych nieruchomości lub niespójności w sposobie raportowania danych w różnych miastach. W niektórych przypadkach szczegóły dotyczące nieruchomości mogą być celowo pomijane przez sprzedających, aby zwiększyć atrakcyjność ogłoszenia lub z powodu braku dokładnych informacji.
 
-
 ```{r, echo=TRUE, message=FALSE, warning=FALSE}
 str(apartments)
 
@@ -190,6 +168,7 @@ find_outliers_iqr <- function(x) {
 
 outliers_iqr <- lapply(numeric_cols, find_outliers_iqr)
 ```
+
 ```{r}
 # Wybór tylko zmiennych numerycznych
 numeric_cols <- apartments %>% select(where(is.numeric))
@@ -214,6 +193,7 @@ for (col in colnames(numeric_cols)) {
 }
 par(mfrow = c(1, 1))  # Powrót do domyślnego układu wykresów
 ```
+
 W Wyniku analizy zbioru danych, możemy zobaczyć, że dane apartments_pl_2024_06 zawierają wiele wartości odstających. Wartości odstające, możemy zaobserwować dla niemal wszystkich zmiennych. Szczególnymi przykładami może być zmienne: Price, collegeDistance oraz Centre Distance.
 
 ### Zastępowanie wartości odstających medianą
@@ -268,11 +248,6 @@ n_complete(czyste)  # Licznik prawidłowych wartości
 pct_miss(czyste)  # Procentowa ilość wartości NA w zbiorze danych
 
 ```
-
-##Rdzeń analizy
-
-Kluczową zmienną do analizy w zbiorze danych jest cena, ponieważ opisuje ona sytuację na polskim rynku mieszkaniowym, na którym oparty jest ten zbiór danych.
-
 ```{r, echo=TRUE, message=FALSE, warning=FALSE}
 descriptive_stats <- czyste %>%
   select(price) %>%
@@ -284,8 +259,6 @@ descriptive_stats <- czyste %>%
     Max = format(max(price, na.rm = TRUE), big.mark = ".", scientific = FALSE, digits = 0),
   
   )
-
-# Print the results
 print(descriptive_stats)
 skew_value <- skewness(czyste$price, na.rm = TRUE)
 kurt_value <- kurtosis(czyste$price, na.rm = TRUE)
@@ -295,6 +268,28 @@ print(paste("Kurtosis: ", kurt_value))
 ```
 
 Po odrzuceniu danych odstających otrzymany rozkład dla zmiennej price jest względnie równy. Skośność na poziomie 0,69 wskazuje na rozkład lekko prawostronnie skośny tzw. "Dłuższy ogon po prawej stronie".
+
+------------------------------------------------------------------------
+## Analiza Opisowa
+
+```{r descriptive-statistics, echo=TRUE, message=FALSE, warning=FALSE}
+czyste %>%
+  select(city, type, rooms, centreDistance, ownership, condition) %>%
+  tbl_summary(by = city) %>%
+  add_p() %>%
+  bold_labels()
+```
+
+Najwięcej ludzi mieszka w blokach w każdym mieście, około 60% mieszkań w każdym mieście, poza Lublinem i Radomiem gdzie te bloki stanowią około 85% budynków mieszkalnych w grupie badanej. Warszawa, Wrocław i Gdańsk to miasta, które posiadają widocznie największą ilość apartamentów około 24%, jest tak najprawdopodobniej dlatego, że apartamenty zreugły stawiane są w najbardziej rozwiniętych miastach a Warszawa, Wrocław i Gdańsk to centra biznesu w Polsce. Zaś Bydgosz Katowice i Styczeń mają najwięcej kamienic ~28%.
+
+Średnia liczba pokoi w mieszkaniach w Polskich miastach to 2 lub 3 pokoie. Miastami z największą ilością mieszkań 4 pokoiowych to Szczecin i Gdynia gdzie te stanowią około 20% wszystkich badanych w tych miastach mieszkań.
+
+W niemal każym mieście proporcja pomiędzy mieszkaniami klasy low i premium jest równa i stanowi prawie 50%. Dwoma miastami, które odchodzą od tej zależności są Szczecin i Rzeszów, gdzie mieszkania klasy premium stanowią około 62% badanych mieszkań.
+
+W grupie badanej średnio najdalej do centrum miasta mają mieszkańcy Warszawy i Gdańska najbliżej zaś mają mieszkańcy Radomia i Białegostoku. Są to dość intuicyjne wyniki z uwagi na to, że Warszawa jest dużym miastem a Radom i Białystok dość niewielkimi. W przypadku Gdańska, który z perspektywy zajmowanego obszaru jest średniej wielkości miastem, wysoką wartość współczynika odległość od centrum miasta możemy tłumaczyć położeniem starego miasta, które znajduje się na wschodzie miejskiej jednostki administracyjnej, duża zagęszczenie mieszkań jest jednak na zachód i południu.
+
+Kluczową zmienną do analizy w zbiorze danych jest cena, ponieważ opisuje ona sytuację na polskim rynku mieszkaniowym, na którym oparty jest ten zbiór danych.
+
 
 ```{r, echo=TRUE, message=FALSE, warning=FALSE}
 install.packages("psych")
@@ -323,10 +318,10 @@ knitr::kable(tabela,
   caption="Tabela cen mieszkań w Polskich miastach - ceny w PLN wg liczby pokoi.",
   col.names = c("Statystyka","1 pokój", "2 pokoje", "3 pokoje", "4 pokoje")) 
 ```
-##### Min i Max
-Najtańsze mieszkanie w oczyszczonej serii danych kosztuje 191.000 PLN najdroższe zaś 1.588.000. Najtańsze mieszkania dla wszystkich liczb pokoi kosztują poniżej 300.000 PLN. W przypadku najdroższych mieszkań jedynie w przypadku mieszkań 1 pokojowych cenna jest mniejsza od 1.000.000 PLN.
-Największa różnica pomiędzy najdroższym a najtańszym mieszkaniem występuję w przypadku mieszkań 2 pokojowych i wynosi 1.394.000 PLN jednak różnica dla mieszkań 3 i 4 pokojowych nie dużo mniejsza  i wynosi odpowiednio 1.340.000 PLN oraz 1.289.000 PLN. Najmniejsza zaś różnica jest w przypadku mieszkań 1 pokojowych i wynosi 779.000 PLN. Jednak są to wartości nominalne nie uwzględniające tego jak duże są pokoje. Poniższa tabela przedstawia metraż jaki mają badane przez nas skrajne obserwacje wraz z ceną za m^2.
 
+##### Min i Max
+
+Najtańsze mieszkanie w oczyszczonej serii danych kosztuje 191.000 PLN najdroższe zaś 1.588.000. Najtańsze mieszkania dla wszystkich liczb pokoi kosztują poniżej 300.000 PLN. W przypadku najdroższych mieszkań jedynie w przypadku mieszkań 1 pokojowych cenna jest mniejsza od 1.000.000 PLN. Największa różnica pomiędzy najdroższym a najtańszym mieszkaniem występuję w przypadku mieszkań 2 pokojowych i wynosi 1.394.000 PLN jednak różnica dla mieszkań 3 i 4 pokojowych nie dużo mniejsza i wynosi odpowiednio 1.340.000 PLN oraz 1.289.000 PLN. Najmniejsza zaś różnica jest w przypadku mieszkań 1 pokojowych i wynosi 779.000 PLN. Jednak są to wartości nominalne nie uwzględniające tego jak duże są pokoje. Poniższa tabela przedstawia metraż jaki mają badane przez nas skrajne obserwacje wraz z ceną za m\^2.
 
 ```{r, echo=TRUE, message=FALSE, warning=FALSE}
 skrajne_mieszkania <- czyste %>%
@@ -345,17 +340,26 @@ knitr::kable(skrajne_mieszkania,
              caption = "Tabela skrajnych mieszkań - ceny, metraż i koszt za m²",
              col.names = c("Liczba pokoi", "Cena (PLN)", "Powierzchnia (m²)", "Cena za m² (PLN)"))
 ```
-Mimo że największa dysproporcja w cenie była obserwowalna dla mieszkań z dwoma pokojami to największa różnica w cenie za m^2 jest widoczna w przypadku mieszkań z 3 pokojami i wynosi 24675,96 PLN dla wartości skrajnych, gdzie pozycją o drugiej największej różnicy są miezkania z 1 pokojem 21211,40 PLN
 
+Mimo że największa dysproporcja w cenie była obserwowalna dla mieszkań z dwoma pokojami to największa różnica w cenie za m\^2 jest widoczna w przypadku mieszkań z 3 pokojami i wynosi 24675,96 PLN dla wartości skrajnych, gdzie pozycją o drugiej największej różnicy są miezkania z 1 pokojem 21211,40 PLN
 
 ##### Średnia i Mediana
-Średnia cena mieszkań dla mieszkań o 2; 3 i 4 pokojach jest większa od mediany co sugeruje rozkład cen skośny prawostornnie oznaczao to, że mieszkania drogie znacznie wpływają na średnią.
 
-Na Potrzeby dalszej analizy dodajmy zmienną priceSquareMeter oznaczającą cenę za m^2 dla danego mieszkania.
+Średnia cena mieszkań dla mieszkań o 2; 3 i 4 pokojach jest większa od mediany co sugeruje rozkład cen skośny prawostornnie oznaczao to, że dla tych kategorii istnieją pojedyńcze bardzo drogie mieszkania, które znacząco wpływają na średnią.
+
+##### Odchylenie Standardowe
+
+Wartość odchylenia standardowego widocznie rośnie wraz z liczbą pokoi, oznacza to, że mieszkania z większą ilością pokoi (czyli z założenia mieszkania większe) mają bardziej zróżnicowane ceny, co jest zgodne z intuicją.
+
+Na Potrzeby dalszej analizy dodajmy zmienną priceSquareMeter oznaczającą cenę za m\^2 dla danego mieszkania.
+
 ```{r, echo=TRUE, message=FALSE, warning=FALSE}
 czyste <- czyste %>%
   mutate(priceSquareMeter = round(price / squareMeters, 2))
 ```
+------------------------------------------------------------------------
+
+## Wizualizacja Danych
 
 #### Aby przeanalizować stan polskiego rynku mieszkaniowego, apartamenty zostały pogrupowane w przedziały cenowe:
 
@@ -403,6 +407,7 @@ ggplot(price_counts, aes(x = price_category, y = n, fill = price_category)) +
 Wizualizacja pokazuje, w jakich przedziałach cenowych znajdują się apartamenty w zbiorze danych. Największy klaster apartamentów znajduje się w przedziale cenowym od 500 000 do 749 999 PLN, który obejmuje 40,2% obserwacji. Kolejne dwie kategorie z największą liczbą obserwacji to 750 000 do 999 999 PLN (24,7%) oraz 250 000 do 499 999 PLN (18,5%). Łącznie stanowią one 83,4% obserwacji.
 
 ##### Orginalne dane zawierały skrajne ceny mieszkań, poniższa tabela przedstawia dystrybucję orginalnych danych dla przyjętych pułapów cenowych.
+
 ```{r, echo=TRUE, message=FALSE, warning=FALSE}
 limits <- c(0, 250000, 500000, 750000, 1000000, 1250000, Inf)
 
@@ -421,7 +426,6 @@ knitr::kable(price_counts,
 
 Po odrzuceniu wartości odstających mieszkania o cenie wyższej niż 1.250.000 PLN stanowią 6,9% badanych mieszkań jednak uwzględniając wartości odstające mieszkania o cenie wyższej niż 1.250.000 PLN stanowiły 13,2%. Zmianie uległ również udział dla mieszkań w przedziale 500.000 PLN - 749.999 PLN, gdzie udział procentowy wynosił 33,9%, a po odrzuceniu wartości skrajnych udział wzrósł do 40,2%. W pozostałych przypadkach wartość pozostała bez zmian.
 
-
 ```{r, echo=TRUE, message=FALSE, warning=FALSE}
 ggplot(czyste, aes(x = city, y = priceSquareMeter)) +  
   geom_boxplot(aes(fill = city), alpha = 0.85) +  
@@ -436,7 +440,9 @@ ggplot(czyste, aes(x = city, y = squareMeters)) +
   theme(axis.text.x = element_blank(), axis.ticks.x = element_blank()) +  
   scale_y_continuous(labels = scales::label_number(big.mark = ".", decimal.mark = ",")) 
 ```
-Pierwszy wykres przedstawia rozkład cen za metr kwadratowy mieszkań w miastach. Największa ceną za metr kwadratowy należy do Warszawy z medianą na poziomie ok.17-18.000 PLN. Obok Warszawy znajdują się również Kraków, z medianą na poziomie ok.16.000 PLN, Gdańsk, z medianą na poziomie ok.14.000 PLN oraz Wrocław, również z medianą na poziomie ok.14.000 PLN. Najniższe wartości ceny za metr kwadratowy znajdują się w Częstochowie i Radomiu i wynoszą ok.7.000 PLN. Większa cena za metr jest również spowodowana licznymi przypadkami, w których cena metra kwadratowego jest dużo większa od innych mieszkań jak na przykład w Gdańsku, Gdyni, Krakowie, Warszawie czy Wrocławiu 
+
+Pierwszy wykres przedstawia rozkład cen za metr kwadratowy mieszkań w miastach. Największa ceną za metr kwadratowy należy do Warszawy z medianą na poziomie ok.17-18.000 PLN. Obok Warszawy znajdują się również Kraków, z medianą na poziomie ok.16.000 PLN, Gdańsk, z medianą na poziomie ok.14.000 PLN oraz Wrocław, również z medianą na poziomie ok.14.000 PLN. Najniższe wartości ceny za metr kwadratowy znajdują się w Częstochowie i Radomiu i wynoszą ok.7.000 PLN. Większa cena za metr jest również spowodowana licznymi przypadkami, w których cena metra kwadratowego jest dużo większa od innych mieszkań jak na przykład w Gdańsku, Gdyni, Krakowie, Warszawie czy Wrocławiu
+
 Drugi wykres ilustruje rozkład metrażu mieszkań w tych samych miastach. Tu sytuacja jest w miarę zbliżona, choć w miastach, gdzie ceny za metr kwadratwoy są wysokie metraż mieszkania jest większy. Mediana znajduje się głównie w przedziale 50-55 metrów kwadratowych.
 
 ```{r, echo=TRUE, message=FALSE, warning=FALSE}
@@ -476,51 +482,42 @@ Blisko 0% Własność udziałowa: Znikoma obecność opcji „udział” sugeruj
 ### Analiza mapy cieplnej
 
 ```{r, echo=TRUE, message=FALSE, warning=FALSE}
-# Compute correlation matrix for selected variables
 correlation_matrix <- cor(czyste %>% select(price, poiCount, squareMeters, rooms), 
                           use = "pairwise.complete.obs")
 
-# Plot correlation heatmap for key apartment features
 corrplot(correlation_matrix, method = "square", 
          tl.cex = 0.8, cl.cex = 0.8, 
          type = "upper", order = "hclust", 
          addCoef.col = "black", number.cex = 0.7,
          title = "Correlation Heatmap for Selected Variables", mar = c(0, 0, 2, 0)) 
 
-# Define relevant POI variables
 poi_vars <- c("schoolDistance", "clinicDistance", "postOfficeDistance", 
               "kindergartenDistance", "restaurantDistance", "collegeDistance", 
               "pharmacyDistance", "centreDistance", "price")
 
-# Ensure all selected variables exist in the dataset
 existing_poi_vars <- poi_vars[poi_vars %in% colnames(czyste)]
 
-# Compute correlation matrix for POI distances and price
 poi_correlation <- cor(czyste %>% select(all_of(existing_poi_vars)), 
                        use = "pairwise.complete.obs")
 
-# Plot POI correlation heatmap
 corrplot(poi_correlation, method = "square", 
          tl.cex = 0.8, cl.cex = 0.8, 
          type = "upper", order = "hclust", 
          addCoef.col = "black", number.cex = 0.7,
-         title = "POI Distance Correlations with Price", mar = c(0, 0, 2, 0)) 
+         title = "Mapa korelacji rozmiar mieszkania a cena", mar = c(0, 0, 2, 0)) 
 
-# Define correlation analysis function
 correlation_analysis <- function(data) {
-  required_columns <- c("price", "poiCount", "squareMeters", "rooms")
+  kolumny <- c("price", "priceSquareMeter", "squareMeters", "rooms")
   
-  # Ensure required columns exist
-  existing_columns <- required_columns[required_columns %in% names(data)]
+  existing_columns <- kolumny[kolumny %in% names(data)]
   
-  if (length(existing_columns) < length(required_columns)) {
+  if (length(existing_columns) < length(kolumny)) {
     stop("One or more required columns are missing from the dataset.")
   }
   
-  # Compute correlation values
   cor_matrix <- cor(data[, existing_columns], use = "pairwise.complete.obs")
   
-  # Create correlation heatmap
+  # Tworzenie mapy korelacji Heatmap
   corrplot(cor_matrix, 
            method = "color", 
            col = colorRampPalette(c("orange", "white", "navy"))(200), 
@@ -529,10 +526,8 @@ correlation_analysis <- function(data) {
            addCoef.col = "black", 
            tl.col = "black", 
            tl.srt = 45, 
-           title = "Correlation Heatmap")
+           title = "Mapa Korelacji Heatmap")
 }
-
-# Execute correlation analysis
 correlation_analysis(czyste)
 
 ```
@@ -543,7 +538,7 @@ Pierwszy wykres przedstawia korelację między wybranymi zmiennymi, takimi jak s
 
 Druga mapa cieplna przedstawia korelację między mieszkaniem a odległością do różnych udogodnień. Pokazuje ona, że zazwyczaj, jeśli mieszkanie znajduje się blisko jednej infrastruktury, to jest także blisko innej. Co jednak ciekawe, istnieje negatywna korelacja między ceną a odległością do kliniki oraz restauracji, co wskazuje, że im mniejsza odległość, tym wyższa cena mieszkania. Jest to szczególnie nietypowe w kontekście pozytywnej korelacji między ceną a odległością do centrum, co sugeruje, że im bliżej centrum znajduje się mieszkanie, tym jest tańsze. Wynik ten stoi w sprzeczności z intuicyjną hipotezą, że mieszkania w centrum miasta są najdroższe. Może to oznaczać, że w danych znajduje się znaczna liczba mieszkań na przedmieściach, które są warte więcej niż mieszkania w obszarach miejskich.
 
-Trzeci wykres przedstawia mapę cieplną mierzącą cenę w odniesieniu do liczby pokoi oraz powierzchni mieszkania. Naturalna hipoteza, że większe mieszkania i większa liczba pokoi oznaczają wyższą cenę, znajduje potwierdzenie, wykazując bardzo wysoką dodatnią korelację.
+Trzeci wykres przedstawia mapę cieplną mierzącą cenę w odniesieniu do zmiennych odnoszących się do rozmiaru mieszkania. Większość wyników jest niezaskakująca takich jak: Im więcej pokoi tym większy metraż im większy metraż tym większa cena, im więcej pokoi tym większa cena, im większy metraż tym mniejsza cena za m^2, im więcej pokoi tym mniejsza cena za m^2. Jednym wynikiem, który jest bardziej zaskakujący jest dodania korelacja na poziomie 0,66 zmiennych cena oraz cena za m^2 oznacza to, że droższe mieszkania mają wyższą cennę za metraż co może sugerować to, że znajdują się w bardzo dobrej lokalizacji albo są mieszkaniami wyższej jakości co za czym idzie sąbardziej porządane.
 
 Następnie tworzony jest wykres analizujący wpływ piętra, na którym znajduje się mieszkanie, na jego cenę.
 
@@ -589,7 +584,6 @@ average_price_by_type <- czyste %>%
 
 Bloki mieszkalne dominują w 62,5%, budynki mieszkalne stanowią 20,2%, a kamienice 17,3%. Znaczna liczba kamienic, które zazwyczaj są małe i niezbyt wysokie, w dużym stopniu przyczynia się do tego, że apartamenty w populacji znajdują się zazwyczaj na niższych piętrach.
 
-
 ```{r}
 ggplot(czyste, aes(x = buildingMaterial, y = price, fill = buildingMaterial)) +
   geom_boxplot(alpha = 0.8) +
@@ -608,9 +602,6 @@ ggplot(czyste, aes(x = factor(hasSecurity, labels = c("No Security", "Has Securi
 ```
 
 Dane pokazują, że ogólnie apartamenty zbudowane z cegły są droższe niż te wykonane z betonu, a apartamenty z ochroną są droższe niż te bez ochrony. Jednak w obu przypadkach istnieje wiele odstających wartości w populacji, co oznacza, że nie ma silnej korelacji między tymi dwoma czynnikami. Ważne dla analizy jest jednak to, że gęstość odstających wartości dla apartamentów bez ochrony sugeruje, że istnieją bardzo drogie apartamenty, które nie mają ochrony.
-
-
-
 
 ## Wnioskowanie Statystyczne
 
@@ -643,23 +634,28 @@ ggplot(data.frame(price = sort(czyste$price)), aes(x = price)) +
   theme_minimal()
 ```
 
-
 ------------------------------------------------------------------------
 
 ## Wyniki
+
 ##### Dane ogólne
-Analiza polskiego rynku nieruchomości na podstawie danych z czerwca 2024 roku pokazuje, że większość polskich apartamentów, bo 77,1%, mieści się w przedziale cenowym od 250 000 do 1 000 000 PLN. Rozkład cen jest wyraźnie przesunięty w prawo, co wskazuje na dużą liczbę apartamentów o wysokiej cenie. Ponad 13% nieruchomości przekracza cenę 1 250 000 PLN, co potwierdza obecność nieruchomości luksusowych.
+
+Analiza polskiego rynku nieruchomości na podstawie danych z czerwca 2024 roku pokazuje, że większość polskich apartamentów, bo 83,4%, mieści się w przedziale cenowym od 250 000 do 1 000 000 PLN. Nawet po odrzuceniu wartości odstających widzimy znaczny wpływ
 
 ##### Miasto, w którym znajduje się apartament, jest najważniejszym czynnikiem wpływającym na jego cenę
+
 Wykresy pudełkowe pokazują znaczną zmienność cen między miastami. Stan apartamentu nie wpływa silnie na cenę, co pokazuje wykres skrzypcowy. Analiza ANOVA ceny według miasta i stanu potwierdza, że różnice cenowe zależą bardziej od miasta niż od stanu technicznego apartamentu.
 
 ##### Odległość od miasta
+
 Negatywna korelacja między ceną a odległością od klinik/restauracji sugeruje, że apartamenty o wysokiej wartości znajdują się w rejonach o lepszej infrastrukturze miejskiej. Nieoczekiwany wynik: Apartamenty oddalone od centrum są droższe, co może wynikać z obecności luksusowych nieruchomości podmiejskich w zamkniętych osiedlach. Zbiór danych może być zniekształcony przez luksusowe inwestycje podmiejskie, a nie tradycyjne miejskie apartamenty.
 
 ### Ostateczne wnioski
-Polski rynek nieruchomości zdominowany jest przez apartamenty w średnim przedziale cenowym (500 000 - 999 999 PLN). W rynku luksusowym występują wartości odstające, które znacząco wpływają na miary statystyczne. Przewagę ma własność prywatna (prawie 90%), a spółdzielcze mieszkania stanowią niewielki odsetek. Stan apartamentu ma niewielki wpływ na cenę, co sugeruje, że bardziej liczy się lokalizacja. Bliskość do klinik i restauracji ma pozytywny związek z ceną, podczas gdy odległość od centrum miasta wykazuje nieoczekiwaną negatywną korelację. Nieoczekiwany efekt odległości od centrum sugeruje, że drogie nieruchomości mogą być skoncentrowane w podmiejskich, luksusowych inwestycjach, a nie w tradycyjnych centrach miast.
+
+Polski rynek nieruchomości zdominowany jest przez mieszkania w średnim przedziale cenowym (500 000 - 999 999 PLN). W rynku luksusowym występują wartości odstające, które znacząco wpływają na miary statystyczne.Najdroższymi miastami do życia są: Warszawa, Kraków i Gdańsk a najtańszymi: Częstochowa i Radom. Miastami z największymi mieszkaniami są Gdynia i Szczein. Stan apartamentu ma niewielki wpływ na cenę, co sugeruje, że bardziej liczy się lokalizacja niż typ premium. Bliskość do klinik i restauracji ma pozytywny związek z ceną, podczas gdy odległość od centrum miasta wykazuje nieoczekiwaną negatywną korelację. Nieoczekiwany efekt odległości od centrum sugeruje, że drogie nieruchomości mogą być skoncentrowane w podmiejskich, luksusowych inwestycjach, a nie w tradycyjnych centrach miast.
 
 ## Źródła
+
 ```{r}
 citation("ggstatsplot")
   
