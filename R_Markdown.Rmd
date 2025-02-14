@@ -481,7 +481,7 @@ Blisko 0% Własność udziałowa: Znikoma obecność opcji „udział” sugeruj
 
 ### Analiza mapy cieplnej
 
-```{r, echo=TRUE, message=FALSE, warning=FALSE}
+```{r Mapy Cieplne, echo=TRUE, message=FALSE, warning=FALSE}
 correlation_matrix <- cor(czyste %>% select(price, poiCount, squareMeters, rooms), 
                           use = "pairwise.complete.obs")
 
@@ -549,23 +549,18 @@ ggplot(czyste, aes(x = floor)) +
   scale_x_continuous(breaks = seq(min(czyste$floor, na.rm = TRUE), 
                                   max(czyste$floor, na.rm = TRUE), 
                                   by = 1)) 
-  labs(title = "Distribution of Apartments by Floor", x = "Floor", y = "Count")
-
-
-
+  labs(title = "Dystrybucja mieszkań z względu na piętro", x = "Piętro", y = "Licznik")
 ```
 
 Wykres pokazuje, że większość mieszkań znajduje się na niższych piętrach oraz że ogólnie liczba budynków mających mniej niż 5 pięter jest większa, co sugeruje, że większość budynków jest raczej niewielka.
 
 ##### Analizę pięter można lepiej zrozumieć poprzez analizę typów budynków w badanej populacji.
 
-```{r , echo=TRUE, message=FALSE, warning=FALSE}
-# Calculate the count and percentage of each building type
+```{r Dystrybucja typów budynków, echo=TRUE, message=FALSE, warning=FALSE}
 type_summary <- czyste %>%
   count(type) %>%
   mutate(percentage = n / sum(n) * 100)
 
-# Create a bar plot to show the count and percentage of each building type with fixed bar height
 ggplot(type_summary, aes(x = type, y = n)) +
   geom_bar(stat = "identity", fill = "steelblue", color = "black", width = 0.7) +
   geom_text(aes(label = paste0(round(percentage, 1), "%")), 
@@ -574,7 +569,6 @@ ggplot(type_summary, aes(x = type, y = n)) +
   labs(title = "Distribution of Building Types", x = "Building Type", y = "Count") +
   theme(axis.text.x = element_text(angle = 45, hjust = 1)) 
 
-# Calculate the average price for each building type
 average_price_by_type <- czyste %>%
   group_by(type) %>%
   summarise(avg_price = mean(price, na.rm = TRUE))
@@ -584,18 +578,17 @@ average_price_by_type <- czyste %>%
 
 Bloki mieszkalne dominują w 62,5%, budynki mieszkalne stanowią 20,2%, a kamienice 17,3%. Znaczna liczba kamienic, które zazwyczaj są małe i niezbyt wysokie, w dużym stopniu przyczynia się do tego, że apartamenty w populacji znajdują się zazwyczaj na niższych piętrach.
 
-```{r}
+```{r Wykresy Pudełkowe, echo=TRUE, message=FALSE, warning=FALSE}
 ggplot(czyste, aes(x = buildingMaterial, y = price, fill = buildingMaterial)) +
   geom_boxplot(alpha = 0.8) +
   theme_minimal() +
   coord_flip() +
-  labs(title = "Impact of Building Material on Price", x = "Building Material", y = "Price") 
+  labs(title = "Wpływ Materiału budowalnego na cennę", x = "Materiał Budowlany", y = "Cena") 
 
-#Impact of Security on Apartment Prices
 ggplot(czyste, aes(x = factor(hasSecurity, labels = c("No Security", "Has Security")), y = price)) +
   geom_boxplot(aes(fill = factor(hasSecurity)), alpha = 0.8) +
   theme_minimal() +
-  labs(title = "Impact of Security on Apartment Prices", x = "Security", y = "Price") +
+  labs(title = "Wpływ ochrony na cennęmieszkania", x = "Ochrona", y = "Cena") +
   scale_fill_manual(values = c("red", "green"))
 
 
@@ -605,7 +598,7 @@ Dane pokazują, że ogólnie apartamenty zbudowane z cegły są droższe niż te
 
 ## Wnioskowanie Statystyczne
 
-```{r}
+```{r Wnioskowanie Statystyczne, echo=TRUE, message=FALSE, warning=FALSE}
 if (!require(nortest)) install.packages("nortest")
 library(nortest)
 # Test Andersona-Darlinga
@@ -616,23 +609,25 @@ ggplot(czyste, aes(x = price)) +
   geom_histogram(aes(y = ..density..), bins = 50, fill = "skyblue", color = "black", alpha = 0.7) +
   geom_density(color = "red", linewidth = 1) +
   labs(title = "Histogram cen mieszkań z gęstością", x = "Cena", y = "Gęstość") +
-  theme_minimal()
+  theme_classic()
 
 # QQ-plot
 ggplot(data.frame(price = czyste$price), aes(sample = price)) +
   stat_qq(distribution = qnorm) +
   stat_qq_line(distribution = qnorm, color = "red", linewidth = 1) +
   labs(title = "QQ-plot dla cen mieszkań", x = "Kwantyle teoretyczne", y = "Kwantyle empiryczne") +
-  theme_minimal()
+  theme_linedraw()
 
-# Empiryczna funkcja rozkładu vs. normalna
-ggplot(data.frame(price = sort(czyste$price)), aes(x = price)) +
-  stat_ecdf(geom = "step", color = "blue", linewidth = 1) +
-  stat_function(fun = function(x) pnorm(x, mean = mean(czyste$price), sd = sd(czyste$price)), 
-                color = "red", linetype = "dashed", linewidth = 1) +
-  labs(title = "Empiryczna CDF vs. Normalna CDF", x = "Cena", y = "Prawdopodobieństwo") +
-  theme_minimal()
 ```
+##### Wykres gęstości rozkładu
+
+wykres przedstawia histogram gęstości rozkładu gdzie histogram pokazuje rozkłąd cen miszkańa czerwona linia gęstość ich rozłożenia. Po kształcie histogramu widzimy, że rozkład cen mieszkań jest prawostronie skośny co mogliśmy zaobserować przy wcześniejszej analizie analizie skośności i kurtozy.
+
+###### Wykres kwantyl-kwantyl
+
+Wykres porównuje empiryczny rozkład cen mieszkań do teoretycznego rozkładu normalnego. W lewym dolnym oraz w prawym górnym rogu wykresu widzimy znaczne odchylenia, co sugeruje, że ceny mieszkań nie podlegąją w pełni rozkładowi normalnemu.
+
+
 
 ------------------------------------------------------------------------
 
