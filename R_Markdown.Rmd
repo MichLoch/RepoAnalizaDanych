@@ -5,11 +5,7 @@ date: "`r format(Sys.Date(), '%d.%m.%Y')`"
 output:
   rmdformats::downcute:
     self_contained: true
-    thumbnails: true
-    lightbox: true
-    gallery: false
-    highlight: zenburn
-    css: "custom.css"
+    css: custom.css
 ---
 
 # Wprowadzenie
