@@ -2,12 +2,8 @@
 title: "Raport"
 author: "Michał Łochowski, Paweł Górdak, Dawid Drawc"
 date: "`r format(Sys.Date(), '%d.%m.%Y')`"
-output:
-  prettydoc::html_pretty:
-    theme: classic
-    highlight: github
-    toc: true   
-    toc_depth: 2 
+output: 
+  rmdformats::readthedown
 ---
 
 # Wprowadzenie
@@ -261,14 +257,23 @@ print(paste("Kurtosis: ", kurt_value))
 Po odrzuceniu danych odstających otrzymany rozkład dla zmiennej price jest względnie równy. Skośność na poziomie 0,69 wskazuje na rozkład lekko prawostronnie skośny tzw. "Dłuższy ogon po prawej stronie".
 
 ------------------------------------------------------------------------
+
 ## Analiza Opisowa
 
-```{r, echo=TRUE, message=FALSE, warning=FALSE}
-czyste %>%
+```{r, echo=FALSE, message=FALSE, warning=FALSE}
+library(dplyr)
+library(gtsummary)
+library(gt)
+
+summary_table <- czyste %>%
   select(city, type, rooms, centreDistance, ownership, condition) %>%
   tbl_summary(by = city) %>%
   add_p() %>%
-  bold_labels()
+  bold_labels() %>%
+  as_gt() %>%
+  tab_options(table.width = px(1200))
+summary_table
+
 ```
 
 Najwięcej ludzi mieszka w blokach w każdym mieście, około 60% mieszkań w każdym mieście, poza Lublinem i Radomiem gdzie te bloki stanowią około 85% budynków mieszkalnych w grupie badanej. Warszawa, Wrocław i Gdańsk to miasta, które posiadają widocznie największą ilość apartamentów około 24%, jest tak najprawdopodobniej dlatego, że apartamenty zreugły stawiane są w najbardziej rozwiniętych miastach a Warszawa, Wrocław i Gdańsk to centra biznesu w Polsce. Zaś Bydgosz Katowice i Styczeń mają najwięcej kamienic ~28%.
