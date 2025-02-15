@@ -289,7 +289,7 @@ knitr::kable(tabela,
 
 Najtańsze mieszkanie w oczyszczonej serii danych kosztuje 191.000 PLN najdroższe zaś 1.588.000. Najtańsze mieszkania dla wszystkich liczb pokoi kosztują poniżej 300.000 PLN. W przypadku najdroższych mieszkań jedynie w przypadku mieszkań 1 pokojowych cenna jest mniejsza od 1.000.000 PLN. Największa różnica pomiędzy najdroższym a najtańszym mieszkaniem występuję w przypadku mieszkań 2 pokojowych i wynosi 1.394.000 PLN jednak różnica dla mieszkań 3 i 4 pokojowych nie dużo mniejsza i wynosi odpowiednio 1.340.000 PLN oraz 1.289.000 PLN. Najmniejsza zaś różnica jest w przypadku mieszkań 1 pokojowych i wynosi 779.000 PLN. Jednak są to wartości nominalne nie uwzględniające tego jak duże są pokoje. Poniższa tabela przedstawia metraż jaki mają badane przez nas skrajne obserwacje wraz z ceną za m\^2.
 
-### 3.2.2 Porótnanie skrajnych mieszkań 
+### 3.2.2 Porótnanie skrajnych mieszkań
 
 ```{r Porównanie skrajnych mieszkań, echo=TRUE, message=FALSE, warning=FALSE}
 skrajne_mieszkania <- czyste %>%
@@ -397,6 +397,10 @@ Po odrzuceniu wartości odstających mieszkania o cenie wyższej niż 1.250.000 
 
 ## 4.2 Wizualizacja z względu na miasto.
 
+Kluczową zmienną w analizie rynku mieszkań jest zmienna **city**, która określa miasto, w którym znajduje się dana nieruchomość. Jest to istotne, ponieważ to aglomeracje miejskie gromadzą wokół siebie firmy i biznesy, które tworzą miejsca pracy. Dostępność miejsc pracy z kolei wpływa na ceny mieszkań, a ceny mieszkań mogą wpływać na atrakcyjność danego miasta dla firm i pracowników.
+
+### 4.2.1 Wykresy rozkładu cen oraz wielkości mieszkań z względu na miasto
+
 ```{r wykresy dla miast, echo=TRUE, message=FALSE, warning=FALSE}
 ggplot(czyste, aes(x = city, y = priceSquareMeter)) +  
   geom_boxplot(aes(fill = city), alpha = 0.85) +  
@@ -412,11 +416,17 @@ ggplot(czyste, aes(x = city, y = squareMeters)) +
   scale_y_continuous(labels = scales::label_number(big.mark = ".", decimal.mark = ",")) 
 ```
 
+### 4.2.2 Analiza wykresów
+
 Pierwszy wykres przedstawia rozkład cen za metr kwadratowy mieszkań w miastach. Największa ceną za metr kwadratowy należy do Warszawy z medianą na poziomie ok.17-18.000 PLN. Obok Warszawy znajdują się również Kraków, z medianą na poziomie ok.16.000 PLN, Gdańsk, z medianą na poziomie ok.14.000 PLN oraz Wrocław, również z medianą na poziomie ok.14.000 PLN. Najniższe wartości ceny za metr kwadratowy znajdują się w Częstochowie i Radomiu i wynoszą ok.7.000 PLN. Większa cena za metr jest również spowodowana licznymi przypadkami, w których cena metra kwadratowego jest dużo większa od innych mieszkań jak na przykład w Gdańsku, Gdyni, Krakowie, Warszawie czy Wrocławiu
 
 Drugi wykres ilustruje rozkład metrażu mieszkań w tych samych miastach. Tu sytuacja jest w miarę zbliżona, choć w miastach, gdzie ceny za metr kwadratwoy są wysokie metraż mieszkania jest większy. Mediana znajduje się głównie w przedziale 50-55 metrów kwadratowych.
 
-## Dystrubucja mieszkań z względu na zmienną ownership
+## 4.3 Dystrubucja mieszkań z względu na zmienną ownership
+
+Zmienna ownership, która przyjmuje wartości: condominium, cooperative oraz udział, jest istotna w analizie rynku mieszkań w Polsce, ponieważ różne formy własności mogą mieć duży wpływ na postrzeganą wartość nieruchomości oraz na preferencje nabywców. Mieszkania na własność (condominium) charakteryzują się pełną swobodą zarządzania nieruchomością, co często wiąże się z wyższą ceną, szczególnie w miastach o dużym popycie. Mieszkania spółdzielcze (cooperative) z kolei mogą być bardziej dostępne cenowo, ale mają ograniczenia związane z brakiem pełnej własności. Mieszkania na zasadzie udziału (udział) to forma, która często dotyczy nieruchomości, gdzie współwłaściciele dzielą się kosztami utrzymania, co wpływa na atrakcyjność tego typu mieszkań, szczególnie w dużych aglomeracjach. Zrozumienie rozkładu tych form własności pozwala lepiej ocenić, które typy mieszkań dominują na rynku i jak różne formy własności mogą wpływać na ceny nieruchomości w różnych miastach.
+
+### 4.3.1 wykres słupkowy dla dmiennej ownership
 
 ```{r Wykres Ownership, echo=TRUE, message=FALSE, warning=FALSE}
 ownership_palette <- c("maroon", "indianred", "darksalmon")  # Maroon → IndianRed → MistyRose
@@ -446,13 +456,19 @@ ggplot(ownership_counts, aes(x = ownership, y = n, fill = ownership)) +
 
 ```
 
-89,7% Własność kondominium: Dominacja kondominiów sugeruje, że większość osób w zbiorze danych posiada swoje mieszkania jako indywidualne jednostki z osobistym tytułem własności. Jest to zgodne z bardziej rynkowym modelem mieszkalnictwa, w którym podkreśla się prywatną własność, a właściciele mają pełną kontrolę nad swoimi lokalami.
+### 4.3.2 Analiza wykresu dal zmiennej ownership
 
-10,3% Własność spółdzielcza: Mniejszy odsetek osób mieszka w lokalach spółdzielczych, co wskazuje, że choć nadal istotna, ta forma własności jest mniej powszechna. Własność spółdzielcza jest często bardziej regulowana i może ograniczać pewne swobody, takie jak możliwość swobodnej sprzedaży lub wynajmu lokalu.
+89,7% Własność kondominium (condominium): Dominacja kondominiów sugeruje, że większość osób w zbiorze danych posiada swoje mieszkania jako indywidualne jednostki z osobistym tytułem własności. Jest to zgodne z bardziej rynkowym modelem mieszkalnictwa, w którym podkreśla się prywatną własność, a właściciele mają pełną kontrolę nad swoimi lokalami.
+
+10,3% Własność spółdzielcza (cooperative): Mniejszy odsetek osób mieszka w lokalach spółdzielczych, co wskazuje, że choć nadal istotna, ta forma własności jest mniej powszechna. Własność spółdzielcza jest często bardziej regulowana i może ograniczać pewne swobody, takie jak możliwość swobodnej sprzedaży lub wynajmu lokalu.
 
 Blisko 0% Własność udziałowa: Znikoma obecność opcji „udział” sugeruje, że ta forma własności jest rzadka lub może zanikać na polskim rynku mieszkaniowym. Może to wskazywać na odchodzenie od starszych, zbiorowych struktur własnościowych.
 
-## Analiza mapy cieplnej
+## 4.4 Mapa Cieplna
+
+W celu znalezienia korelacji między kluczowymi zmiennymi tworzymy wizualizację Mapy Cieplnej (eng. Heatmap).
+
+### 4.4.1 Wizualizacja Mapy Cieplnej
 
 ```{r Heatmap, echo=TRUE, message=FALSE, warning=FALSE}
 
@@ -502,13 +518,19 @@ correlation_analysis(czyste)
 
 ```
 
+### 4.4.2 Analiza map cieplnych
+
 Pierwsza wizualizacja przedstawia korelację między mieszkaniem a odległością do różnych udogodnień. Pokazuje ona, że zazwyczaj, jeśli mieszkanie znajduje się blisko jednej infrastruktury, to jest także blisko innej. Co jednak ciekawe, istnieje negatywna korelacja między ceną a odległością do kliniki oraz restauracji, co wskazuje, że im mniejsza odległość, tym wyższa cena mieszkania. Jest to szczególnie nietypowe w kontekście pozytywnej korelacji między ceną a odległością do centrum, co sugeruje, że im bliżej centrum znajduje się mieszkanie, tym jest tańsze. Wynik ten stoi w sprzeczności z intuicyjną hipotezą, że mieszkania w centrum miasta są najdroższe. Może to oznaczać, że w danych znajduje się znaczna liczba mieszkań na przedmieściach, które są warte więcej niż mieszkania w obszarach miejskich.
 
 Druga wizualizacja przedstawia mapę cieplną mierzącą cenę w odniesieniu do zmiennych odnoszących się do rozmiaru mieszkania. Większość wyników jest niezaskakująca takich jak: Im więcej pokoi tym większy metraż im większy metraż tym większa cena, im więcej pokoi tym większa cena, im większy metraż tym mniejsza cena za m\^2, im więcej pokoi tym mniejsza cena za m\^2. Jednym wynikiem, który jest bardziej zaskakujący jest dodania korelacja na poziomie 0,66 zmiennych cena oraz cena za m\^2 oznacza to, że droższe mieszkania mają wyższą cennę za metraż co może sugerować to, że znajdują się w bardzo dobrej lokalizacji albo są mieszkaniami wyższej jakości co za czym idzie sąbardziej porządane.
 
 Następnie tworzony jest wykres analizujący wpływ piętra, na którym znajduje się mieszkanie, na jego cenę.
 
-## Wizualizacja zmiennej floor
+## 4.5. Wizualizacja zmiennej floor oraz type
+
+W celu analizy polskiego rynku mieszkań badamy populację z względu na zmieną floor oraz type.
+
+### 4.5.1 Wykres Słupkowy dla zmiennej floor
 
 ```{r Wykres pięter, echo=TRUE, message=FALSE, warning=FALSE}
 ggplot(czyste, aes(x = floor)) +
@@ -517,12 +539,13 @@ ggplot(czyste, aes(x = floor)) +
   scale_x_continuous(breaks = seq(min(czyste$floor, na.rm = TRUE), 
                                   max(czyste$floor, na.rm = TRUE), 
                                   by = 1)) 
-  labs(title = "Dystrybucja mieszkań z względu na piętro", x = "Piętro", y = "Licznik")
 ```
+
+### 4.5.2 Analiza wykresu dla zmiennej floor
 
 Wykres pokazuje, że większość mieszkań znajduje się na niższych piętrach oraz że ogólnie liczba budynków mających mniej niż 5 pięter jest większa, co sugeruje, że większość budynków jest raczej niewielka.
 
-## Wizualizacja zmiennej type
+### 4.5.3 Wykres słupkowy dla zmiennej type
 
 ```{r Wykrest typów budynków, echo=TRUE, message=FALSE, warning=FALSE}
 type_summary <- czyste %>%
@@ -544,9 +567,15 @@ average_price_by_type <- czyste %>%
 
 ```
 
+### 4.5.4 Analiza wykresu dla zmiennej type
+
 Bloki mieszkalne dominują w 62,5%, budynki mieszkalne stanowią 20,2%, a kamienice 17,3%. Znaczna liczba kamienic, które zazwyczaj są małe i niezbyt wysokie, w dużym stopniu przyczynia się do tego, że apartamenty w populacji znajdują się zazwyczaj na niższych piętrach.
 
-## Wizualizacja zmiennych buildingMaterial oraz hasSecurity
+## 4.6 Wizualizacja zmiennych buildingMaterial oraz hasSecurity
+
+Analizujemy wpływ materiału oraz tego czy budynek posiada ochronę na cenę mieszkania.
+
+### 4.6.1 Wizualizacja Boxplot buildingMaterial x price oraz hasSecurity x price
 
 ```{r Wykresy Boxplot: Materiał; Ochrona, echo=TRUE, message=FALSE, warning=FALSE}
 ggplot(czyste, aes(x = buildingMaterial, y = price, fill = buildingMaterial)) +
@@ -565,11 +594,15 @@ ggplot(czyste, aes(x = factor(hasSecurity, labels = c("No Security", "Has Securi
 
 ```
 
+### 4.6.2 Analiza wykresów Boxplot buildingMaterial x price oraz hasSecurity x price
+
 Dane pokazują, że ogólnie apartamenty zbudowane z cegły są droższe niż te wykonane z betonu, a apartamenty z ochroną są droższe niż te bez ochrony. Jednak w obu przypadkach istnieje wiele odstających wartości w populacji, co oznacza, że nie ma silnej korelacji między tymi dwoma czynnikami. Ważne dla analizy jest jednak to, że gęstość odstających wartości dla apartamentów bez ochrony sugeruje, że istnieją bardzo drogie apartamenty, które nie mają ochrony.
 
-# Wnioskowanie Statystyczne
+# 5. Wnioskowanie Statystyczne
 
-## Przeprowadzania Testu Andersona-Darlinga
+Na potrzeby tego raportu testujemy hipotezę zerową, żeby sprawdzić czy zmienna price podlega rozkładowi normalnemu w tym celu przeprowadzamy Test Andersona-Darlinga.
+
+## 5.1 Przeprowadzanie Testu Andersona-Darlinga
 
 ```{r Wnioskowanie statystyczne Test Andersona-Darlinga, echo=TRUE, message=FALSE, warning=FALSE}
 if (!require(nortest)) install.packages("nortest")
@@ -594,39 +627,58 @@ ggplot(data.frame(price = czyste$price), aes(sample = price)) +
 
 ```
 
-### Wykres gęstości rozkładu
+### 5.2 Analiza wyników Testu Andersona-Darlinga
+
+Rezultatem kodu jest tabela z wynikiem Testu Andersona-Darlinga oraz 2 wykresy: wykres gęstości rozkładu oraz wykres kwantyl-kwantyl.
+
+### 5.2.1
+
+Wynikiem Testu Andersona-Darlinga jest współczynik A. Dla zmiennej Price wynosi on A=225,39.
+
+A = 0 oznacza, że dane idealnie pasują do rozkładu normalnego. Wartość A \> 0 wskazuje, że dane są coraz bardziej różne od rozkładu normalnego. 
+
+Wartość A = 225,39 jest bardzo wysoka, co sugeruje istotną różnicę między rozkładem próby a rozkładem normalnym.
+
+Wartość P na poziomie p=2,2e\^-16 czyli p<0,05 świadczy o tym, że możemy odrzucić hipotezę zerową.
+
+### 5.2.2 Analiza wykresu gęstości rozkładu
 
 wykres przedstawia histogram gęstości rozkładu gdzie histogram pokazuje rozkłąd cen miszkańa czerwona linia gęstość ich rozłożenia. Po kształcie histogramu widzimy, że rozkład cen mieszkań jest prawostronie skośny co mogliśmy zaobserować przy wcześniejszej analizie analizie skośności i kurtozy.
 
-### Wykres kwantyl-kwantyl
+### 5.2.3 Analiza Wykresu kwantyl-kwantyl
 
 Wykres porównuje empiryczny rozkład cen mieszkań do teoretycznego rozkładu normalnego. W lewym dolnym oraz w prawym górnym rogu wykresu widzimy znaczne odchylenia, co sugeruje, że ceny mieszkań nie podlegąją w pełni rozkładowi normalnemu.
 
-## Wnioski z testu Andersona-Darlinga:
+## 5.3 Wnioski z testu Andersona-Darlinga:
 
-Wartość p w teście Andersona-Darlinga jest na poziomie 2,2e\^-16 jest ona mniejsza niż 0,05, odrzucamy więc hipotezę zerową. Oznacza to, że dane nie pochodzą z rozkładu normalnego.
+Wartość A=225,39 świadczy o tym, że rozkład dla zmiennej price nie jest rozkładem normalnym
+Wartość p w teście Andersona-Darlinga jest na poziomie 2,2e\^-16, odrzucamy więc hipotezę zerową.
 
 ------------------------------------------------------------------------
 
-# Wyniki
+# 6. Wyniki
 
-###### Dane ogólne
+## 6.1 Dane ogólne
 
 Analiza polskiego rynku nieruchomości na podstawie danych z czerwca 2024 roku pokazuje, że większość polskich apartamentów, bo 83,4%, mieści się w przedziale cenowym od 250 000 do 1 000 000 PLN. Nawet po odrzuceniu wartości odstających widzimy znaczny wpływ
 
-###### Miasto, w którym znajduje się apartament, jest najważniejszym czynnikiem wpływającym na jego cenę
+## 6.2 Wpływ na rozmiaru mieszkania na cenę
+
+Zmiennymi o największym wpływie na cenę mieszkań są zmienne **rooms** oraz **squareMeters** jest to wynik przewidywalny i świadczy o normalnym w porównaniu do reszty świata stanie rynku.
+
+## 6.3 Wpływ Miasta na Cenę
 
 Wykresy pudełkowe pokazują znaczną zmienność cen między miastami. Stan apartamentu nie wpływa silnie na cenę, co pokazuje wykres skrzypcowy. Analiza ANOVA ceny według miasta i stanu potwierdza, że różnice cenowe zależą bardziej od miasta niż od stanu technicznego apartamentu.
 
-###### Odległość od miasta
+## 6.4 Odległość od miasta
 
 Negatywna korelacja między ceną a odległością od klinik/restauracji sugeruje, że apartamenty o wysokiej wartości znajdują się w rejonach o lepszej infrastrukturze miejskiej. Nieoczekiwany wynik: Apartamenty oddalone od centrum są droższe, co może wynikać z obecności luksusowych nieruchomości podmiejskich w zamkniętych osiedlach. Zbiór danych może być zniekształcony przez luksusowe inwestycje podmiejskie, a nie tradycyjne miejskie apartamenty.
 
-### Ostateczne wnioski
+## 6.5 Ostateczne wnioski
 
 Polski rynek nieruchomości zdominowany jest przez mieszkania w średnim przedziale cenowym (500 000 - 999 999 PLN). W rynku luksusowym występują wartości odstające, które znacząco wpływają na miary statystyczne.Najdroższymi miastami do życia są: Warszawa, Kraków i Gdańsk a najtańszymi: Częstochowa i Radom. Miastami z największymi mieszkaniami są Gdynia i Szczein. Stan apartamentu ma niewielki wpływ na cenę, co sugeruje, że bardziej liczy się lokalizacja niż typ premium. Bliskość do klinik i restauracji ma pozytywny związek z ceną, podczas gdy odległość od centrum miasta wykazuje nieoczekiwaną negatywną korelację. Nieoczekiwany efekt odległości od centrum sugeruje, że drogie nieruchomości mogą być skoncentrowane w podmiejskich, luksusowych inwestycjach, a nie w tradycyjnych centrach miast.
 
-# Źródła
+# 7. Bibliografia
 
 ```{r}
 citation("ggstatsplot")
