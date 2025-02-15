@@ -3,6 +3,7 @@ title: "Rynek mieszkań w Polsce"
 subtitle: "Analiza Danych Semestr Zima 2024"
 author: "Michał Łochowski, Paweł Górdak"
 date: "`r format(Sys.Date(), '%d.%m.%Y')`"
+institution: "Politechnika Gdańska, Wydział Zarządzania i Ekonomii"
 output: 
   rmdformats::readthedown
 ---
