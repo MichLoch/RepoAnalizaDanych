@@ -1,5 +1,5 @@
 ---
-title: "Raport"
+title: "Analiza Danych Semestr Zima 2024 - Raport o miszkaniach w polskich miastach"
 author: "Michał Łochowski, Paweł Górdak"
 date: "`r format(Sys.Date(), '%d.%m.%Y')`"
 output: 
@@ -76,57 +76,23 @@ knitr::opts_chunk$set(
 options(repos = c(CRAN = "https://cran.rstudio.com"))
 options(qwraps2_markup = "markdown")
 
-library(e1071)
-if (!require("naniar")) install.packages("naniar")  
-library(naniar)    
-if (!require("VIM")) install.packages("VIM")
-library(VIM)
-if (!require("mice")) install.packages("mice")
-library(mice)
-library(haven)
+packages <- c("naniar", "VIM", "mice", "haven", "frequency", "corrplot", 
+              "dplyr", "gtsummary", "gt", "ggpubr", "ggplot2", "scales", 
+              "knitr", "moments", "tidyverse", "kableExtra", "patchwork", 
+              "validate", "qwraps2", "DMwR2", "outliers", "arsenal", "papeR", 
+              "summarytools", "classInt", "pastecs", "psych", "ggstatsplot")
+
+for (pkg in packages) {
+  if (!require(pkg, character.only = TRUE)) {
+    install.packages(pkg)
+    library(pkg, character.only = TRUE)
+  }
+}
+
+# Additional packages that are used frequently
 library(frequency)
 library(corrplot)
-library(ggpubr) 
-library(ggplot2)
-library(scales)
-library(dplyr) 
-library(knitr)
-library(corrplot) 
-library(moments)
-library(dplyr)
-library(tidyverse)
-library(ggplot2)
-library(kableExtra)
-library(patchwork)
-install.packages("validate")
-library(validate)
-if (!require("qwraps2")) install.packages("qwraps2")
-library(qwraps2)
-if (!require("DMwR2")) install.packages("DMwR2")
-library(DMwR2)
-if (!require("outliers")) install.packages("outliers")
-library(outliers)
-if (!require("arsenal")) install.packages("arsenal")
-library(arsenal)
-if (!require("papeR")) install.packages("papeR")
-library(papeR)
-if (!require("summarytools")) install.packages("summarytools")
-library(summarytools)
-if (!require("classInt")) install.packages("classInt")
-library(classInt)
-if (!require("pastecs")) install.packages("pastecs")
-library(pastecs)
-if (!require("desctable")) install.packages("desctable")
-library(desctable)
-if (!require("frequency")) install.packages("frequency")
-library(frequency)
-if (!require("psych")) install.packages("psych")
-library(psych)
-if (!require("ggstatsplot")) install.packages("ggstatsplot")
-library(ggstatsplot)
-if (!require("gtsummary")) install.packages("gtsummary")
 library(gtsummary)
-
 #data reading
 apartments <- read_csv("apartments_pl_2024_06.csv")
 
@@ -163,7 +129,7 @@ find_outliers_iqr <- function(x) {
 outliers_iqr <- lapply(numeric_cols, find_outliers_iqr)
 ```
 
-```{r}
+```{r Wykresy wartości odstających, echo=TRUE, message=FALSE, warning=FALSE}
 numeric_cols <- apartments %>% select(where(is.numeric))
 
 # Funkcja do wykrywania wartości odstających metodą IQR
@@ -189,9 +155,9 @@ par(mfrow = c(1, 1))  # Powrót do domyślnego układu wykresów
 
 W Wyniku analizy zbioru danych, możemy zobaczyć, że dane apartments_pl_2024_06 zawierają wiele wartości odstających. Wartości odstające, możemy zaobserwować dla niemal wszystkich zmiennych. Szczególnymi przykładami może być zmienne: Price, collegeDistance oraz Centre Distance.
 
-### Zastępowanie wartości odstających medianą
+#### Zastępowanie wartości odstających medianą
 
-```{r, echo=TRUE, message=FALSE, warning=FALSE}
+```{r Zastępowanie wartości odstających, echo=TRUE, message=FALSE, warning=FALSE}
 # Lista zmiennych związanych z odległościami (distance)
 distance_vars <- c("centreDistance", "schoolDistance", "clinicDistance", 
                    "postOfficeDistance", "kindergartenDistance", 
@@ -205,7 +171,7 @@ replace_outliers_with_median <- function(x) {
   lower_bound <- Q1 - 1.5 * IQR
   upper_bound <- Q3 + 1.5 * IQR
   
-  # Zastąp wartości odstające medianą
+  # Zastępowanie wartości odstających medianą
   x[x < lower_bound | x > upper_bound] <- median(x, na.rm = TRUE)
   return(x)
 }
@@ -226,7 +192,7 @@ summary(apartments2)
 
 #### Wypełnianie brakujących danych używając funkcji hotdeck
 
-```{r, echo=TRUE, message=FALSE, warning=FALSE}
+```{r Liczniki NA, echo=TRUE, message=FALSE, warning=FALSE}
  czyste <- hotdeck(apartments2)
 
 n_miss(czyste)  # Licznik wartości NA
@@ -234,7 +200,7 @@ n_complete(czyste)  # Licznik prawidłowych wartości
 pct_miss(czyste)  # Procentowa ilość wartości NA w zbiorze danych
 
 ```
-```{r, echo=TRUE, message=FALSE, warning=FALSE}
+```{r Analiza Ceny, echo=TRUE, message=FALSE, warning=FALSE}
 descriptive_stats <- czyste %>%
   select(price) %>%
   summarise(
@@ -259,11 +225,7 @@ Po odrzuceniu danych odstających otrzymany rozkład dla zmiennej price jest wzg
 
 ## Analiza Opisowa
 
-```{r, echo=FALSE, message=FALSE, warning=FALSE}
-library(dplyr)
-library(gtsummary)
-library(gt)
-
+```{r Analzia opisowa 1, echo=FALSE, message=FALSE, warning=FALSE}
 summary_table <- czyste %>%
   select(city, type, rooms, centreDistance, ownership, condition) %>%
   tbl_summary(by = city) %>%
@@ -286,9 +248,7 @@ W grupie badanej średnio najdalej do centrum miasta mają mieszkańcy Warszawy 
 Kluczową zmienną do analizy w zbiorze danych jest cena, ponieważ opisuje ona sytuację na polskim rynku mieszkaniowym, na którym oparty jest ten zbiór danych.
 
 
-```{r, echo=TRUE, message=FALSE, warning=FALSE}
-install.packages("psych")
-library(psych)
+```{r Analiza opisowa 2, echo=TRUE, message=FALSE, warning=FALSE}
 raport <-
   list("Cena w PLN" =
        list("Min"= ~ min(price),
@@ -318,7 +278,7 @@ knitr::kable(tabela,
 
 Najtańsze mieszkanie w oczyszczonej serii danych kosztuje 191.000 PLN najdroższe zaś 1.588.000. Najtańsze mieszkania dla wszystkich liczb pokoi kosztują poniżej 300.000 PLN. W przypadku najdroższych mieszkań jedynie w przypadku mieszkań 1 pokojowych cenna jest mniejsza od 1.000.000 PLN. Największa różnica pomiędzy najdroższym a najtańszym mieszkaniem występuję w przypadku mieszkań 2 pokojowych i wynosi 1.394.000 PLN jednak różnica dla mieszkań 3 i 4 pokojowych nie dużo mniejsza i wynosi odpowiednio 1.340.000 PLN oraz 1.289.000 PLN. Najmniejsza zaś różnica jest w przypadku mieszkań 1 pokojowych i wynosi 779.000 PLN. Jednak są to wartości nominalne nie uwzględniające tego jak duże są pokoje. Poniższa tabela przedstawia metraż jaki mają badane przez nas skrajne obserwacje wraz z ceną za m\^2.
 
-```{r, echo=TRUE, message=FALSE, warning=FALSE}
+```{r Porównanie skrajnych mieszkań, echo=TRUE, message=FALSE, warning=FALSE}
 skrajne_mieszkania <- czyste %>%
   group_by(rooms) %>%
   filter(price == min(price) | price == max(price)) %>%
@@ -348,7 +308,7 @@ Wartość odchylenia standardowego widocznie rośnie wraz z liczbą pokoi, oznac
 
 Na Potrzeby dalszej analizy dodajmy zmienną priceSquareMeter oznaczającą cenę za m\^2 dla danego mieszkania.
 
-```{r, echo=TRUE, message=FALSE, warning=FALSE}
+```{r Dodawanie zmiennej priceSquareMeter, echo=TRUE, message=FALSE, warning=FALSE}
 czyste <- czyste %>%
   mutate(priceSquareMeter = round(price / squareMeters, 2))
 ```
@@ -356,13 +316,12 @@ czyste <- czyste %>%
 
 ## Wizualizacja Danych
 
-#### Aby przeanalizować stan polskiego rynku mieszkaniowego, apartamenty zostały pogrupowane w przedziały cenowe:
+###### Aby przeanalizować stan polskiego rynku mieszkaniowego, apartamenty zostały pogrupowane w przedziały cenowe:
 
-```{r, echo=TRUE, message=FALSE, warning=FALSE}
-# Define a custom color palette (light rose to maroon)
-custom_colors <- c("#FFC0CB", "#E9967A", "#CD5C5C", "#8B0000")  # Light pink to maroon
+```{r przedział cenowy, echo=TRUE, message=FALSE, warning=FALSE}
+# Paleta kolorów
+custom_colors <- c("mistyrose", "darksalmon", "indianred", "maroon")  # Light pink to maroon
 
-# Create the price categories
 limits <- c(0, 250000, 500000, 750000, 1000000, 1250000, Inf)
 labels <- c("<250,000 PLN", "250,000 - 499,999 PLN", "500,000 - 749,999 PLN", 
             "750,000 - 999,999 PLN", "1,000,000 - 1,249,999 PLN", "≥1,250,000 PLN")
@@ -370,15 +329,12 @@ labels <- c("<250,000 PLN", "250,000 - 499,999 PLN", "500,000 - 749,999 PLN",
 czyste$price_category <- cut(czyste$price, breaks = limits, labels = labels, 
                              include.lowest = TRUE, right = FALSE)
 
-# Count price categories
 price_counts <- czyste %>%
   count(price_category) %>%
   mutate(percentage = n / sum(n) * 100)
 
-# Set text placement
 fixed_label_height <- max(price_counts$n) * 1.05  
 
-# Plot with gradient fill
 ggplot(price_counts, aes(x = price_category, y = n, fill = price_category)) +
   geom_bar(stat = "identity", show.legend = FALSE) +
   geom_text(aes(label = paste0(round(percentage, 1), "%")), 
@@ -401,7 +357,7 @@ Wizualizacja pokazuje, w jakich przedziałach cenowych znajdują się apartament
 
 ###### Orginalne dane zawierały skrajne ceny mieszkań, poniższa tabela przedstawia dystrybucję orginalnych danych dla przyjętych pułapów cenowych.
 
-```{r, echo=TRUE, message=FALSE, warning=FALSE}
+```{r Przedział cenowy dla orginalnych danych, echo=TRUE, message=FALSE, warning=FALSE}
 limits <- c(0, 250000, 500000, 750000, 1000000, 1250000, Inf)
 
 apartments$price_category <- cut(apartments$price, breaks = limits, labels = labels, include.lowest = TRUE, right = FALSE)
@@ -418,8 +374,9 @@ knitr::kable(price_counts,
 ```
 
 Po odrzuceniu wartości odstających mieszkania o cenie wyższej niż 1.250.000 PLN stanowią 6,9% badanych mieszkań jednak uwzględniając wartości odstające mieszkania o cenie wyższej niż 1.250.000 PLN stanowiły 13,2%. Zmianie uległ również udział dla mieszkań w przedziale 500.000 PLN - 749.999 PLN, gdzie udział procentowy wynosił 33,9%, a po odrzuceniu wartości skrajnych udział wzrósł do 40,2%. W pozostałych przypadkach wartość pozostała bez zmian.
+#### Wizualizacja cen oraz rozmiarów mieskzań pomiędy miastami
 
-```{r, echo=TRUE, message=FALSE, warning=FALSE}
+```{r wykresy dla miast, echo=TRUE, message=FALSE, warning=FALSE}
 ggplot(czyste, aes(x = city, y = priceSquareMeter)) +  
   geom_boxplot(aes(fill = city), alpha = 0.85) +  
   theme_minimal() +  
@@ -438,31 +395,33 @@ Pierwszy wykres przedstawia rozkład cen za metr kwadratowy mieszkań w miastach
 
 Drugi wykres ilustruje rozkład metrażu mieszkań w tych samych miastach. Tu sytuacja jest w miarę zbliżona, choć w miastach, gdzie ceny za metr kwadratwoy są wysokie metraż mieszkania jest większy. Mediana znajduje się głównie w przedziale 50-55 metrów kwadratowych.
 
-```{r, echo=TRUE, message=FALSE, warning=FALSE}
-# Zlicz wystąpienia i oblicz procentowy udział dla zmiennej 'ownership'
+#### Dystrubucja mieszkań z względu na zmienną ownership - status własności
+
+```{r Wykres Ownership, echo=TRUE, message=FALSE, warning=FALSE}
+ownership_palette <- c("maroon", "indianred", "darksalmon")  # Maroon → IndianRed → MistyRose
+
 ownership_counts <- czyste %>%
   count(ownership) %>%
-  mutate(percentage = n / sum(n) * 100)  # Convert counts to percentages
+  mutate(percentage = n / sum(n) * 100)
 
-# Ustal stałą wysokość etykiet (dostosuj w zależności od zbioru danych)
-fixed_label_height <- max(ownership_counts$n) * 1.05  # Slightly above max count for visibility
+fixed_label_height <- max(ownership_counts$n) * 1.05  
 
-# Wizualizuj rozkład własności ('ownership')
 ggplot(ownership_counts, aes(x = ownership, y = n, fill = ownership)) +
   geom_bar(stat = "identity", show.legend = FALSE) +
   geom_text(aes(label = paste0(round(percentage, 1), "%")), 
-            vjust = 2, 
+            vjust = 1.5, 
             size = 5, 
             color = "black",
-            nudge_y = fixed_label_height - max(ownership_counts$n)) +  # Fixed height
-  scale_y_continuous(labels = scales::comma) +  # Format Y-axis with thousands separator
+            nudge_y = fixed_label_height - max(ownership_counts$n)) +  
+  scale_y_continuous(labels = scales::comma) +  
+  scale_fill_manual(values = ownership_palette) +
   theme_minimal() +
   labs(
-    title = "Dystrubucja typu własności mieszkań",
-    x = "Typ Właności",
-    y = "Licznik Mieszkań"
+    title = "Dystrybucja typu własności mieszkań",
+    x = "Typ Własności",
+    y = "Liczba Mieszkań"
   ) +
-  theme(axis.text.x = element_text(angle = 45, hjust = 1))  # Rotate labels for readability
+  theme(axis.text.x = element_text(angle = 45, hjust = 1)) 
 
 ```
 
@@ -474,7 +433,7 @@ Blisko 0% Własność udziałowa: Znikoma obecność opcji „udział” sugeruj
 
 ### Analiza mapy cieplnej
 
-```{r, echo=TRUE, message=FALSE, warning=FALSE}
+```{r Heatmap, echo=TRUE, message=FALSE, warning=FALSE}
 
   
 poi_vars <- c("schoolDistance", "clinicDistance", "postOfficeDistance", 
@@ -528,7 +487,7 @@ Druga wizualizacja przedstawia mapę cieplną mierzącą cenę w odniesieniu do 
 
 Następnie tworzony jest wykres analizujący wpływ piętra, na którym znajduje się mieszkanie, na jego cenę.
 
-```{r, echo=TRUE, message=FALSE, warning=FALSE}
+```{r Wykres pięter, echo=TRUE, message=FALSE, warning=FALSE}
 ggplot(czyste, aes(x = floor)) +
   geom_histogram(binwidth = 1, fill = "maroon", alpha = 0.7) +
   theme_minimal() +
@@ -542,7 +501,7 @@ Wykres pokazuje, że większość mieszkań znajduje się na niższych piętrach
 
 ###### Analizę pięter można lepiej zrozumieć poprzez analizę typów budynków w badanej populacji.
 
-```{r, echo=TRUE, message=FALSE, warning=FALSE}
+```{r Wykrest typów budynków, echo=TRUE, message=FALSE, warning=FALSE}
 type_summary <- czyste %>%
   count(type) %>%
   mutate(percentage = n / sum(n) * 100)
@@ -564,7 +523,7 @@ average_price_by_type <- czyste %>%
 
 Bloki mieszkalne dominują w 62,5%, budynki mieszkalne stanowią 20,2%, a kamienice 17,3%. Znaczna liczba kamienic, które zazwyczaj są małe i niezbyt wysokie, w dużym stopniu przyczynia się do tego, że apartamenty w populacji znajdują się zazwyczaj na niższych piętrach.
 
-```{r, echo=TRUE, message=FALSE, warning=FALSE}
+```{r Wykresy Boxplot: Materiał; Ochrona, echo=TRUE, message=FALSE, warning=FALSE}
 ggplot(czyste, aes(x = buildingMaterial, y = price, fill = buildingMaterial)) +
   geom_boxplot(alpha = 0.8) +
   theme_minimal() +
@@ -585,11 +544,12 @@ Dane pokazują, że ogólnie apartamenty zbudowane z cegły są droższe niż te
 
 ## Wnioskowanie Statystyczne
 
-```{r, echo=TRUE, message=FALSE, warning=FALSE}
+```{r Wnioskowanie statystyczne Test Andersona-Darlinga, echo=TRUE, message=FALSE, warning=FALSE}
 if (!require(nortest)) install.packages("nortest")
 library(nortest)
 # Test Andersona-Darlinga
 ad_test <- ad.test(czyste$price)
+print(ad_test)
 
 # Histogram z gęstością rozkładu
 ggplot(czyste, aes(x = price)) +
@@ -615,6 +575,11 @@ wykres przedstawia histogram gęstości rozkładu gdzie histogram pokazuje rozk�
 
 Wykres porównuje empiryczny rozkład cen mieszkań do teoretycznego rozkładu normalnego. W lewym dolnym oraz w prawym górnym rogu wykresu widzimy znaczne odchylenia, co sugeruje, że ceny mieszkań nie podlegąją w pełni rozkładowi normalnemu.
 
+#### Wnioski z testu Andersona-Darlinga:
+
+Wartość p w teście Andersona-Darlinga jest na poziomie 2,2e^-16 jest ona mniejsza niż 0,05, odrzucamy więc hipotezę zerową.
+Oznacza to, że dane nie pochodzą z rozkładu normalnego.
+
 ------------------------------------------------------------------------
 
 ## Wyniki
@@ -639,5 +604,17 @@ Polski rynek nieruchomości zdominowany jest przez mieszkania w średnim przedzi
 
 ```{r}
 citation("ggstatsplot")
-  
+citation("mice")
+citation("naniar")
+citation("VIM")
+citation("psych")
+citation("corrplot")
+citation("gtsummary")
+citation("arsenal")
+citation("summarytools")
+citation("classInt")
+citation("qwraps2")
+citation("pastecs")
+citation("desctable")
+citation("ggpubr")
 ```
