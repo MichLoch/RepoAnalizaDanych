@@ -65,9 +65,8 @@ Zbiór danych zawiera następujące zmienne:
 
 ## Czyszczenie i przetwarzanie danych
 
-#### Instalowanie potrzebnych biblitoek oraz zbioru danych
-
-```{r setup1, include=FALSE}
+```{r Raport setup, include=FALSE}
+# Instalowanie potrzebnych bibliotek oraz zbioru danych
 knitr::opts_chunk$set(
 	echo = TRUE,
 	message = FALSE,
