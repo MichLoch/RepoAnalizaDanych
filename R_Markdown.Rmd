@@ -22,18 +22,18 @@ Koncentruje się na cenach nieruchomości, wielkości mieszkań, bliskości infr
 
 Zbiór danych zawiera następujące zmienne:
 
-#### Zmienne opisujące lokalizację mieszkania:
+###### Zmienne opisujące lokalizację mieszkania:
 
 **id** – Unikalny identyfikator każdej nieruchomości generowany komputerowo\
 **city** – Miasto, w którym znajduje się nieruchomość\
 **latitude** – Szerokość geograficzna\
 **longitude** – Długość geograficzna
 
-#### Zmienne opisujące cenę i status własności nieruchomości:
+###### Zmienne opisujące cenę i status własności nieruchomości:
 
 **price** – Cena nieruchomości **priceSquareMeter** - Cena za metr kwadratowy - zmienna dodana na potrzeby raportu **ownership** – Status własności nieruchomości
 
-#### Zmienne opisujące typ i wielkość mieszkania:
+###### Zmienne opisujące typ i wielkość mieszkania:
 
 **type** – Typ budynku: blok mieszkalny, apartamentowiec, kamienica\
 **buildingMaterial** – Materiał użyty do budowy budynku\
@@ -43,7 +43,7 @@ Zbiór danych zawiera następujące zmienne:
 **floor** – Piętro, na którym znajduje się nieruchomość\
 **floor count** – Całkowita liczba pięter w budynku
 
-#### Zmienne opisujące odległość od kluczowych udogodnień w mieście:
+###### Zmienne opisujące odległość od kluczowych udogodnień w mieście:
 
 **centreDistance** – Odległość od centrum miasta\
 **poiCount** – Liczba punktów użyteczności publicznej w pobliżu nieruchomości\
@@ -55,7 +55,7 @@ Zbiór danych zawiera następujące zmienne:
 **collegeDistance** – Odległość do najbliższego college’u/uniwersytetu\
 **pharmacyDistance** – Odległość do najbliższej apteki
 
-#### Zmienne opisujące, czy nieruchomość lub budynek, w którym się znajduje, obejmuje określoną infrastrukturę:
+###### Zmienne opisujące, czy nieruchomość lub budynek, w którym się znajduje, obejmuje określoną infrastrukturę:
 
 **hasParkingSpace** – Czy nieruchomość posiada miejsce parkingowe (Tak/Nie)\
 **hasBalcony** – Czy nieruchomość posiada balkon (Tak/Nie)\
@@ -314,7 +314,7 @@ knitr::kable(tabela,
   col.names = c("Statystyka","1 pokój", "2 pokoje", "3 pokoje", "4 pokoje")) 
 ```
 
-##### Min i Max
+###### Min i Max
 
 Najtańsze mieszkanie w oczyszczonej serii danych kosztuje 191.000 PLN najdroższe zaś 1.588.000. Najtańsze mieszkania dla wszystkich liczb pokoi kosztują poniżej 300.000 PLN. W przypadku najdroższych mieszkań jedynie w przypadku mieszkań 1 pokojowych cenna jest mniejsza od 1.000.000 PLN. Największa różnica pomiędzy najdroższym a najtańszym mieszkaniem występuję w przypadku mieszkań 2 pokojowych i wynosi 1.394.000 PLN jednak różnica dla mieszkań 3 i 4 pokojowych nie dużo mniejsza i wynosi odpowiednio 1.340.000 PLN oraz 1.289.000 PLN. Najmniejsza zaś różnica jest w przypadku mieszkań 1 pokojowych i wynosi 779.000 PLN. Jednak są to wartości nominalne nie uwzględniające tego jak duże są pokoje. Poniższa tabela przedstawia metraż jaki mają badane przez nas skrajne obserwacje wraz z ceną za m\^2.
 
@@ -338,11 +338,11 @@ knitr::kable(skrajne_mieszkania,
 
 Mimo że największa dysproporcja w cenie była obserwowalna dla mieszkań z dwoma pokojami to największa różnica w cenie za m\^2 jest widoczna w przypadku mieszkań z 3 pokojami i wynosi 24675,96 PLN dla wartości skrajnych, gdzie pozycją o drugiej największej różnicy są miezkania z 1 pokojem 21211,40 PLN
 
-##### Średnia i Mediana
+###### Średnia i Mediana
 
 Średnia cena mieszkań dla mieszkań o 2; 3 i 4 pokojach jest większa od mediany co sugeruje rozkład cen skośny prawostornnie oznaczao to, że dla tych kategorii istnieją pojedyńcze bardzo drogie mieszkania, które znacząco wpływają na średnią.
 
-##### Odchylenie Standardowe
+###### Odchylenie Standardowe
 
 Wartość odchylenia standardowego widocznie rośnie wraz z liczbą pokoi, oznacza to, że mieszkania z większą ilością pokoi (czyli z założenia mieszkania większe) mają bardziej zróżnicowane ceny, co jest zgodne z intuicją.
 
@@ -401,7 +401,7 @@ ggplot(price_counts, aes(x = price_category, y = n, fill = price_category)) +
 
 Wizualizacja pokazuje, w jakich przedziałach cenowych znajdują się apartamenty w zbiorze danych. Największy klaster apartamentów znajduje się w przedziale cenowym od 500 000 do 749 999 PLN, który obejmuje 40,2% obserwacji. Kolejne dwie kategorie z największą liczbą obserwacji to 750 000 do 999 999 PLN (24,7%) oraz 250 000 do 499 999 PLN (18,5%). Łącznie stanowią one 83,4% obserwacji.
 
-##### Orginalne dane zawierały skrajne ceny mieszkań, poniższa tabela przedstawia dystrybucję orginalnych danych dla przyjętych pułapów cenowych.
+###### Orginalne dane zawierały skrajne ceny mieszkań, poniższa tabela przedstawia dystrybucję orginalnych danych dla przyjętych pułapów cenowych.
 
 ```{r, echo=TRUE, message=FALSE, warning=FALSE}
 limits <- c(0, 250000, 500000, 750000, 1000000, 1250000, Inf)
@@ -542,7 +542,7 @@ ggplot(czyste, aes(x = floor)) +
 
 Wykres pokazuje, że większość mieszkań znajduje się na niższych piętrach oraz że ogólnie liczba budynków mających mniej niż 5 pięter jest większa, co sugeruje, że większość budynków jest raczej niewielka.
 
-##### Analizę pięter można lepiej zrozumieć poprzez analizę typów budynków w badanej populacji.
+###### Analizę pięter można lepiej zrozumieć poprzez analizę typów budynków w badanej populacji.
 
 ```{r, echo=TRUE, message=FALSE, warning=FALSE}
 type_summary <- czyste %>%
@@ -608,7 +608,7 @@ ggplot(data.frame(price = czyste$price), aes(sample = price)) +
 
 ```
 
-##### Wykres gęstości rozkładu
+###### Wykres gęstości rozkładu
 
 wykres przedstawia histogram gęstości rozkładu gdzie histogram pokazuje rozkłąd cen miszkańa czerwona linia gęstość ich rozłożenia. Po kształcie histogramu widzimy, że rozkład cen mieszkań jest prawostronie skośny co mogliśmy zaobserować przy wcześniejszej analizie analizie skośności i kurtozy.
 
@@ -616,21 +616,19 @@ wykres przedstawia histogram gęstości rozkładu gdzie histogram pokazuje rozk�
 
 Wykres porównuje empiryczny rozkład cen mieszkań do teoretycznego rozkładu normalnego. W lewym dolnym oraz w prawym górnym rogu wykresu widzimy znaczne odchylenia, co sugeruje, że ceny mieszkań nie podlegąją w pełni rozkładowi normalnemu.
 
-
-
 ------------------------------------------------------------------------
 
 ## Wyniki
 
-##### Dane ogólne
+###### Dane ogólne
 
 Analiza polskiego rynku nieruchomości na podstawie danych z czerwca 2024 roku pokazuje, że większość polskich apartamentów, bo 83,4%, mieści się w przedziale cenowym od 250 000 do 1 000 000 PLN. Nawet po odrzuceniu wartości odstających widzimy znaczny wpływ
 
-##### Miasto, w którym znajduje się apartament, jest najważniejszym czynnikiem wpływającym na jego cenę
+###### Miasto, w którym znajduje się apartament, jest najważniejszym czynnikiem wpływającym na jego cenę
 
 Wykresy pudełkowe pokazują znaczną zmienność cen między miastami. Stan apartamentu nie wpływa silnie na cenę, co pokazuje wykres skrzypcowy. Analiza ANOVA ceny według miasta i stanu potwierdza, że różnice cenowe zależą bardziej od miasta niż od stanu technicznego apartamentu.
 
-##### Odległość od miasta
+###### Odległość od miasta
 
 Negatywna korelacja między ceną a odległością od klinik/restauracji sugeruje, że apartamenty o wysokiej wartości znajdują się w rejonach o lepszej infrastrukturze miejskiej. Nieoczekiwany wynik: Apartamenty oddalone od centrum są droższe, co może wynikać z obecności luksusowych nieruchomości podmiejskich w zamkniętych osiedlach. Zbiór danych może być zniekształcony przez luksusowe inwestycje podmiejskie, a nie tradycyjne miejskie apartamenty.
 
