@@ -1,5 +1,5 @@
 ---
-title: "Analiza Danych Semestr Zima 2024\ Raport o miszkaniach w polskich miastach"
+title: "Analiza Danych Semestr Zima 2024\n Raport o miszkaniach w polskich miastach"
 author: "Michał Łochowski, Paweł Górdak"
 date: "`r format(Sys.Date(), '%d.%m.%Y')`"
 output: 
@@ -199,6 +199,7 @@ n_complete(czyste)  # Licznik prawidłowych wartości
 pct_miss(czyste)  # Procentowa ilość wartości NA w zbiorze danych
 
 ```
+
 ```{r Analiza Ceny, echo=TRUE, message=FALSE, warning=FALSE}
 descriptive_stats <- czyste %>%
   select(price) %>%
@@ -236,7 +237,7 @@ summary_table
 
 ```
 
-Najwięcej ludzi mieszka w blokach w każdym mieście, około 60% mieszkań w każdym mieście, poza Lublinem i Radomiem gdzie te bloki stanowią około 85% budynków mieszkalnych w grupie badanej. Warszawa, Wrocław i Gdańsk to miasta, które posiadają widocznie największą ilość apartamentów około 24%, jest tak najprawdopodobniej dlatego, że apartamenty zreugły stawiane są w najbardziej rozwiniętych miastach a Warszawa, Wrocław i Gdańsk to centra biznesu w Polsce. Zaś Bydgosz Katowice i Styczeń mają najwięcej kamienic ~28%.
+Najwięcej ludzi mieszka w blokach w każdym mieście, około 60% mieszkań w każdym mieście, poza Lublinem i Radomiem gdzie te bloki stanowią około 85% budynków mieszkalnych w grupie badanej. Warszawa, Wrocław i Gdańsk to miasta, które posiadają widocznie największą ilość apartamentów około 24%, jest tak najprawdopodobniej dlatego, że apartamenty zreugły stawiane są w najbardziej rozwiniętych miastach a Warszawa, Wrocław i Gdańsk to centra biznesu w Polsce. Zaś Bydgosz Katowice i Styczeń mają najwięcej kamienic \~28%.
 
 Średnia liczba pokoi w mieszkaniach w Polskich miastach to 2 lub 3 pokoie. Miastami z największą ilością mieszkań 4 pokoiowych to Szczecin i Gdynia gdzie te stanowią około 20% wszystkich badanych w tych miastach mieszkań.
 
@@ -245,7 +246,6 @@ W niemal każym mieście proporcja pomiędzy mieszkaniami klasy low i premium je
 W grupie badanej średnio najdalej do centrum miasta mają mieszkańcy Warszawy i Gdańska najbliżej zaś mają mieszkańcy Radomia i Białegostoku. Są to dość intuicyjne wyniki z uwagi na to, że Warszawa jest dużym miastem a Radom i Białystok dość niewielkimi. W przypadku Gdańska, który z perspektywy zajmowanego obszaru jest średniej wielkości miastem, wysoką wartość współczynika odległość od centrum miasta możemy tłumaczyć położeniem starego miasta, które znajduje się na wschodzie miejskiej jednostki administracyjnej, duża zagęszczenie mieszkań jest jednak na zachód i południu.
 
 Kluczową zmienną do analizy w zbiorze danych jest cena, ponieważ opisuje ona sytuację na polskim rynku mieszkaniowym, na którym oparty jest ten zbiór danych.
-
 
 ```{r Analiza opisowa 2, echo=TRUE, message=FALSE, warning=FALSE}
 raport <-
@@ -311,6 +311,7 @@ Na Potrzeby dalszej analizy dodajmy zmienną priceSquareMeter oznaczającą cen�
 czyste <- czyste %>%
   mutate(priceSquareMeter = round(price / squareMeters, 2))
 ```
+
 ------------------------------------------------------------------------
 
 ## Wizualizacja Danych
@@ -372,8 +373,7 @@ knitr::kable(price_counts,
              col.names = c("Przedział cenowy", "Liczba mieszkań", "Procentowy udział (%)"))
 ```
 
-Po odrzuceniu wartości odstających mieszkania o cenie wyższej niż 1.250.000 PLN stanowią 6,9% badanych mieszkań jednak uwzględniając wartości odstające mieszkania o cenie wyższej niż 1.250.000 PLN stanowiły 13,2%. Zmianie uległ również udział dla mieszkań w przedziale 500.000 PLN - 749.999 PLN, gdzie udział procentowy wynosił 33,9%, a po odrzuceniu wartości skrajnych udział wzrósł do 40,2%. W pozostałych przypadkach wartość pozostała bez zmian.
-#### Wizualizacja cen oraz rozmiarów mieskzań pomiędy miastami
+Po odrzuceniu wartości odstających mieszkania o cenie wyższej niż 1.250.000 PLN stanowią 6,9% badanych mieszkań jednak uwzględniając wartości odstające mieszkania o cenie wyższej niż 1.250.000 PLN stanowiły 13,2%. Zmianie uległ również udział dla mieszkań w przedziale 500.000 PLN - 749.999 PLN, gdzie udział procentowy wynosił 33,9%, a po odrzuceniu wartości skrajnych udział wzrósł do 40,2%. W pozostałych przypadkach wartość pozostała bez zmian. \#### Wizualizacja cen oraz rozmiarów mieskzań pomiędy miastami
 
 ```{r wykresy dla miast, echo=TRUE, message=FALSE, warning=FALSE}
 ggplot(czyste, aes(x = city, y = priceSquareMeter)) +  
@@ -482,7 +482,7 @@ correlation_analysis(czyste)
 
 Pierwsza wizualizacja przedstawia korelację między mieszkaniem a odległością do różnych udogodnień. Pokazuje ona, że zazwyczaj, jeśli mieszkanie znajduje się blisko jednej infrastruktury, to jest także blisko innej. Co jednak ciekawe, istnieje negatywna korelacja między ceną a odległością do kliniki oraz restauracji, co wskazuje, że im mniejsza odległość, tym wyższa cena mieszkania. Jest to szczególnie nietypowe w kontekście pozytywnej korelacji między ceną a odległością do centrum, co sugeruje, że im bliżej centrum znajduje się mieszkanie, tym jest tańsze. Wynik ten stoi w sprzeczności z intuicyjną hipotezą, że mieszkania w centrum miasta są najdroższe. Może to oznaczać, że w danych znajduje się znaczna liczba mieszkań na przedmieściach, które są warte więcej niż mieszkania w obszarach miejskich.
 
-Druga wizualizacja przedstawia mapę cieplną mierzącą cenę w odniesieniu do zmiennych odnoszących się do rozmiaru mieszkania. Większość wyników jest niezaskakująca takich jak: Im więcej pokoi tym większy metraż im większy metraż tym większa cena, im więcej pokoi tym większa cena, im większy metraż tym mniejsza cena za m^2, im więcej pokoi tym mniejsza cena za m^2. Jednym wynikiem, który jest bardziej zaskakujący jest dodania korelacja na poziomie 0,66 zmiennych cena oraz cena za m^2 oznacza to, że droższe mieszkania mają wyższą cennę za metraż co może sugerować to, że znajdują się w bardzo dobrej lokalizacji albo są mieszkaniami wyższej jakości co za czym idzie sąbardziej porządane.
+Druga wizualizacja przedstawia mapę cieplną mierzącą cenę w odniesieniu do zmiennych odnoszących się do rozmiaru mieszkania. Większość wyników jest niezaskakująca takich jak: Im więcej pokoi tym większy metraż im większy metraż tym większa cena, im więcej pokoi tym większa cena, im większy metraż tym mniejsza cena za m\^2, im więcej pokoi tym mniejsza cena za m\^2. Jednym wynikiem, który jest bardziej zaskakujący jest dodania korelacja na poziomie 0,66 zmiennych cena oraz cena za m\^2 oznacza to, że droższe mieszkania mają wyższą cennę za metraż co może sugerować to, że znajdują się w bardzo dobrej lokalizacji albo są mieszkaniami wyższej jakości co za czym idzie sąbardziej porządane.
 
 Następnie tworzony jest wykres analizujący wpływ piętra, na którym znajduje się mieszkanie, na jego cenę.
 
@@ -576,8 +576,7 @@ Wykres porównuje empiryczny rozkład cen mieszkań do teoretycznego rozkładu n
 
 #### Wnioski z testu Andersona-Darlinga:
 
-Wartość p w teście Andersona-Darlinga jest na poziomie 2,2e^-16 jest ona mniejsza niż 0,05, odrzucamy więc hipotezę zerową.
-Oznacza to, że dane nie pochodzą z rozkładu normalnego.
+Wartość p w teście Andersona-Darlinga jest na poziomie 2,2e\^-16 jest ona mniejsza niż 0,05, odrzucamy więc hipotezę zerową. Oznacza to, że dane nie pochodzą z rozkładu normalnego.
 
 ------------------------------------------------------------------------
 
