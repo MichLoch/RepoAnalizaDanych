@@ -1,5 +1,6 @@
 ---
-title: "Analiza Danych Semestr Zima 2024\n Raport o miszkaniach w polskich miastach"
+title: "Analiza Danych Semestr Zima 2024\n 
+Raport o miszkaniach w polskich miastach"
 author: "Michał Łochowski, Paweł Górdak"
 date: "`r format(Sys.Date(), '%d.%m.%Y')`"
 output: 
@@ -101,7 +102,7 @@ apartments <- read_csv("apartments_pl_2024_06.csv")
 
 ## 2.1 Wizualizacja brakujących danych używając mapy brakujących danych.
 
-```{r, echo=TRUE, message=FALSE, warning=FALSE}
+```{r Mapa oraz wykres brakujących danych, echo=TRUE, message=FALSE, warning=FALSE}
 # Mapa brakujących danych
 vis_miss(apartments)
 
@@ -115,7 +116,7 @@ Brakujące dane w zbiorze mogą wynikać z kilku czynników. Wysoki odsetek brak
 
 ### 2.1.1 Szukanie wartości odstających
 
-```{r, echo=TRUE, message=FALSE, warning=FALSE}
+```{r Wartości odstające, echo=TRUE, message=FALSE, warning=FALSE}
 str(apartments)
 
 numeric_cols <- apartments %>% select(where(is.numeric))
@@ -680,7 +681,7 @@ Polski rynek nieruchomości zdominowany jest przez mieszkania w średnim przedzi
 
 # 7. Bibliografia
 
-```{r}
+```{r Bibligorafia}
 citation("ggstatsplot")
 citation("mice")
 citation("naniar")
