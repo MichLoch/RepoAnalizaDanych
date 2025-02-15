@@ -1,5 +1,5 @@
 ---
-title: "Raport o mieszkaniach w polskich miastach"
+title: "Rynek mieszkań w Polsce"
 subtitle: "Analiza Danych Semestr Zima 2024"
 author: "Michał Łochowski, Paweł Górdak"
 date: "`r format(Sys.Date(), '%d.%m.%Y')`"
