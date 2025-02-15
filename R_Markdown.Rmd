@@ -63,7 +63,7 @@ Zbiór danych zawiera następujące zmienne:
 **hasSecurity** – Czy nieruchomość/budynek posiada zabezpieczenia (Tak/Nie)\
 **hasStorageRoom** – Czy nieruchomość posiada pomieszczenie gospodarcze (Tak/Nie)
 
-## Czyszczenie i przetwarzanie danych
+# Czyszczenie i przetwarzanie danych
 
 ```{r Raport setup, include=FALSE}
 # Instalowanie potrzebnych bibliotek oraz zbioru danych
@@ -222,7 +222,7 @@ Po odrzuceniu danych odstających otrzymany rozkład dla zmiennej price jest wzg
 
 ------------------------------------------------------------------------
 
-## Analiza Opisowa
+# Analiza Opisowa
 
 ```{r Analzia opisowa 1, echo=FALSE, message=FALSE, warning=FALSE}
 summary_table <- czyste %>%
@@ -581,7 +581,7 @@ Oznacza to, że dane nie pochodzą z rozkładu normalnego.
 
 ------------------------------------------------------------------------
 
-## Wyniki
+# Wyniki
 
 ###### Dane ogólne
 
@@ -599,7 +599,7 @@ Negatywna korelacja między ceną a odległością od klinik/restauracji sugeruj
 
 Polski rynek nieruchomości zdominowany jest przez mieszkania w średnim przedziale cenowym (500 000 - 999 999 PLN). W rynku luksusowym występują wartości odstające, które znacząco wpływają na miary statystyczne.Najdroższymi miastami do życia są: Warszawa, Kraków i Gdańsk a najtańszymi: Częstochowa i Radom. Miastami z największymi mieszkaniami są Gdynia i Szczein. Stan apartamentu ma niewielki wpływ na cenę, co sugeruje, że bardziej liczy się lokalizacja niż typ premium. Bliskość do klinik i restauracji ma pozytywny związek z ceną, podczas gdy odległość od centrum miasta wykazuje nieoczekiwaną negatywną korelację. Nieoczekiwany efekt odległości od centrum sugeruje, że drogie nieruchomości mogą być skoncentrowane w podmiejskich, luksusowych inwestycjach, a nie w tradycyjnych centrach miast.
 
-## Źródła
+# Źródła
 
 ```{r}
 citation("ggstatsplot")
