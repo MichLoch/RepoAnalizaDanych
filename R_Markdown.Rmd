@@ -359,28 +359,26 @@ czyste <- czyste %>%
 #### Aby przeanalizować stan polskiego rynku mieszkaniowego, apartamenty zostały pogrupowane w przedziały cenowe:
 
 ```{r, echo=TRUE, message=FALSE, warning=FALSE}
+# Define a custom color palette (light rose to maroon)
+custom_colors <- c("#FFC0CB", "#E9967A", "#CD5C5C", "#8B0000")  # Light pink to maroon
+
+# Create the price categories
 limits <- c(0, 250000, 500000, 750000, 1000000, 1250000, Inf)
-
 labels <- c("<250,000 PLN", "250,000 - 499,999 PLN", "500,000 - 749,999 PLN", 
-  "750,000 - 999,999 PLN", "1,000,000 - 1,249,999 PLN", "≥1,250,000 PLN")
+            "750,000 - 999,999 PLN", "1,000,000 - 1,249,999 PLN", "≥1,250,000 PLN")
 
-czyste$price_category <- cut(
-  czyste$price, 
-  breaks = limits, 
-  labels = labels, 
-  include.lowest = TRUE, 
-  right = FALSE
-)
+czyste$price_category <- cut(czyste$price, breaks = limits, labels = labels, 
+                             include.lowest = TRUE, right = FALSE)
 
-for (i in 1:length(labels)) {
-  czyste[paste0("in_range_", i)] <- ifelse(czyste$price_category == labels[i], 1, 0)
-}
-
+# Count price categories
 price_counts <- czyste %>%
   count(price_category) %>%
-  mutate(percentage = n / sum(n) * 100)  
+  mutate(percentage = n / sum(n) * 100)
 
-fixed_label_height <- max(price_counts$n) * 1.05  # Slightly above max count for visibility
+# Set text placement
+fixed_label_height <- max(price_counts$n) * 1.05  
+
+# Plot with gradient fill
 ggplot(price_counts, aes(x = price_category, y = n, fill = price_category)) +
   geom_bar(stat = "identity", show.legend = FALSE) +
   geom_text(aes(label = paste0(round(percentage, 1), "%")), 
@@ -388,15 +386,15 @@ ggplot(price_counts, aes(x = price_category, y = n, fill = price_category)) +
             size = 5, 
             color = "black",
             nudge_y = fixed_label_height - max(price_counts$n)) +  
-  scale_y_continuous(labels = scales::comma) +  
+  scale_y_continuous(labels = comma) +  
+  scale_fill_manual(values = colorRampPalette(custom_colors)(length(labels))) +  # Gradient fill
   theme_minimal() +
   labs(
     title = "Rozkład cen apartamentów",
     x = "Przedział cenowy",
     y = "Liczba apartamentów"
   ) +
-  theme(axis.text.x = element_text(angle = 45, hjust = 1))  
-
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
 ```
 
 Wizualizacja pokazuje, w jakich przedziałach cenowych znajdują się apartamenty w zbiorze danych. Największy klaster apartamentów znajduje się w przedziale cenowym od 500 000 do 749 999 PLN, który obejmuje 40,2% obserwacji. Kolejne dwie kategorie z największą liczbą obserwacji to 750 000 do 999 999 PLN (24,7%) oraz 250 000 do 499 999 PLN (18,5%). Łącznie stanowią one 83,4% obserwacji.
@@ -552,7 +550,7 @@ type_summary <- czyste %>%
 ggplot(type_summary, aes(x = type, y = n)) +
   geom_bar(stat = "identity", fill = "maroon", color = "black", width = 0.7) +
   geom_text(aes(label = paste0(round(percentage, 1), "%")), 
-            vjust = 0.5, hjust = 0.5, size = 5, color = "black") +  # Center the percentage
+            vjust = 2, hjust = 0.5, size = 5, color = "black") +  # Center the percentage
   theme_minimal() +
   labs(title = "Distribution of Building Types", x = "Building Type", y = "Count") +
   theme(axis.text.x = element_text(angle = 45, hjust = 1)) 
