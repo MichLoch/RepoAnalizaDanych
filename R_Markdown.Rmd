@@ -182,7 +182,7 @@ outliers_iqr <- lapply(numeric_cols, find_outliers_iqr)
 # Wizualizacja wartości odstających za pomocą boxplotów dla każdej zmiennej numerycznej
 par(mfrow = c(3, 3))  # Układ wykresów (3x3)
 for (col in colnames(numeric_cols)) {
-  boxplot(numeric_cols[[col]], main = col, col = "lightsalmon", border = "maroon", outline = TRUE)
+  boxplot(numeric_cols[[col]], main = col, col = "black", border = "maroon", outline = TRUE)
 }
 par(mfrow = c(1, 1))  # Powrót do domyślnego układu wykresów
 ```
@@ -487,7 +487,7 @@ existing_poi_vars <- poi_vars[poi_vars %in% colnames(czyste)]
 poi_correlation <- cor(czyste %>% select(all_of(existing_poi_vars)), use = "pairwise.complete.obs")
 
 # Custom color palette using maroon and lightsalmon
-custom_palette <- colorRampPalette(c("lightsalmon", "white", "maroon"))(200)
+custom_palette <- colorRampPalette(c("mistyrose", "white", "maroon"))(200)
 
 # Generate the correlation plot with the new colors
 corrplot(poi_correlation, 
@@ -512,7 +512,7 @@ correlation_analysis <- function(data) {
   # Tworzenie mapy korelacji Heatmap
   corrplot(cor_matrix, 
            method = "color", 
-           col = colorRampPalette(c("lightsalmon", "white", "maroon"))(200), 
+           col = colorRampPalette(c("mistyrose", "white", "maroon"))(200), 
            type = "upper", 
            order = "hclust", 
            addCoef.col = "black", 
@@ -572,13 +572,13 @@ ggplot(czyste, aes(x = buildingMaterial, y = price, fill = buildingMaterial)) +
   theme_minimal() +
   coord_flip() +
   labs(title = "Wpływ Materiału budowalnego na cennę", x = "Materiał Budowlany", y = "Cena") +
-  scale_fill_manual(values = c("maroon", "lightsalmon"))
+  scale_fill_manual(values = c("maroon", "mistyrose"))
 
 ggplot(czyste, aes(x = factor(hasSecurity, labels = c("No Security", "Has Security")), y = price)) +
   geom_boxplot(aes(fill = factor(hasSecurity)), alpha = 0.8) +
   theme_minimal() +
   labs(title = "Wpływ ochrony na cennęmieszkania", x = "Ochrona", y = "Cena") +
-  scale_fill_manual(values = c("maroon", "lightsalmon"))
+  scale_fill_manual(values = c("maroon", "mistyrose"))
 
 
 ```
@@ -595,7 +595,7 @@ ad_test <- ad.test(czyste$price)
 
 # Histogram z gęstością rozkładu
 ggplot(czyste, aes(x = price)) +
-  geom_histogram(aes(y = ..density..), bins = 50, fill = "lightsalmon", color = "black", alpha = 0.7) +
+  geom_histogram(aes(y = ..density..), bins = 50, fill = "mistyrose", color = "black", alpha = 0.7) +
   geom_density(color = "maroon", linewidth = 1) +
   labs(title = "Histogram cen mieszkań z gęstością", x = "Cena", y = "Gęstość") +
   theme_classic()
