@@ -6,34 +6,34 @@ output:
   rmdformats::readthedown
 ---
 
-# Wprowadzenie
+# 1. Wprowadzenie
 
-## Cel Raportu
+## 1.1 Cel Raportu
 
 Celem tego raportu jest analiza zbioru danych **apartaments_pl_2024_06**.\
 Aby to osiągnąć, dane zostaną oczyszczone, brakujące wartości uzupełnione, a następnie przeprowadzona zostanie analiza opisowa oraz wnioskowanie statystyczne wraz z wizualizacją wyników.
 
-## Przegląd zbioru danych
+## 1.2 Przegląd zbioru danych
 
 Zbiór danych **apartaments_pl_2024_06** zawiera informacje o rynku nieruchomości w największych miastach Polski.\
 Koncentruje się na cenach nieruchomości, wielkości mieszkań, bliskości infrastruktury miejskiej oraz roku budowy.
 
-## Zmienne w zbiorze danych aparaments_pl_2024_06
+### 1.2.1 Zmienne w zbiorze danych aparaments_pl_2024_06
 
 Zbiór danych zawiera następujące zmienne:
 
-###### Zmienne opisujące lokalizację mieszkania:
+###### 1.2.1.1 Zmienne opisujące lokalizację mieszkania:
 
 **id** – Unikalny identyfikator każdej nieruchomości generowany komputerowo\
 **city** – Miasto, w którym znajduje się nieruchomość\
 **latitude** – Szerokość geograficzna\
 **longitude** – Długość geograficzna
 
-###### Zmienne opisujące cenę i status własności nieruchomości:
+###### 1.2.1.2 Zmienne opisujące cenę i status własności nieruchomości:
 
 **price** – Cena nieruchomości **priceSquareMeter** - Cena za metr kwadratowy - zmienna dodana na potrzeby raportu **ownership** – Status własności nieruchomości
 
-###### Zmienne opisujące typ i wielkość mieszkania:
+###### 1.2.1.3 Zmienne opisujące typ i wielkość mieszkania:
 
 **type** – Typ budynku: blok mieszkalny, apartamentowiec, kamienica\
 **buildingMaterial** – Materiał użyty do budowy budynku\
@@ -43,7 +43,7 @@ Zbiór danych zawiera następujące zmienne:
 **floor** – Piętro, na którym znajduje się nieruchomość\
 **floor count** – Całkowita liczba pięter w budynku
 
-###### Zmienne opisujące odległość od kluczowych udogodnień w mieście:
+###### 1.2.1.4 Zmienne opisujące odległość od kluczowych udogodnień w mieście:
 
 **centreDistance** – Odległość od centrum miasta\
 **poiCount** – Liczba punktów użyteczności publicznej w pobliżu nieruchomości\
@@ -55,7 +55,7 @@ Zbiór danych zawiera następujące zmienne:
 **collegeDistance** – Odległość do najbliższego college’u/uniwersytetu\
 **pharmacyDistance** – Odległość do najbliższej apteki
 
-###### Zmienne opisujące, czy nieruchomość lub budynek, w którym się znajduje, obejmuje określoną infrastrukturę:
+###### 1.2.1.5 Zmienne opisujące, czy nieruchomość lub budynek, w którym się znajduje, obejmuje określoną infrastrukturę:
 
 **hasParkingSpace** – Czy nieruchomość posiada miejsce parkingowe (Tak/Nie)\
 **hasBalcony** – Czy nieruchomość posiada balkon (Tak/Nie)\
@@ -63,7 +63,9 @@ Zbiór danych zawiera następujące zmienne:
 **hasSecurity** – Czy nieruchomość/budynek posiada zabezpieczenia (Tak/Nie)\
 **hasStorageRoom** – Czy nieruchomość posiada pomieszczenie gospodarcze (Tak/Nie)
 
-# Czyszczenie i przetwarzanie danych
+# 2. Czyszczenie i przetwarzanie danych
+
+W celu przeanalizowania danych z zbioru apartaments_pl_2024_06 zbiór zostaje oczyszczony z braków danych oraz zostaje pozbawiony wartości odstających.
 
 ```{r Raport setup, include=FALSE}
 # Instalowanie potrzebnych bibliotek oraz zbioru danych
@@ -97,7 +99,7 @@ apartments <- read_csv("apartments_pl_2024_06.csv")
 
 ```
 
-#### Wizualizacja brakujących danych używając mapy brakujących danych.
+## 2.1 Wizualizacja brakujących danych używając mapy brakujących danych.
 
 ```{r, echo=TRUE, message=FALSE, warning=FALSE}
 # Mapa brakujących danych
@@ -110,6 +112,8 @@ gg_miss_upset(apartments, nsets = 3)
 Otrzymany wykres pokazuje, że brakujące dane w zbiorze stanowią około 6,3% wszystkich danych. Większość brakujących wartości pochodzi z zmiennej condition, której braki wynoszą 74%, oraz **material**, gdzie braki sięgają 41%. Znaczące deficyty danych można również zauważyć w zmiennych: **type**, **floor** oraz **buildYear**, które zawierają odpowiednio 20%, 17% i 16% brakujących wartości.
 
 Brakujące dane w zbiorze mogą wynikać z kilku czynników. Wysoki odsetek brakujących wartości w zmiennych condition i buildingMaterial sugeruje, że takie informacje często nie są ujawniane przez właścicieli nieruchomości lub w ogłoszeniach na portalach. Podobnie, luki w zmiennych **type**, **floor** i **buildYear** mogą wynikać z niekompletnych zapisów dotyczących starszych nieruchomości lub niespójności w sposobie raportowania danych w różnych miastach. W niektórych przypadkach szczegóły dotyczące nieruchomości mogą być celowo pomijane przez sprzedających, aby zwiększyć atrakcyjność ogłoszenia lub z powodu braku dokładnych informacji.
+
+### 2.1.1 Szukanie wartości odstających
 
 ```{r, echo=TRUE, message=FALSE, warning=FALSE}
 str(apartments)
@@ -154,7 +158,7 @@ par(mfrow = c(1, 1))  # Powrót do domyślnego układu wykresów
 
 W Wyniku analizy zbioru danych, możemy zobaczyć, że dane apartments_pl_2024_06 zawierają wiele wartości odstających. Wartości odstające, możemy zaobserwować dla niemal wszystkich zmiennych. Szczególnymi przykładami może być zmienne: Price, collegeDistance oraz Centre Distance.
 
-#### Zastępowanie wartości odstających medianą
+## 2.2 Zastępowanie wartości odstających medianą
 
 ```{r Zastępowanie wartości odstających, echo=TRUE, message=FALSE, warning=FALSE}
 # Lista zmiennych związanych z odległościami (distance)
@@ -189,7 +193,7 @@ cat("\nStatystyki dla przetworzonego zbioru danych (apartments2):\n")
 summary(apartments2)
 ```
 
-#### Wypełnianie brakujących danych używając funkcji hotdeck
+## 2.3 Wypełnianie brakujących danych używając funkcji hotdeck
 
 ```{r Liczniki NA, echo=TRUE, message=FALSE, warning=FALSE}
  czyste <- hotdeck(apartments2)
@@ -223,7 +227,13 @@ Po odrzuceniu danych odstających otrzymany rozkład dla zmiennej price jest wzg
 
 ------------------------------------------------------------------------
 
-# Analiza Opisowa
+# 3. Analiza Opisowa
+
+Kluczowymi zmiennymi dla zbioru danych apartaments_pl_2024_06 są zmienne: **price**, **city**, **type**, **rooms**, **squareMeters**, **centreDistance**, **ownership**, **condition**. Na potrzeby tego raportu dogłębna i rzeczowa analiza zostanie przeprowadzona właśnie dla tych zmiennych.
+
+## 3.1 Analiza kluczowych zmiennych
+
+### 3.1.1 Tabela dystrybucji dla zmiennej City
 
 ```{r Analzia opisowa 1, echo=FALSE, message=FALSE, warning=FALSE}
 summary_table <- czyste %>%
@@ -246,6 +256,8 @@ W niemal każym mieście proporcja pomiędzy mieszkaniami klasy low i premium je
 W grupie badanej średnio najdalej do centrum miasta mają mieszkańcy Warszawy i Gdańska najbliżej zaś mają mieszkańcy Radomia i Białegostoku. Są to dość intuicyjne wyniki z uwagi na to, że Warszawa jest dużym miastem a Radom i Białystok dość niewielkimi. W przypadku Gdańska, który z perspektywy zajmowanego obszaru jest średniej wielkości miastem, wysoką wartość współczynika odległość od centrum miasta możemy tłumaczyć położeniem starego miasta, które znajduje się na wschodzie miejskiej jednostki administracyjnej, duża zagęszczenie mieszkań jest jednak na zachód i południu.
 
 Kluczową zmienną do analizy w zbiorze danych jest cena, ponieważ opisuje ona sytuację na polskim rynku mieszkaniowym, na którym oparty jest ten zbiór danych.
+
+## 3.2 Analiza zmiennej price
 
 ```{r Analiza opisowa 2, echo=TRUE, message=FALSE, warning=FALSE}
 raport <-
@@ -273,9 +285,11 @@ knitr::kable(tabela,
   col.names = c("Statystyka","1 pokój", "2 pokoje", "3 pokoje", "4 pokoje")) 
 ```
 
-###### Min i Max
+### 3.2.1 Min i Max
 
 Najtańsze mieszkanie w oczyszczonej serii danych kosztuje 191.000 PLN najdroższe zaś 1.588.000. Najtańsze mieszkania dla wszystkich liczb pokoi kosztują poniżej 300.000 PLN. W przypadku najdroższych mieszkań jedynie w przypadku mieszkań 1 pokojowych cenna jest mniejsza od 1.000.000 PLN. Największa różnica pomiędzy najdroższym a najtańszym mieszkaniem występuję w przypadku mieszkań 2 pokojowych i wynosi 1.394.000 PLN jednak różnica dla mieszkań 3 i 4 pokojowych nie dużo mniejsza i wynosi odpowiednio 1.340.000 PLN oraz 1.289.000 PLN. Najmniejsza zaś różnica jest w przypadku mieszkań 1 pokojowych i wynosi 779.000 PLN. Jednak są to wartości nominalne nie uwzględniające tego jak duże są pokoje. Poniższa tabela przedstawia metraż jaki mają badane przez nas skrajne obserwacje wraz z ceną za m\^2.
+
+### 3.2.2 Porótnanie skrajnych mieszkań 
 
 ```{r Porównanie skrajnych mieszkań, echo=TRUE, message=FALSE, warning=FALSE}
 skrajne_mieszkania <- czyste %>%
@@ -297,11 +311,11 @@ knitr::kable(skrajne_mieszkania,
 
 Mimo że największa dysproporcja w cenie była obserwowalna dla mieszkań z dwoma pokojami to największa różnica w cenie za m\^2 jest widoczna w przypadku mieszkań z 3 pokojami i wynosi 24675,96 PLN dla wartości skrajnych, gdzie pozycją o drugiej największej różnicy są miezkania z 1 pokojem 21211,40 PLN
 
-###### Średnia i Mediana
+### 3.2.3 Średnia i Mediana
 
 Średnia cena mieszkań dla mieszkań o 2; 3 i 4 pokojach jest większa od mediany co sugeruje rozkład cen skośny prawostornnie oznaczao to, że dla tych kategorii istnieją pojedyńcze bardzo drogie mieszkania, które znacząco wpływają na średnią.
 
-###### Odchylenie Standardowe
+### 3.2.4 Odchylenie Standardowe
 
 Wartość odchylenia standardowego widocznie rośnie wraz z liczbą pokoi, oznacza to, że mieszkania z większą ilością pokoi (czyli z założenia mieszkania większe) mają bardziej zróżnicowane ceny, co jest zgodne z intuicją.
 
@@ -314,9 +328,13 @@ czyste <- czyste %>%
 
 ------------------------------------------------------------------------
 
-## Wizualizacja Danych
+# 4. Wizualizacja Danych
 
-###### Aby przeanalizować stan polskiego rynku mieszkaniowego, apartamenty zostały pogrupowane w przedziały cenowe:
+## 4.1 Wizualizacja Ceny mieszkań.
+
+Aby przeanalizować stan polskiego rynku mieszkaniowego, apartamenty grupujemy w przedziały cenowe, pozwoli nam to lepiej zwizualizować rozkład danych i przyczyni się do dalszej analizy zmiennych.
+
+### 4.1.1 Wykres przedział cenowych.
 
 ```{r przedział cenowy, echo=TRUE, message=FALSE, warning=FALSE}
 # Paleta kolorów
@@ -355,7 +373,9 @@ ggplot(price_counts, aes(x = price_category, y = n, fill = price_category)) +
 
 Wizualizacja pokazuje, w jakich przedziałach cenowych znajdują się apartamenty w zbiorze danych. Największy klaster apartamentów znajduje się w przedziale cenowym od 500 000 do 749 999 PLN, który obejmuje 40,2% obserwacji. Kolejne dwie kategorie z największą liczbą obserwacji to 750 000 do 999 999 PLN (24,7%) oraz 250 000 do 499 999 PLN (18,5%). Łącznie stanowią one 83,4% obserwacji.
 
-###### Orginalne dane zawierały skrajne ceny mieszkań, poniższa tabela przedstawia dystrybucję orginalnych danych dla przyjętych pułapów cenowych.
+### 4.1.2 Wykres przediał cenowych dla orginalnych danych.
+
+Orginalne dane zawierały skrajne ceny mieszkań, poniższa tabela przedstawia dystrybucję orginalnych danych dla przyjętych pułapów cenowych.
 
 ```{r Przedział cenowy dla orginalnych danych, echo=TRUE, message=FALSE, warning=FALSE}
 limits <- c(0, 250000, 500000, 750000, 1000000, 1250000, Inf)
@@ -373,7 +393,9 @@ knitr::kable(price_counts,
              col.names = c("Przedział cenowy", "Liczba mieszkań", "Procentowy udział (%)"))
 ```
 
-Po odrzuceniu wartości odstających mieszkania o cenie wyższej niż 1.250.000 PLN stanowią 6,9% badanych mieszkań jednak uwzględniając wartości odstające mieszkania o cenie wyższej niż 1.250.000 PLN stanowiły 13,2%. Zmianie uległ również udział dla mieszkań w przedziale 500.000 PLN - 749.999 PLN, gdzie udział procentowy wynosił 33,9%, a po odrzuceniu wartości skrajnych udział wzrósł do 40,2%. W pozostałych przypadkach wartość pozostała bez zmian. \#### Wizualizacja cen oraz rozmiarów mieskzań pomiędy miastami
+Po odrzuceniu wartości odstających mieszkania o cenie wyższej niż 1.250.000 PLN stanowią 6,9% badanych mieszkań jednak uwzględniając wartości odstające mieszkania o cenie wyższej niż 1.250.000 PLN stanowiły 13,2%. Zmianie uległ również udział dla mieszkań w przedziale 500.000 PLN - 749.999 PLN, gdzie udział procentowy wynosił 33,9%, a po odrzuceniu wartości skrajnych udział wzrósł do 40,2%. W pozostałych przypadkach wartość pozostała bez zmian.
+
+## 4.2 Wizualizacja z względu na miasto.
 
 ```{r wykresy dla miast, echo=TRUE, message=FALSE, warning=FALSE}
 ggplot(czyste, aes(x = city, y = priceSquareMeter)) +  
@@ -394,7 +416,7 @@ Pierwszy wykres przedstawia rozkład cen za metr kwadratowy mieszkań w miastach
 
 Drugi wykres ilustruje rozkład metrażu mieszkań w tych samych miastach. Tu sytuacja jest w miarę zbliżona, choć w miastach, gdzie ceny za metr kwadratwoy są wysokie metraż mieszkania jest większy. Mediana znajduje się głównie w przedziale 50-55 metrów kwadratowych.
 
-#### Dystrubucja mieszkań z względu na zmienną ownership - status własności
+## Dystrubucja mieszkań z względu na zmienną ownership
 
 ```{r Wykres Ownership, echo=TRUE, message=FALSE, warning=FALSE}
 ownership_palette <- c("maroon", "indianred", "darksalmon")  # Maroon → IndianRed → MistyRose
@@ -430,7 +452,7 @@ ggplot(ownership_counts, aes(x = ownership, y = n, fill = ownership)) +
 
 Blisko 0% Własność udziałowa: Znikoma obecność opcji „udział” sugeruje, że ta forma własności jest rzadka lub może zanikać na polskim rynku mieszkaniowym. Może to wskazywać na odchodzenie od starszych, zbiorowych struktur własnościowych.
 
-### Analiza mapy cieplnej
+## Analiza mapy cieplnej
 
 ```{r Heatmap, echo=TRUE, message=FALSE, warning=FALSE}
 
@@ -486,6 +508,8 @@ Druga wizualizacja przedstawia mapę cieplną mierzącą cenę w odniesieniu do 
 
 Następnie tworzony jest wykres analizujący wpływ piętra, na którym znajduje się mieszkanie, na jego cenę.
 
+## Wizualizacja zmiennej floor
+
 ```{r Wykres pięter, echo=TRUE, message=FALSE, warning=FALSE}
 ggplot(czyste, aes(x = floor)) +
   geom_histogram(binwidth = 1, fill = "maroon", alpha = 0.7) +
@@ -498,7 +522,7 @@ ggplot(czyste, aes(x = floor)) +
 
 Wykres pokazuje, że większość mieszkań znajduje się na niższych piętrach oraz że ogólnie liczba budynków mających mniej niż 5 pięter jest większa, co sugeruje, że większość budynków jest raczej niewielka.
 
-###### Analizę pięter można lepiej zrozumieć poprzez analizę typów budynków w badanej populacji.
+## Wizualizacja zmiennej type
 
 ```{r Wykrest typów budynków, echo=TRUE, message=FALSE, warning=FALSE}
 type_summary <- czyste %>%
@@ -522,6 +546,8 @@ average_price_by_type <- czyste %>%
 
 Bloki mieszkalne dominują w 62,5%, budynki mieszkalne stanowią 20,2%, a kamienice 17,3%. Znaczna liczba kamienic, które zazwyczaj są małe i niezbyt wysokie, w dużym stopniu przyczynia się do tego, że apartamenty w populacji znajdują się zazwyczaj na niższych piętrach.
 
+## Wizualizacja zmiennych buildingMaterial oraz hasSecurity
+
 ```{r Wykresy Boxplot: Materiał; Ochrona, echo=TRUE, message=FALSE, warning=FALSE}
 ggplot(czyste, aes(x = buildingMaterial, y = price, fill = buildingMaterial)) +
   geom_boxplot(alpha = 0.8) +
@@ -542,6 +568,8 @@ ggplot(czyste, aes(x = factor(hasSecurity, labels = c("No Security", "Has Securi
 Dane pokazują, że ogólnie apartamenty zbudowane z cegły są droższe niż te wykonane z betonu, a apartamenty z ochroną są droższe niż te bez ochrony. Jednak w obu przypadkach istnieje wiele odstających wartości w populacji, co oznacza, że nie ma silnej korelacji między tymi dwoma czynnikami. Ważne dla analizy jest jednak to, że gęstość odstających wartości dla apartamentów bez ochrony sugeruje, że istnieją bardzo drogie apartamenty, które nie mają ochrony.
 
 # Wnioskowanie Statystyczne
+
+## Przeprowadzania Testu Andersona-Darlinga
 
 ```{r Wnioskowanie statystyczne Test Andersona-Darlinga, echo=TRUE, message=FALSE, warning=FALSE}
 if (!require(nortest)) install.packages("nortest")
@@ -566,15 +594,15 @@ ggplot(data.frame(price = czyste$price), aes(sample = price)) +
 
 ```
 
-###### Wykres gęstości rozkładu
+### Wykres gęstości rozkładu
 
 wykres przedstawia histogram gęstości rozkładu gdzie histogram pokazuje rozkłąd cen miszkańa czerwona linia gęstość ich rozłożenia. Po kształcie histogramu widzimy, że rozkład cen mieszkań jest prawostronie skośny co mogliśmy zaobserować przy wcześniejszej analizie analizie skośności i kurtozy.
 
-###### Wykres kwantyl-kwantyl
+### Wykres kwantyl-kwantyl
 
 Wykres porównuje empiryczny rozkład cen mieszkań do teoretycznego rozkładu normalnego. W lewym dolnym oraz w prawym górnym rogu wykresu widzimy znaczne odchylenia, co sugeruje, że ceny mieszkań nie podlegąją w pełni rozkładowi normalnemu.
 
-#### Wnioski z testu Andersona-Darlinga:
+## Wnioski z testu Andersona-Darlinga:
 
 Wartość p w teście Andersona-Darlinga jest na poziomie 2,2e\^-16 jest ona mniejsza niż 0,05, odrzucamy więc hipotezę zerową. Oznacza to, że dane nie pochodzą z rozkładu normalnego.
 
