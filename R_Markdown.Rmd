@@ -1,6 +1,6 @@
 ---
-title: "Analiza Danych Semestr Zima 2024\n 
-Raport o miszkaniach w polskich miastach"
+title: "Raport o mieszkaniach w polskich miastach"
+subtitle: "Analiza Danych Semestr Zima 2024"
 author: "Michał Łochowski, Paweł Górdak"
 date: "`r format(Sys.Date(), '%d.%m.%Y')`"
 output: 
