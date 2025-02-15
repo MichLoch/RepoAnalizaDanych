@@ -1,6 +1,6 @@
 ---
 title: "Raport"
-author: "Michał Łochowski, Paweł Górdak, Dawid Drawc"
+author: "Michał Łochowski, Paweł Górdak"
 date: "`r format(Sys.Date(), '%d.%m.%Y')`"
 output: 
   rmdformats::readthedown
@@ -97,6 +97,7 @@ library(dplyr)
 library(tidyverse)
 library(ggplot2)
 library(kableExtra)
+library(patchwork)
 install.packages("validate")
 library(validate)
 if (!require("qwraps2")) install.packages("qwraps2")
@@ -181,7 +182,7 @@ outliers_iqr <- lapply(numeric_cols, find_outliers_iqr)
 # Wizualizacja wartości odstających za pomocą boxplotów dla każdej zmiennej numerycznej
 par(mfrow = c(3, 3))  # Układ wykresów (3x3)
 for (col in colnames(numeric_cols)) {
-  boxplot(numeric_cols[[col]], main = col, col = "turquoise", border = "navy", outline = TRUE)
+  boxplot(numeric_cols[[col]], main = col, col = "lightsalmon", border = "maroon", outline = TRUE)
 }
 par(mfrow = c(1, 1))  # Powrót do domyślnego układu wykresów
 ```
@@ -477,21 +478,25 @@ Blisko 0% Własność udziałowa: Znikoma obecność opcji „udział” sugeruj
 
 ```{r, echo=TRUE, message=FALSE, warning=FALSE}
 
-
+  
 poi_vars <- c("schoolDistance", "clinicDistance", "postOfficeDistance", 
               "kindergartenDistance", "restaurantDistance", "collegeDistance", 
               "pharmacyDistance", "centreDistance", "price")
 
 existing_poi_vars <- poi_vars[poi_vars %in% colnames(czyste)]
+poi_correlation <- cor(czyste %>% select(all_of(existing_poi_vars)), use = "pairwise.complete.obs")
 
-poi_correlation <- cor(czyste %>% select(all_of(existing_poi_vars)), 
-                       use = "pairwise.complete.obs")
+# Custom color palette using maroon and lightsalmon
+custom_palette <- colorRampPalette(c("lightsalmon", "white", "maroon"))(200)
 
-corrplot(poi_correlation, method = "square", 
+# Generate the correlation plot with the new colors
+corrplot(poi_correlation, 
+         method = "square", 
+         col = custom_palette,  # Apply the custom color palette
          tl.cex = 0.8, cl.cex = 0.8, 
          type = "upper", order = "hclust", 
          addCoef.col = "black", number.cex = 0.7,
-         title = "Mapa korelacji rozmiar mieszkania a cena", mar = c(0, 0, 2, 0)) 
+         title = "Mapa korelacji rozmiar mieszkania a cena", mar = c(0, 0, 2, 0))  
 
 correlation_analysis <- function(data) {
   kolumny <- c("price", "priceSquareMeter", "squareMeters", "rooms")
@@ -507,7 +512,7 @@ correlation_analysis <- function(data) {
   # Tworzenie mapy korelacji Heatmap
   corrplot(cor_matrix, 
            method = "color", 
-           col = colorRampPalette(c("orange", "white", "navy"))(200), 
+           col = colorRampPalette(c("lightsalmon", "white", "maroon"))(200), 
            type = "upper", 
            order = "hclust", 
            addCoef.col = "black", 
@@ -527,7 +532,7 @@ Następnie tworzony jest wykres analizujący wpływ piętra, na którym znajduje
 
 ```{r, echo=TRUE, message=FALSE, warning=FALSE}
 ggplot(czyste, aes(x = floor)) +
-  geom_histogram(binwidth = 1, fill = "blue", alpha = 0.7) +
+  geom_histogram(binwidth = 1, fill = "maroon", alpha = 0.7) +
   theme_minimal() +
   scale_x_continuous(breaks = seq(min(czyste$floor, na.rm = TRUE), 
                                   max(czyste$floor, na.rm = TRUE), 
@@ -602,6 +607,7 @@ ggplot(data.frame(price = czyste$price), aes(sample = price)) +
   theme_linedraw()
 
 ```
+
 ##### Wykres gęstości rozkładu
 
 wykres przedstawia histogram gęstości rozkładu gdzie histogram pokazuje rozkłąd cen miszkańa czerwona linia gęstość ich rozłożenia. Po kształcie histogramu widzimy, że rozkład cen mieszkań jest prawostronie skośny co mogliśmy zaobserować przy wcześniejszej analizie analizie skośności i kurtozy.
