@@ -550,7 +550,7 @@ type_summary <- czyste %>%
   mutate(percentage = n / sum(n) * 100)
 
 ggplot(type_summary, aes(x = type, y = n)) +
-  geom_bar(stat = "identity", fill = "steelblue", color = "black", width = 0.7) +
+  geom_bar(stat = "identity", fill = "maroon", color = "black", width = 0.7) +
   geom_text(aes(label = paste0(round(percentage, 1), "%")), 
             vjust = 0.5, hjust = 0.5, size = 5, color = "black") +  # Center the percentage
   theme_minimal() +
@@ -571,13 +571,14 @@ ggplot(czyste, aes(x = buildingMaterial, y = price, fill = buildingMaterial)) +
   geom_boxplot(alpha = 0.8) +
   theme_minimal() +
   coord_flip() +
-  labs(title = "Wpływ Materiału budowalnego na cennę", x = "Materiał Budowlany", y = "Cena") 
+  labs(title = "Wpływ Materiału budowalnego na cennę", x = "Materiał Budowlany", y = "Cena") +
+  scale_fill_manual(values = c("maroon", "lightsalmon"))
 
 ggplot(czyste, aes(x = factor(hasSecurity, labels = c("No Security", "Has Security")), y = price)) +
   geom_boxplot(aes(fill = factor(hasSecurity)), alpha = 0.8) +
   theme_minimal() +
   labs(title = "Wpływ ochrony na cennęmieszkania", x = "Ochrona", y = "Cena") +
-  scale_fill_manual(values = c("red", "green"))
+  scale_fill_manual(values = c("maroon", "lightsalmon"))
 
 
 ```
@@ -594,15 +595,15 @@ ad_test <- ad.test(czyste$price)
 
 # Histogram z gęstością rozkładu
 ggplot(czyste, aes(x = price)) +
-  geom_histogram(aes(y = ..density..), bins = 50, fill = "skyblue", color = "black", alpha = 0.7) +
-  geom_density(color = "red", linewidth = 1) +
+  geom_histogram(aes(y = ..density..), bins = 50, fill = "lightsalmon", color = "black", alpha = 0.7) +
+  geom_density(color = "maroon", linewidth = 1) +
   labs(title = "Histogram cen mieszkań z gęstością", x = "Cena", y = "Gęstość") +
   theme_classic()
 
 # QQ-plot
 ggplot(data.frame(price = czyste$price), aes(sample = price)) +
   stat_qq(distribution = qnorm) +
-  stat_qq_line(distribution = qnorm, color = "red", linewidth = 1) +
+  stat_qq_line(distribution = qnorm, color = "maroon", linewidth = 1) +
   labs(title = "QQ-plot dla cen mieszkań", x = "Kwantyle teoretyczne", y = "Kwantyle empiryczne") +
   theme_linedraw()
 
