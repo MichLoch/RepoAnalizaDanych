@@ -1,5 +1,5 @@
 ---
-title: "Analiza Danych Semestr Zima 2024 - Raport o miszkaniach w polskich miastach"
+title: "Analiza Danych Semestr Zima 2024\ Raport o miszkaniach w polskich miastach"
 author: "Michał Łochowski, Paweł Górdak"
 date: "`r format(Sys.Date(), '%d.%m.%Y')`"
 output: 
