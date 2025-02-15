@@ -541,7 +541,7 @@ ggplot(czyste, aes(x = factor(hasSecurity, labels = c("No Security", "Has Securi
 
 Dane pokazują, że ogólnie apartamenty zbudowane z cegły są droższe niż te wykonane z betonu, a apartamenty z ochroną są droższe niż te bez ochrony. Jednak w obu przypadkach istnieje wiele odstających wartości w populacji, co oznacza, że nie ma silnej korelacji między tymi dwoma czynnikami. Ważne dla analizy jest jednak to, że gęstość odstających wartości dla apartamentów bez ochrony sugeruje, że istnieją bardzo drogie apartamenty, które nie mają ochrony.
 
-## Wnioskowanie Statystyczne
+# Wnioskowanie Statystyczne
 
 ```{r Wnioskowanie statystyczne Test Andersona-Darlinga, echo=TRUE, message=FALSE, warning=FALSE}
 if (!require(nortest)) install.packages("nortest")
