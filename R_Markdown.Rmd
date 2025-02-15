@@ -65,7 +65,7 @@ Zbiór danych zawiera następujące zmienne:
 
 ## Czyszczenie i przetwarzanie danych
 
-#### Installation of needed libraries and data
+#### Instalowanie potrzebnych biblitoek oraz zbioru danych
 
 ```{r setup1, include=FALSE}
 knitr::opts_chunk$set(
@@ -131,14 +131,13 @@ apartments <- read_csv("apartments_pl_2024_06.csv")
 
 ```
 
-#### Visualizing the missing data using missing-data map
+#### Wizualizacja brakujących danych używając mapy brakujących danych.
 
 ```{r, echo=TRUE, message=FALSE, warning=FALSE}
 # Mapa brakujących danych
 vis_miss(apartments)
 
 # Wykres Brakujących danych
-library(naniar)
 gg_miss_upset(apartments, nsets = 3)
 ```
 
@@ -164,7 +163,6 @@ outliers_iqr <- lapply(numeric_cols, find_outliers_iqr)
 ```
 
 ```{r}
-# Wybór tylko zmiennych numerycznych
 numeric_cols <- apartments %>% select(where(is.numeric))
 
 # Funkcja do wykrywania wartości odstających metodą IQR
@@ -478,14 +476,7 @@ Blisko 0% Własność udziałowa: Znikoma obecność opcji „udział” sugeruj
 ### Analiza mapy cieplnej
 
 ```{r, echo=TRUE, message=FALSE, warning=FALSE}
-correlation_matrix <- cor(czyste %>% select(price, poiCount, squareMeters, rooms), 
-                          use = "pairwise.complete.obs")
 
-corrplot(correlation_matrix, method = "square", 
-         tl.cex = 0.8, cl.cex = 0.8, 
-         type = "upper", order = "hclust", 
-         addCoef.col = "black", number.cex = 0.7,
-         title = "Correlation Heatmap for Selected Variables", mar = c(0, 0, 2, 0)) 
 
 poi_vars <- c("schoolDistance", "clinicDistance", "postOfficeDistance", 
               "kindergartenDistance", "restaurantDistance", "collegeDistance", 
@@ -528,13 +519,9 @@ correlation_analysis(czyste)
 
 ```
 
-Analiza mapy cieplnej korelacji między różnymi zmiennymi prowadzi do trzech wykresów:
+Pierwsza wizualizacja przedstawia korelację między mieszkaniem a odległością do różnych udogodnień. Pokazuje ona, że zazwyczaj, jeśli mieszkanie znajduje się blisko jednej infrastruktury, to jest także blisko innej. Co jednak ciekawe, istnieje negatywna korelacja między ceną a odległością do kliniki oraz restauracji, co wskazuje, że im mniejsza odległość, tym wyższa cena mieszkania. Jest to szczególnie nietypowe w kontekście pozytywnej korelacji między ceną a odległością do centrum, co sugeruje, że im bliżej centrum znajduje się mieszkanie, tym jest tańsze. Wynik ten stoi w sprzeczności z intuicyjną hipotezą, że mieszkania w centrum miasta są najdroższe. Może to oznaczać, że w danych znajduje się znaczna liczba mieszkań na przedmieściach, które są warte więcej niż mieszkania w obszarach miejskich.
 
-Pierwszy wykres przedstawia korelację między wybranymi zmiennymi, takimi jak szerokość geograficzna, cena, metraż, liczba pokoi, piętro, liczba pięter w budynku, długość geograficzna, rok budowy oraz odległość od centrum. Wykazuje on niewielką lub żadną korelację między większością z tych zmiennych.
-
-Druga mapa cieplna przedstawia korelację między mieszkaniem a odległością do różnych udogodnień. Pokazuje ona, że zazwyczaj, jeśli mieszkanie znajduje się blisko jednej infrastruktury, to jest także blisko innej. Co jednak ciekawe, istnieje negatywna korelacja między ceną a odległością do kliniki oraz restauracji, co wskazuje, że im mniejsza odległość, tym wyższa cena mieszkania. Jest to szczególnie nietypowe w kontekście pozytywnej korelacji między ceną a odległością do centrum, co sugeruje, że im bliżej centrum znajduje się mieszkanie, tym jest tańsze. Wynik ten stoi w sprzeczności z intuicyjną hipotezą, że mieszkania w centrum miasta są najdroższe. Może to oznaczać, że w danych znajduje się znaczna liczba mieszkań na przedmieściach, które są warte więcej niż mieszkania w obszarach miejskich.
-
-Trzeci wykres przedstawia mapę cieplną mierzącą cenę w odniesieniu do zmiennych odnoszących się do rozmiaru mieszkania. Większość wyników jest niezaskakująca takich jak: Im więcej pokoi tym większy metraż im większy metraż tym większa cena, im więcej pokoi tym większa cena, im większy metraż tym mniejsza cena za m^2, im więcej pokoi tym mniejsza cena za m^2. Jednym wynikiem, który jest bardziej zaskakujący jest dodania korelacja na poziomie 0,66 zmiennych cena oraz cena za m^2 oznacza to, że droższe mieszkania mają wyższą cennę za metraż co może sugerować to, że znajdują się w bardzo dobrej lokalizacji albo są mieszkaniami wyższej jakości co za czym idzie sąbardziej porządane.
+Druga wizualizacja przedstawia mapę cieplną mierzącą cenę w odniesieniu do zmiennych odnoszących się do rozmiaru mieszkania. Większość wyników jest niezaskakująca takich jak: Im więcej pokoi tym większy metraż im większy metraż tym większa cena, im więcej pokoi tym większa cena, im większy metraż tym mniejsza cena za m^2, im więcej pokoi tym mniejsza cena za m^2. Jednym wynikiem, który jest bardziej zaskakujący jest dodania korelacja na poziomie 0,66 zmiennych cena oraz cena za m^2 oznacza to, że droższe mieszkania mają wyższą cennę za metraż co może sugerować to, że znajdują się w bardzo dobrej lokalizacji albo są mieszkaniami wyższej jakości co za czym idzie sąbardziej porządane.
 
 Następnie tworzony jest wykres analizujący wpływ piętra, na którym znajduje się mieszkanie, na jego cenę.
 
